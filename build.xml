@@ -5,9 +5,9 @@
   *    Copyright: 2000 Regents of the University of California and the
   *               National Center for Ecological Analysis and Synthesis
   *
-  *   '$Author: jones $'
-  *   '$Date: 2003-08-08 23:00:13 $'
-  *   '$Revision: 1.6 $'
+  *   '$Author: brooke $'
+  *   '$Date: 2003-08-29 23:22:17 $'
+  *   '$Revision: 1.7 $'
 -->
 <project name="utilities" default="usage" basedir=".">
 
@@ -117,7 +117,7 @@
       <mkdir dir="${installdir}" />
    </target>
 
-   <target name="jdoc" depends="init"
+   <target name="jdoc" depends="init,prepare"
            description="creates javadoc documentation for all the java classes">
        <mkdir dir="${build.javadocs}" />
        <javadoc packagenames="edu.ucsb.nceas.*"

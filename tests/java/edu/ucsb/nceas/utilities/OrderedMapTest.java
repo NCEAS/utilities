@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-07-17 21:30:00 $'
- * '$Revision: 1.1 $'
+ *     '$Date: 2003-08-29 23:22:17 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,17 +191,73 @@ public class OrderedMapTest extends TestCase
 
   public void testPutAll(){
 
-    System.out.println("testing putAll()...");
+    System.out.println("Testing putAll()...");
 
-    assertNotNull(orderedMap);
+    OrderedMap origOrderedMap  = new OrderedMap();
+    
+    origOrderedMap.put(testData[0][0], testData[0][1]);
+    origOrderedMap.put(testData[1][0], testData[1][1]);
+    origOrderedMap.put(testData[2][0], testData[2][1]);
+    origOrderedMap.put(testData[3][0], testData[3][1]);
+    origOrderedMap.put(testData[4][0], testData[4][1]);
+    origOrderedMap.put(testData[5][0], testData[5][1]);
 
+    assertNotNull(origOrderedMap);
+    
+    // here's the OrderedMap we will add by passing it to putAll():
+    OrderedMap mapToAdd = new OrderedMap();
+    mapToAdd.put("mapToAddKey1","mapToAddValue1");
+    mapToAdd.put("mapToAddKey2","mapToAddValue2");
+    mapToAdd.put("mapToAddKey3","mapToAddValue3");
+    ///////////////
+    
+    
+    //Here's the expected result:
+    OrderedMap expectedMap = new OrderedMap();
+    
+    Object nextKey  = null;
+    Iterator keysIt = null;
+    
+    keysIt = origOrderedMap.keySet().iterator();
+    while (keysIt.hasNext()) {
+      nextKey = keysIt.next();
+      expectedMap.put(nextKey, origOrderedMap.get(nextKey));       
+    }
+    
+    keysIt = mapToAdd.keySet().iterator();
+    while (keysIt.hasNext()) {
+      nextKey = keysIt.next();
+      expectedMap.put(nextKey, mapToAdd.get(nextKey));       
+    }
+    ///////////////
+    
+    
     try {
-        orderedMap.putAll(new HashMap());
-    } catch (UnsupportedOperationException e) {
-        System.out.println("*EXPECTED* UnsupportedOperationException doing orderedMap.putAll()"+e);
+      origOrderedMap.putAll(mapToAdd);
     } catch (Exception ex) {
       ex.printStackTrace();
-      fail("unexpected Exception doing putAll() "+ex);
+      fail("unexpected Exception doing putAll(mapToAdd) "+ex);
+    }
+    
+    assertNotNull(origOrderedMap);
+    assertEquals(expectedMap, origOrderedMap);
+
+    try {
+      origOrderedMap.putAll(null);
+    } catch (UnsupportedOperationException e) {
+      System.out.println("*EXPECTED* UnsupportedOperationException doing origOrderedMap.putAll(null)"+e);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      fail("unexpected Exception doing putAll(null) "+ex);
+    }
+
+    try {
+      origOrderedMap.putAll(new HashMap());
+    } catch (UnsupportedOperationException e) {
+      System.out.println("*EXPECTED* UnsupportedOperationException doing origOrderedMap.putAll(new HashMap())"+e);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      fail("unexpected Exception doing putAll(new HashMap()) "+ex);
     }
   }
 
