@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-07-17 21:31:24 $'
- * '$Revision: 1.1 $'
+ *     '$Date: 2003-08-29 23:24:09 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,8 @@ public class XMLUtilities {
 
   private static Logger log = Logger.getLogger(XMLUtilities.class.getName());
 
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  Given a string filename, attempts to load XML text from that file and 
    *  parse it into a DOM tree. Then returns the root node of that tree
    * 
@@ -84,7 +85,7 @@ public class XMLUtilities {
    *
    *  @return the root node of the DOM tree parsed from the input file
    *
-   *  @thows IOException if file cannot be opened or processed
+   *  @throws IOException if file cannot be opened or processed
    */
   public static Node getXMLAsDOMTreeRootNode(String cpRelativeFilename) 
                                                             throws IOException {
@@ -92,7 +93,8 @@ public class XMLUtilities {
     return (Node)(getXMLAsDOMDocument(cpRelativeFilename).getDocumentElement());
   }
 
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  Given a Reader, attempts to load XML text from that Reader and 
    *  parse it into a DOM tree. Then returns the root node of that tree
    * 
@@ -101,7 +103,7 @@ public class XMLUtilities {
    *
    *  @return the root node of the DOM tree parsed from the input file
    *
-   *  @thows IOException if file cannot be opened or processed
+   *  @throws IOException if file cannot be opened or processed
    */
   public static Node getXMLReaderAsDOMTreeRootNode(Reader xmlReader) 
                                                             throws IOException {
@@ -110,7 +112,8 @@ public class XMLUtilities {
   }
 
 
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  Given a string filename, attempts to load XML text from that file and 
    *  parse it into a DOM tree. Then returns the corresponding Document
    * 
@@ -119,7 +122,7 @@ public class XMLUtilities {
    *
    *  @return the Document corresponding to the XML parsed from the input file
    *
-   *  @thows IOException if file cannot be opened or processed
+   *  @throws IOException if file cannot be opened or processed
    */
   public static Document getXMLAsDOMDocument(String cpRelativeFilename)
                                                             throws IOException {
@@ -139,7 +142,8 @@ public class XMLUtilities {
   
   
   
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  Given a Reader, attempts to load XML text from that Reader and
    *  parse it into a DOM tree. Then returns the corresponding Document
    *
@@ -148,7 +152,7 @@ public class XMLUtilities {
    *
    *  @return the DOM Document containing the XML parsed from the input Reader
    *
-   *  @thows IOException if file cannot be opened or processed
+   *  @throws IOException if file cannot be opened or processed
    */
   public static Document getXMLReaderAsDOMDocument(Reader xmlReader)
                                                             throws IOException {
@@ -182,7 +186,8 @@ public class XMLUtilities {
   
   
   
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  This method take an XPATH expression and follows it through a DOM tree, 
    *  creating nodes along the way as needed, if they don't already exist. At
    *  the end of the XPATH it will create a TEXT_NODE and populate it with the 
@@ -259,7 +264,8 @@ public class XMLUtilities {
   }
   
   
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  This method take an XPATH expression and follows it through a DOM tree, 
    *  creating nodes along the way as needed, if they don't already exist. At
    *  the end of the XPATH it will create an ATTRIBUTE_NODE and populate it with  
@@ -388,7 +394,8 @@ public class XMLUtilities {
   }  
   
 
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  This method returns a <em>unique</em> Node.TEXT_NODE defined by the XPATH  
    *  expression provided
    *
@@ -451,7 +458,8 @@ public class XMLUtilities {
   } 
   
   
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  This method returns a <em>unique</em> Node.ATTRIBUTE_NODE defined by the   
    *  XPATH expression provided
    * 
@@ -499,7 +507,8 @@ public class XMLUtilities {
   } 
 
 
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  This method returns a <em>unique</em> node defined by the XPATH expression 
    *  provided
    * 
@@ -547,7 +556,8 @@ public class XMLUtilities {
 
 
 
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  This method returns a <code>NodeList</code> of nodes matching the XPATH
    *  expression provided
    *
@@ -643,7 +653,8 @@ public class XMLUtilities {
 
   
 
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  This method can walk a DOM subtree (based at the passed Node), and 
    *  return it as a string
    * 
@@ -675,7 +686,8 @@ public class XMLUtilities {
       return baos.toString();
   }
 
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  This method can walk a DOM subtree (based at the passed Node), and 
    *  print it to the PrintWriter provided, using the encoding defined
    *  in the DEFAULT_OUTPUT_FORMAT variable elsewhere in this class. 
@@ -689,7 +701,8 @@ public class XMLUtilities {
      print(node, printWriter, DEFAULT_OUTPUT_FORMAT);
    }
    
-  /** NOTE - NONE OF THESE METHODS ARE THREAD_SAFE!!
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
    *  This method can walk a DOM subtree (based at the passed Node), and 
    *  print it to the PrintWriter provided, using the encoding provided. 
    *  Does *not* flush or close PrintWriter after use

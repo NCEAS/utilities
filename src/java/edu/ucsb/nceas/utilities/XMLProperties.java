@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-07-17 21:31:24 $'
- * '$Revision: 1.1 $'
+ *     '$Date: 2003-08-29 23:24:09 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ public class XMLProperties
    *  @param xmlPropsSource   <code>InputStream</code> from which the properties 
    *                          XML is to be read and parsed
    *
-   *  @thows IOException if InputStream cannot be opened or processed
+   *  @throws IOException if InputStream cannot be opened or processed
    */
   public void load(InputStream xmlPropsSource) throws IOException {
     
