@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: jones $'
- *     '$Date: 2003-08-12 06:27:12 $'
- * '$Revision: 1.2 $'
+ *   '$Author: tao $'
+ *     '$Date: 2003-09-02 23:31:05 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ import java.io.Writer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 
 /**
  *  General static utilities for IO operations
@@ -216,6 +217,39 @@ public class IOUtil
         
         return buffer.toString();
     }
+   
+   /**
+     *  Read character data from a input stream and return a string.
+     *
+     *  @param  input               The input stream
+     *
+     *  @return                     The string contain data read from input
+     *                              stream
+     */  
+  public static String getInputStreamAsString(InputStream input)
+  {
+    String response = null;
+    try
+    {
+      InputStreamReader returnStream = new InputStreamReader(input);
+      StringWriter sw = new StringWriter();
+      int len;
+      char[] characters = new char[512];
+      while ((len = returnStream.read(characters, 0, 512)) != -1)
+      {
+        sw.write(characters, 0, len);
+      }
+      returnStream.close();
+      response = sw.toString();
+      sw.close();
+    }
+    catch(Exception e)
+    {
+      return null;
+    }
+  
+    return response;
+  }
 }
 
 
