@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2004-03-22 18:41:17 $'
- * '$Revision: 1.13 $'
+ *     '$Date: 2004-03-22 18:45:51 $'
+ * '$Revision: 1.14 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -461,6 +461,8 @@ public class XMLUtilities {
    *      removed. eg: <br>
    *      input:  /eml:eml/dataset[1]/project[1]/personnel[2]/role[1]
    *      output: /eml:eml/dataset/project/personnel/role
+   *
+   * @return the string with predicates removed, or null if original xpath null
    */
   private static StringBuffer strippedXPathBuff = new StringBuffer();
   //
