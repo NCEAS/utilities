@@ -3,9 +3,9 @@
  *  Copyright: 2000 Regents of the University of California and the
  *              National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: jones $'
- *     '$Date: 2003-08-08 23:00:13 $'
- * '$Revision: 1.1 $'
+ *   '$Author: sgarg $'
+ *     '$Date: 2004-08-19 20:43:01 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ public class HttpMessage
     // Set some addition request headers
     ((HttpURLConnection)con).setRequestMethod("POST");
     String ctype = myform.getContentType();
-    ((HttpURLConnection)con).setRequestProperty("Content-Type", ctype + "\r\n");
+    ((HttpURLConnection)con).setRequestProperty("Content-Type", ctype);
     long contentLength = myform.getLength();
     ((HttpURLConnection)con).setRequestProperty("Content-Length",
              new Long(contentLength).toString());
