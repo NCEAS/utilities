@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-08-29 23:24:09 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2003-09-15 16:18:50 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 
 /**
@@ -89,7 +89,7 @@ public class XMLProperties
   //output format used by store() method
   private static String OUTPUT_FORMAT = "UTF-8";
 
-  private static Logger log = Logger.getLogger(XMLProperties.class.getName());
+//  private static Logger log = Logger.getLogger(XMLProperties.class.getName());
   
   /**
    *  Creates a new, empty XML properties object
@@ -137,25 +137,25 @@ public class XMLProperties
 
     NodeList nl = XMLUtilities.getNodeListWithXPath(root, keyXPath);
 
-    log.debug(  
-      "XMLProperties.getProperty(): getNodeListWithXPath() returned NodeList: "
-                                                                          +nl);
+//    log.debug(  
+//      "XMLProperties.getProperty(): getNodeListWithXPath() returned NodeList: "
+//                                                                          +nl);
     if (nl==null) {
-      log.debug(  
-        "XMLProperties.getProperty(): getNodeListWithXPath() returned NULL");
+//      log.debug(  
+//        "XMLProperties.getProperty(): getNodeListWithXPath() returned NULL");
       return null;
     }
     
     int totChildren = nl.getLength();
     
     if (totChildren < 1) {
-      log.debug(  "XMLProperties.getProperty(): getNodeListWithXPath() returned "
-                            +totChildren+" children; returning new String[0]");
+//      log.debug(  "XMLProperties.getProperty(): getNodeListWithXPath() returned "
+//                            +totChildren+" children; returning new String[0]");
       return null;
     }
     
-    log.debug(  "XMLProperties.getProperty(): getNodeListWithXPath() returned "
-                            +totChildren+" children");
+//    log.debug(  "XMLProperties.getProperty(): getNodeListWithXPath() returned "
+//                            +totChildren+" children");
     
     List resultList = new ArrayList();
     Node nextChild = null;
