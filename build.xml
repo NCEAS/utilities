@@ -6,8 +6,8 @@
   *               National Center for Ecological Analysis and Synthesis
   *
   *   '$Author: brooke $'
-  *   '$Date: 2003-07-15 18:30:41 $'
-  *   '$Revision: 1.4 $'
+  *   '$Date: 2003-07-17 21:30:22 $'
+  *   '$Revision: 1.5 $'
 -->
 <project name="utilities" default="usage" basedir=".">
 
@@ -25,7 +25,7 @@
   </target>
 
   <target name="init" depends="config">
-      <property name="name" value="util"/>
+      <property name="name" value="utilities"/>
       <property name="Name" value="Utilities"/>
       <property name="release" value="0.0.0"/>
 
@@ -45,8 +45,6 @@
       <property name="build.lib" value="${build.dir}/lib"/>
       <property name="build.javadocs" value="${build.dir}/docs/api"/>
 
-      <property name="cpath" value=""/>
-
       <property name="package.home" value="edu/ucsb/nceas" />
 
       <property name="dist.dir" value="dist"/>
@@ -56,7 +54,22 @@
       <filter token="debuglevel" value="${debuglevel}"/>
       <filter token="installdir" value="${installdir}"/>
       <filter token="name" value="${name}"/>
-   </target>
+
+      <!-- classpath jar files (including relative path from basedir) -->
+<!--
+      <property name="xmlapijar" value="${libdir}/xml-apis.jar" />
+      <property name="xalanjar"  value="${libdir}/xalan.jar" />
+      <property name="extresjar" value="${libdir}/ExternalResources.jar" />
+-->
+      <property name="xercesjar" value="${libdir}/xercesImpl.jar" />
+      <property name="log4jjar"  value="${libdir}/log4j-1.2.8.jar" />
+      <!-- CLASSPATH -->
+      <property name="cpath"          
+                value="${xercesjar}:${log4jjar}" />
+                
+      <echo message="classpath is:   ${cpath}"/>
+ 
+    </target>
 
    <target name="prepare" depends="init">
       <mkdir dir="${build.dir}"/>
@@ -76,14 +89,16 @@
       </copy>
    </target>
 
-   <target name="compile" depends="prepare">
+   <target name="compile" depends="prepare"
+           description="compiles all the java classes">
       <javac srcdir="${build.src}"
              destdir="${build.dest}"
              classpath="${cpath}"
              debug="on"/>
    </target>
 
-   <target name="jar" depends="compile">
+   <target name="jar" depends="compile"
+           description="compiles and jars all the java classes">
       <delete file="${build.dir}/${name}.jar" />
       <copy todir="${build.dest}/${package.home}/${name}" filtering="no">
         <fileset dir="${srcdir}/${package.home}/${name}">
@@ -101,7 +116,8 @@
       <mkdir dir="${installdir}" />
    </target>
 
-   <target name="jdoc" depends="init">
+   <target name="jdoc" depends="init"
+           description="creates javadoc documentation for all the java classes">
        <mkdir dir="${build.javadocs}" />
        <javadoc packagenames="edu.ucsb.nceas.*"
            sourcepath="src"
@@ -111,20 +127,27 @@
            use="true"
            windowtitle="${Name} API"
            doctitle="&lt;h1&gt;${Name}&lt;/h1&gt;"
-           bottom="&lt;i&gt;Copyright &#169; 2000 National Center for Ecological Analysis and Synthesis. All Rights Reserved.&lt;/i&gt;"
-       />
+           bottom="&lt;i&gt;Copyright &#169; 2000 National Center for Ecological Analysis and Synthesis. All Rights Reserved.&lt;/i&gt;">
+        <fileset dir="${build.src}">
+          <include name="**/*.java"/>
+          <exclude name="**/CVS*"/>
+          <exclude name="**/.#*"/>
+        </fileset>
+       </javadoc>
    </target>
 
-   <target name="clean" depends="init">
+   <target name="clean" depends="init"
+           description="deletes everything in the build directory">
        <delete dir="${build.dir}" />
    </target>
 
-   <target name="buildtestjar" depends="clean,compile">
-      <!-- copy and compile the tests into a jar file -->
+   <target name="buildtestjar" depends="clean,compile"
+           description="copy and compile the tests into a jar file">
       <mkdir dir="${build.tests}"/>
       <copy todir="${build.tests}" filtering="yes">
         <fileset dir="${testdir}">
           <include name="**/*.java"/>
+          <include name="**/*.xml"/>
           <exclude name="**/CVS*"/>
           <exclude name="**/.#*"/>
         </fileset>
@@ -136,18 +159,19 @@
 
       <jar jarfile="${build.dir}/${name}-test.jar" basedir="${build.dest}">
         <fileset dir="${testdir}">
-          <include name="${package.home}/${name}Test/**" />
+          <include name="${package.home}/${name}/**" />
           <exclude name="**/*.java"/>
         </fileset>
       </jar>
 
    </target>
 
-   <target name="test" depends="buildtestjar">
+   <target name="test" depends="buildtestjar"
+           description="run all JUnit tests">
 
       <!-- use the ant "junit" task to run JUnit tests. -->
-      <junit printsummary="withOutAndErr" haltonfailure="no" fork="no"
-             haltonerror="no" newenvironment="true">
+      <junit printsummary="withOutAndErr" haltonfailure="yes" fork="no"
+             haltonerror="yes" newenvironment="true">
         <classpath>
           <pathelement path="${cpath}:${build.dir}/${name}-test.jar:${build.dir}/classes" />
         </classpath>
@@ -189,7 +213,8 @@
     </target>
 
 
-   <target name="dist" depends="jar,jdoc">
+   <target name="dist" depends="jar,jdoc"
+           description="jar all class files and documentation for distribution">
       <mkdir dir="${dist.dir}"/>
       <delete dir="${ver.dir}" />
       <mkdir dir="${ver.dir}"/>
@@ -200,10 +225,10 @@
       <copy todir="${ver.dir}" file="build.xml"/>
       <copy todir="${ver.dir}/lib" file="${build.dir}/${name}.jar"/>
 
-      <copy todir="${ver.dir}/docs" filtering="yes">
+      <copy todir="${ver.dir}/docs" filtering="yes" failonerror="false">
         <fileset dir="docs" excludes="**/*gif **/*jpg **/*png" />
       </copy>
-      <copy todir="${ver.dir}/docs" filtering="no">
+      <copy todir="${ver.dir}/docs" filtering="no" failonerror="false">
         <fileset dir="docs" includes="**/*gif **/*jpg **/*png" />
       </copy>
       <copy todir="${ver.dir}/docs/dev">
@@ -224,7 +249,8 @@
       <delete file="./${name}-${release}.tar" />
   </target>
 
-  <target name="distsrc" depends="dist">
+  <target name="distsrc" depends="dist"
+           description="jar all source files for distribution">
       <mkdir dir="${ver.src}"/>
       <copy todir="${ver.src}">
         <fileset dir="./src"/>
