@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: tao $'
- *     '$Date: 2003-09-02 23:31:05 $'
- * '$Revision: 1.3 $'
+ *   '$Author: brooke $'
+ *     '$Date: 2003-09-15 16:05:50 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.io.PrintWriter;
+
 
 /**
  *  General static utilities for IO operations
@@ -219,13 +221,13 @@ public class IOUtil
     }
    
    /**
-     *  Read character data from a input stream and return a string.
-     *
-     *  @param  input               The input stream
-     *
-     *  @return                     The string contain data read from input
-     *                              stream
-     */  
+    *  Read character data from a input stream and return a string.
+    *
+    *  @param  input               The input stream
+    *
+    *  @return                     The string contain data read from input
+    *                              stream
+    */  
   public static String getInputStreamAsString(InputStream input)
   {
     String response = null;
@@ -249,6 +251,25 @@ public class IOUtil
     }
   
     return response;
+  }
+  
+  
+  
+  
+  /**
+   *  Read a Stack Trace from the argument Throwable object and return it as a 
+   *  String for logging etc.
+   *
+   *  @param  e   The <code>Throwable</code> source for the stack trace
+   *
+   *  @return     The string contain the stack trace read from input
+   */  
+  public static String getStackTraceAsString(Throwable e) {
+  
+    StringWriter sw = new java.io.StringWriter();
+    PrintWriter  pw = new java.io.PrintWriter( sw );
+    ((Exception) e).printStackTrace( pw );
+    return sw.toString();
   }
 }
 
