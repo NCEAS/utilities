@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-09-15 16:05:50 $'
- * '$Revision: 1.4 $'
+ *     '$Date: 2003-09-15 16:18:50 $'
+ * '$Revision: 1.5 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,17 +78,14 @@ public class IOUtil
                 sb.append(buff, 0, numCharsRead);
             }
         } catch (IOException ioe) {
-            System.err.println("IOUtil.getAsStringBuffer(): Error reading Reader: "
-                                                            +ioe.getMessage());
+//            System.err.println("IOUtil.getAsStringBuffer(): Error reading Reader: "
+//                                                            +ioe.getMessage());
             throw ioe;
         } finally {
             if (closeWhenFinished) {
                 try { 
                     if (reader!=null) reader.close();
-                } catch (IOException ce) {  
-                    System.err.println("IOUtil.getAsStringBuffer(): closing Reader: "
-                                                            +ce.getMessage());
-                }
+                } catch (IOException ce) { ce.printStackTrace(); }
             }
         }
         return sb;
@@ -151,17 +148,14 @@ public class IOUtil
             writer.write(bufferChars);
             writer.flush();
         } catch (IOException ioe) {
-            System.err.println("IOUtil.writeToWriter(): Error writing to Writer: "
-                                                            +ioe.getMessage());
+//            System.err.println("IOUtil.writeToWriter(): Error writing to Writer: "
+//                                                            +ioe.getMessage());
             throw ioe;
         } finally {
             if (closeWhenFinished) {
                 try { 
                     if (writer!=null) writer.close();
-                } catch (IOException ce) {  
-                    System.err.println("IOUtil.writeToWriter(): closing Writer: "
-                                                            +ce.getMessage());
-                }
+                } catch (IOException ce) { ce.printStackTrace(); }
             }
         }
     }
