@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: brooke $'
- *     '$Date: 2003-09-15 16:09:59 $'
- * '$Revision: 1.5 $'
+ *   '$Author: higgins $'
+ *     '$Date: 2003-09-15 17:00:31 $'
+ * '$Revision: 1.6 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -863,6 +863,83 @@ public class XMLUtilities {
   
    
    
+  /** Normalizes the given string. 
+   *  note that this version explicitly consideres
+   *  characters that have codes less than 32 and
+   *  greater than 128. This proved necessary in morpho
+   *  due to the possibility of pasting text from other 
+   *  applications (e.g. Word, PDFs) that use these spceial 
+   *  ascii characters. (Xalan seems particularly sensitive to
+   *  unusual white-space characters)
+   */
+  public static String normalize(Object ss) {
+    String s = "";
+    s = (String)ss;
+    StringBuffer str = new StringBuffer();
+
+    int len = (s != null) ? s.length() : 0;
+    for (int i = 0; i < len; i++) {
+      char ch = s.charAt(i);
+      switch (ch) {
+        case '<': {
+                    str.append("&lt;");
+                    break;
+                }
+        case '>': {
+                    str.append("&gt;");
+                    break;
+                }
+        case '&': {
+                    str.append("&amp;");
+                    break;
+                }
+        case '"': {
+                    str.append("&quot;");
+                    break;
+                }
+        case '\r':
+		    case '\t':
+        case '\n': {
+                    if (false) {
+                        str.append("&#");
+                        str.append(Integer.toString(ch));
+                        str.append(';');
+                        break;
+                    }
+                    // else, default append char
+			              break;
+                }
+        default: {
+                    if ((ch<128)&&(ch>31)) {
+                      str.append(ch);
+                    } 
+                    else if (ch<32) {
+                      if (ch== 10) {
+                        str.append(ch);
+                      }
+                      if (ch==13) {
+                        str.append(ch);
+                      }
+                      if (ch==9) {
+                        str.append(ch);
+                      }  
+                      // otherwise skip
+                    }
+                    else {
+                        str.append("&#");
+                        str.append(Integer.toString(ch));
+                        str.append(';');
+                    }
+                }
+      }
+    }
+  String temp = str.toString();
+  temp = temp.trim();
+  if (temp.length()<1) temp = " ";
+  return temp;
+
+  } // normalize(String):String
+
  
    
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -1089,35 +1166,6 @@ public class XMLUtilities {
 
 
 
-  /** Normalizes the given string. */
-  private static String normalize(String s) {
-
-    StringBuffer str = new StringBuffer();
-
-    int len = (s!=null) ? s.length() : 0;
-    for (int i = 0; i < len; i++) {
-      char ch = s.charAt(i);
-      switch (ch) {
-      case '<':
-        str.append("&lt;");
-        break;
-      case '>':
-        str.append("&gt;");
-        break;
-      case '&':
-        str.append("&amp;");
-        break;
-      case '"':
-        str.append("&quot;");
-        break;
-      case '\r':
-      case '\n':
-      default:
-        str.append(ch);
-      }
-    }
-    return (str.toString());
-  }
 
 
 
