@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2004-03-18 22:17:03 $'
- * '$Revision: 1.12 $'
+ *     '$Date: 2004-03-22 18:41:17 $'
+ * '$Revision: 1.13 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -453,6 +453,36 @@ public class XMLUtilities {
   }
 
 
+
+  /**
+   * removes all predicates from the given <code>String</code> xpath.
+   *
+   *  @param xpath the <code>String</code> xpath that will have its predicates
+   *      removed. eg: <br>
+   *      input:  /eml:eml/dataset[1]/project[1]/personnel[2]/role[1]
+   *      output: /eml:eml/dataset/project/personnel/role
+   */
+  private static StringBuffer strippedXPathBuff = new StringBuffer();
+  //
+  public static String removeAllPredicates(String xpath) {
+
+    if (xpath==null) return null;
+
+    int pos;
+    if ((pos = xpath.indexOf("[")) < 0) return xpath;
+
+    strippedXPathBuff.delete(0, strippedXPathBuff.length());
+
+    for (; pos != -1; pos = xpath.indexOf("[")) {
+      strippedXPathBuff.append(xpath.substring(0, pos));
+      pos = 1 + xpath.indexOf("]");
+      if (pos < 1) pos = xpath.length();
+      xpath = xpath.substring(pos);
+    }
+    strippedXPathBuff.append(xpath);
+
+    return strippedXPathBuff.toString();
+  }
 
 
 
