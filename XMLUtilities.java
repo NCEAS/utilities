@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-09-13 00:57:33 $'
- * '$Revision: 1.4 $'
+ *     '$Date: 2003-09-15 16:09:59 $'
+ * '$Revision: 1.5 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.IOException;
 
 import java.util.Stack;
 import java.util.Map;
@@ -59,7 +58,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 
 public class XMLUtilities {
@@ -74,7 +73,7 @@ public class XMLUtilities {
 
   private static DocumentBuilder domParser = null;
 
-  private static Logger log = Logger.getLogger(XMLUtilities.class.getName());
+//  private static Logger log = Logger.getLogger(XMLUtilities.class.getName());
 
   /** 
    *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
@@ -161,26 +160,42 @@ public class XMLUtilities {
     Document    doc = null;
     if (xmlReader==null) {
     
-      IOException ioe 
+      IOException ioe1 
           = new IOException("getXMLReaderAsDOMDocument received a null Reader");
-      ioe.fillInStackTrace();
-      throw ioe;
+      ioe1.fillInStackTrace();
+      throw ioe1;
     }
+    
     InputSource in  = new InputSource(xmlReader);
+    
     try {
       doc = getDOMParser().parse(in);
+      
     } catch(SAXException e) {
-      log.error("SAXException parsing Reader\n"+e);
-      e.printStackTrace();
-    } catch(IOException ioe) {
-      log.error("IOException parsing Reader\n"+ioe);
-      ioe.printStackTrace();
+      
+        IOException ioe2 = new IOException( "getXMLReaderAsDOMDocument: "
+                                    +"nested SAXException parsing Reader: "+e);
+        ioe2.fillInStackTrace();
+        throw ioe2;
+
+    } catch(IOException ie) {
+      
+        IOException ioe3 = new IOException( "getXMLReaderAsDOMDocument: "
+                                           +"IOException parsing Reader: "+ie);
+        ioe3.fillInStackTrace();
+        throw ioe3;
+
+    } catch(ParserConfigurationException pe) {
+      
+        IOException ioe4 = new IOException( "getXMLReaderAsDOMDocument: "
+           +"nested ParserConfigurationException calling getDOMParser(): "+pe);
+        ioe4.fillInStackTrace();
+        throw ioe4;
+
     } finally {
+    
       try { if (xmlReader!=null) xmlReader.close(); }
-      catch (IOException i) {
-        log.error("IOException closing Reader "+i);
-        i.printStackTrace();
-      }
+      catch (IOException i) { i.printStackTrace();  }
     }
     return doc;
   }
@@ -213,8 +228,8 @@ public class XMLUtilities {
   public static void addTextNodeToDOMTree(Node rootNode, String xpath,
                   String textValue) throws DOMException, TransformerException { 
 
-    log.debug("XMLUtilities.addTextNodeToDOMTree(); xpath="+xpath
-              +"\nrootnode = "+rootNode);
+//    log.debug("XMLUtilities.addTextNodeToDOMTree(); xpath="+xpath
+//              +"\nrootnode = "+rootNode);
 
     Node lastRealNode  = getLastExistingNodeInXPath(rootNode, xpath);
 
@@ -226,7 +241,7 @@ public class XMLUtilities {
     while (!nodesToCreate.isEmpty()) {
     
       nextNodeName = popNextNodeString(nodesToCreate);
-      log.debug("in while loop; -> nextNodeName = "+nextNodeName);
+//      log.debug("in while loop; -> nextNodeName = "+nextNodeName);
     
       if (nextNodeName==null) {
         DOMException de2 = new DOMException(DOMException.SYNTAX_ERR, 
@@ -238,10 +253,10 @@ public class XMLUtilities {
       
 
       Element newElement = doc.createElement(stripXPathIndex(nextNodeName));
-      log.debug("in while loop; -> newElement created = "+newElement);
+//      log.debug("in while loop; -> newElement created = "+newElement);
     
       lastRealNode.appendChild(newElement);
-      log.debug("in while loop; -> DONE lastRealNode.appendChild(newElement)");
+//      log.debug("in while loop; -> DONE lastRealNode.appendChild(newElement)");
       lastRealNode = newElement;
     } 
     //check to see if last real node has any children already...
@@ -295,9 +310,9 @@ public class XMLUtilities {
   public static void addAttributeNodeToDOMTree(Node rootNode, String xpath,
                   String attribValue) throws DOMException, TransformerException { 
 
-    log.debug("XMLUtilities.addAttributeNodeToDOMTree(); xpath="+xpath
-              +"\nattribValue = "+attribValue
-              +"\nrootNode = "+rootNode);
+//    log.debug("XMLUtilities.addAttributeNodeToDOMTree(); xpath="+xpath
+//              +"\nattribValue = "+attribValue
+//              +"\nrootNode = "+rootNode);
 
     if (xpath.indexOf(ATTRIB_XPATH_SYMBOL)<0) {
       DOMException de1 = new DOMException(DOMException.SYNTAX_ERR, 
@@ -425,13 +440,13 @@ public class XMLUtilities {
   public static Node getTextNodeWithXPath(Node rootNode, String xpath) 
                                     throws DOMException, TransformerException { 
 
-    log.debug("XMLUtilities.getTextNodeWithXPath() called; xpath="+xpath);
+//    log.debug("XMLUtilities.getTextNodeWithXPath() called; xpath="+xpath);
     
     Node targetNode     = getNodeWithXPath(rootNode, xpath);
     
     if (targetNode==null) {
       
-      log.debug("node pointed to by xpath is null; returning null");
+//      log.debug("node pointed to by xpath is null; returning null");
       return null;
     }
     // targetNode *should* only have one child node, which the actual text it 
@@ -441,7 +456,7 @@ public class XMLUtilities {
 
     // if node doesn't exist, return null
     if (targetList.getLength()==0) {
-      log.debug("text node doesn't yet exist: "+xpath);
+//      log.debug("text node doesn't yet exist: "+xpath);
       return null;
     }
 
@@ -452,7 +467,7 @@ public class XMLUtilities {
       Node textNode = targetList.item(nodeIndex);
       if (textNode.getNodeType()==Node.TEXT_NODE 
                           || textNode.getNodeType()==Node.CDATA_SECTION_NODE) {
-        log.debug("FOUND VALUE = "+textNode.getNodeValue());
+//        log.debug("FOUND VALUE = "+textNode.getNodeValue());
         return textNode;
       }
     }
@@ -486,13 +501,13 @@ public class XMLUtilities {
   public static Node getAttributeNodeWithXPath(Node rootNode, String xpath) 
                                     throws DOMException, TransformerException { 
 
-    log.debug("XMLUtilities.getAttributeNodeWithXPath() called; xpath="+xpath);
+//    log.debug("XMLUtilities.getAttributeNodeWithXPath() called; xpath="+xpath);
     
     Node targetNode = getNodeWithXPath(rootNode, xpath);
     
     if (targetNode==null) {
       
-      log.debug("node pointed to by xpath is null; returning null");
+//      log.debug("node pointed to by xpath is null; returning null");
       return null;
     }
     
@@ -534,15 +549,15 @@ public class XMLUtilities {
   public static Node getNodeWithXPath(Node rootNode, String xpath) 
                                     throws DOMException, TransformerException {
 
-    log.debug("XMLUtilities.getNodeWithXPath() called; xpath="+xpath);
+//    log.debug("XMLUtilities.getNodeWithXPath() called; xpath="+xpath);
 
     NodeList nodeList = getNodeListWithXPath(rootNode, xpath);
 
     if (nodeList==null) {
-      log.debug("nodeList is null; returning null");
+//      log.debug("nodeList is null; returning null");
       return null;
     }
-    log.debug("nodeList.getLength() = "+nodeList.getLength());
+//    log.debug("nodeList.getLength() = "+nodeList.getLength());
 
     if (nodeList.getLength() > 1) {
       // XPATH expression must point to a unique 
@@ -579,8 +594,8 @@ public class XMLUtilities {
   public static NodeList getNodeListWithXPath(Node rootNode, String xpath) 
                                                   throws TransformerException { 
 
-    log.debug("XMLUtilities.getNodeListWithXPath() called; xpath="+xpath
-                              +"\nrootnode = "+rootNode);
+//    log.debug("XMLUtilities.getNodeListWithXPath() called; xpath="+xpath
+//                              +"\nrootnode = "+rootNode);
 
     NodeList nodeList = null;
     
@@ -605,19 +620,19 @@ public class XMLUtilities {
       nodeList = XPathAPI.selectNodeList(rootNode, xpath.trim(), rootNode);
       
     } catch (TransformerException e) {
-      e.printStackTrace();
-      log.error("TransformerException doing XPath search for nodelist"
-                                  +" at xpath: "+xpath+"\nException is: "+e);
+//      e.printStackTrace();
+//      log.error("TransformerException doing XPath search for nodelist"
+//                                  +" at xpath: "+xpath+"\nException is: "+e);
       throw e;
     } 
     
     if (nodeList==null) {
-      log.debug("NULL NodeList received - API docs say this should"
-                                              +" never happen! xpath = "+xpath);
+//      log.debug("NULL NodeList received - API docs say this should"
+//                                              +" never happen! xpath = "+xpath);
       return null;
     } else if (nodeList.getLength()<1) {
-      log.debug("NodeList length = 0; No nodes exist for this xpath: "
-                                                                        +xpath);
+//      log.debug("NodeList length = 0; No nodes exist for this xpath: "
+//                                                                        +xpath);
       return null;
     } 
     return nodeList;
@@ -674,7 +689,7 @@ public class XMLUtilities {
         print(node, printWriter);
       } catch (Exception e) {
         String msg = "getDOMTreeAsString() - unexpected Exception: "+e+"\n";
-        log.error(msg);
+//        log.error(msg);
         printWriter.println(msg);
         e.printStackTrace(printWriter);
       } finally {
@@ -739,7 +754,7 @@ public class XMLUtilities {
          = new XMLSerializer(printWriter, format);
         serializer.serialize(document);     
       } catch (IOException e) {
-        log.error("IOException doing print(): "+e); 
+//        log.error("IOException doing print(): "+e); 
         e.printStackTrace(printWriter);
       } 
   }
@@ -813,15 +828,15 @@ public class XMLUtilities {
 
         if (attribNode==null) {
           // if node doesn't exist, we need to add it to the DOM tree
-          log.debug("Attribute node doesn't exist - need to create");
+//          log.debug("Attribute node doesn't exist - need to create");
       
           addAttributeNodeToDOMTree(rootNode, nextKey, nextVal);
         
         } else {
     
           attribNode.setNodeValue(nextVal);
-          log.debug("Existing attribute node set to new value: "
-                                                    +attribNode.getNodeValue());
+//          log.debug("Existing attribute node set to new value: "
+//                                                    +attribNode.getNodeValue());
         } 
     
       } else {
@@ -831,15 +846,15 @@ public class XMLUtilities {
   
         if (textNode==null) {
           // if node doesn't exist, we need to add it to the DOM tree
-          log.debug("Text node doesn't exist - need to create");
+//          log.debug("Text node doesn't exist - need to create");
   
           addTextNodeToDOMTree(rootNode, nextKey, nextVal);
   
         } else {
      
           textNode.setNodeValue(nextVal);
-          log.debug("Existing text node set to new value: "
-                                                      +textNode.getNodeValue());
+//          log.debug("Existing text node set to new value: "
+//                                                      +textNode.getNodeValue());
         } 
       }  
     }
@@ -1111,39 +1126,32 @@ public class XMLUtilities {
    *
    * @return   a DOM parser object for parsing
    */
-  private static DocumentBuilder getDOMParser() {
+  private static DocumentBuilder getDOMParser() 
+                                          throws ParserConfigurationException {
   
     if (domParser==null) {
-      try {
-        DocumentBuilderFactory factory 
-        = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        
-        //ignore whitespace, CR's etc in file when parsing:
-        //factory.setIgnoringContentElementWhitespace(true);
-        
-        ////////////////////////////////////////////////////////////////////////
-        //
-        // see http://xml.apache.org/xerces2-j/features.html
-        ////////////////////////////////////////////////////////////////////////
+    
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setNamespaceAware(true);
+      factory.setValidating(false);
+      
+      //ignore whitespace, CR's etc in file when parsing:
+      //factory.setIgnoringContentElementWhitespace(true);
+      
+      ////////////////////////////////////////////////////////////////////////
+      //
+      // see http://xml.apache.org/xerces2-j/features.html
+      ////////////////////////////////////////////////////////////////////////
 
-        factory.setAttribute(
-              "http://apache.org/xml/features/nonvalidating/load-external-dtd", 
-              new Boolean(false));
+      factory.setAttribute(
+            "http://apache.org/xml/features/nonvalidating/load-external-dtd", 
+            new Boolean(false));
 
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
-        
-        domParser = factory.newDocumentBuilder();
-        if (domParser != null) {
-          log.debug("Parser created is: "+domParser.getClass().getName());
-        } else {
-          log.error("Unable to create DOM Parser!");
-        }
-      } catch (ParserConfigurationException pce) {
-        log.error("Exception while creating DOM parser!\n"+pce.getMessage());
-      }
+      ////////////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////////////
+      
+      domParser = factory.newDocumentBuilder();
+
     }
     return domParser;
   }
@@ -1250,8 +1258,8 @@ public class XMLUtilities {
     
     stringToPush = existingPath.substring(existingPath.lastIndexOf("/") + 1);
     nodesToCreate.push(stringToPush);
-    log.debug("stepBackUpPath just added to Stack: "+nodesToCreate.peek());
-    log.debug("Stack is now: "+nodesToCreate.toString());
+//    log.debug("stepBackUpPath just added to Stack: "+nodesToCreate.peek());
+//    log.debug("Stack is now: "+nodesToCreate.toString());
     
     return existingPath.substring(0, existingPath.lastIndexOf("/"));
   }
