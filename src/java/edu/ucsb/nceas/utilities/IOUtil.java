@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: brooke $'
- *     '$Date: 2003-07-17 21:31:24 $'
- * '$Revision: 1.1 $'
+ *   '$Author: jones $'
+ *     '$Date: 2003-08-12 06:27:12 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,29 @@ public class IOUtil
             }
         }
         return sb;
+    }
+
+    /**
+     *  reads character data from the <code>Reader</code> provided, using a 
+     *  buffered read. Returns data as a <code>String</code>
+     *
+     *  @param  reader              <code>Reader</code> object to be read
+     *
+     *  @param  closeWhenFinished   <code>boolean</code> value to indicate 
+     *                              whether Reader should be closed when reading
+     *                              finished
+     *
+     *  @return                     <code>String</code> containing  
+     *                              characters read from the <code>Reader</code>
+     *
+     *  @throws IOException if there are problems accessing or using the Reader.
+     */
+    public static String getAsString( Reader reader, 
+                                      boolean closeWhenFinished) 
+                                      throws IOException
+    {
+        StringBuffer sb = IOUtil.getAsStringBuffer(reader, closeWhenFinished);
+        return sb.toString();
     }
     
     /**
