@@ -6,8 +6,8 @@
   *               National Center for Ecological Analysis and Synthesis
   *
   *   '$Author: brooke $'
-  *   '$Date: 2003-08-29 23:22:17 $'
-  *   '$Revision: 1.7 $'
+  *   '$Date: 2003-09-23 23:08:20 $'
+  *   '$Revision: 1.8 $'
 -->
 <project name="utilities" default="usage" basedir=".">
 
@@ -139,7 +139,13 @@
 
    <target name="clean" depends="init"
            description="deletes everything in the build directory">
-       <delete dir="${build.dir}" />
+       <delete>
+          <fileset dir="${build.dir}">
+            <include name="**/*.*"/>
+            <exclude name="**/CVS*"/>
+            <exclude name="**/.#*"/>
+          </fileset>
+       </delete>
    </target>
 
    <target name="buildtestjar" depends="clean,compile"
