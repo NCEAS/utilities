@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: higgins $'
- *     '$Date: 2003-09-21 23:28:51 $'
- * '$Revision: 1.7 $'
+ *   '$Author: brooke $'
+ *     '$Date: 2003-09-24 01:21:38 $'
+ * '$Revision: 1.8 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -682,13 +682,40 @@ public class XMLUtilities {
    *  @return <code>String</code> representation of the DOM tree
    */
   public static String getDOMTreeAsString(Node node) {
+  
+    return getDOMTreeAsString(node, false);
+  }
+
+  
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
+   *  This method can walk a DOM subtree (based at the passed Node), and 
+   *  return it as a string
+   * 
+   *  @param node the root node of a DOM subtree
+   * 
+   *  @param preserveWhitespace - if set to true, will preserve spaces. <br>
+   *                              <em>NOTES:</em><ul><li>*false* - Setting 
+   *                              this to false means that any elements that 
+   *                              contain only whitespace will be printed out as 
+   *                              being *empty*, but the layout of the output 
+   *                              will have "nice" line endings and indentation. 
+   *                              </li><li>*true* - Setting it to true can mess 
+   *                              up line endings/formatting of output, but will 
+   *                              mean that elements containing only whitespace 
+   *                              will be printed out in their original form.
+   *                              </li></ul>
+   *
+   *  @return <code>String</code> representation of the DOM tree
+   */
+  public static String getDOMTreeAsString(Node node, boolean preserveWhitespace) {
       
       if (node==null) return null;  
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       PrintWriter printWriter = new PrintWriter(baos);
 
       try {
-        print(node, printWriter);
+        print(node, printWriter, DEFAULT_OUTPUT_FORMAT, preserveWhitespace);
       } catch (Exception e) {
         String msg = "getDOMTreeAsString() - unexpected Exception: "+e+"\n";
 //        log.error(msg);
@@ -737,6 +764,40 @@ public class XMLUtilities {
    public static void print(Node node, 
                             PrintWriter printWriter, String encoding) {
 
+      print(node, printWriter, encoding, false);
+   }
+   
+   
+  /** 
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>. 
+   *  This method can walk a DOM subtree (based at the passed Node), and 
+   *  print it to the PrintWriter provided, using the encoding provided. 
+   *  Does *not* flush or close PrintWriter after use
+   * 
+   *  @param node         the root node of a DOM subtree
+   *
+   *  @param printWriter  the <code>PrintWriter</code> to which output will be 
+   *                      printed
+   *
+   *  @param encoding     the <code>String</code> defining the output format
+   *                      (e.g. UTF-8 etc)
+   * 
+   *  @param preserveWhitespace - if set to true, will preserve spaces. <br>
+   *                              <em>NOTES:</em><ul><li>*false* - Setting 
+   *                              this to false means that any elements that 
+   *                              contain only whitespace will be printed out as 
+   *                              being *empty*, but the layout of the output 
+   *                              will have "nice" line endings and indentation. 
+   *                              </li><li>*true* - Setting it to true can mess 
+   *                              up line endings/formatting of output, but will 
+   *                              mean that elements containing only whitespace 
+   *                              will be printed out in their original form.
+   *                              </li></ul>
+   *
+   */
+   public static void print(Node node, PrintWriter printWriter,
+                                  String encoding, boolean preserveWhitespace) {
+
       if (node==null)         return;  
       if (printWriter==null)  return;  
       if (encoding==null)     return;  
@@ -748,10 +809,12 @@ public class XMLUtilities {
         if (document==null) return;
         OutputFormat format 
          = new OutputFormat(document, encoding, true);
-        format.setLineSeparator("\r\n");
+
+        format.setLineSeparator(System.getProperty("line.separator"));
         format.setLineWidth(72);
         format.setIndent(2);
-        format.setPreserveSpace(false);
+
+        format.setPreserveSpace(preserveWhitespace);
         XMLSerializer serializer 
          = new XMLSerializer(printWriter, format);
         serializer.serialize(document);     
@@ -1286,7 +1349,7 @@ public class XMLUtilities {
       factory.setAttribute(
             "http://apache.org/xml/features/nonvalidating/load-external-dtd", 
             new Boolean(false));
-
+        	    
       ////////////////////////////////////////////////////////////////////////
       ////////////////////////////////////////////////////////////////////////
       
