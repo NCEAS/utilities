@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: higgins $'
- *     '$Date: 2003-09-12 23:08:43 $'
- * '$Revision: 1.3 $'
+ *   '$Author: brooke $'
+ *     '$Date: 2003-09-13 00:57:33 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ import java.io.IOException;
 
 import java.util.Stack;
 import java.util.Map;
+import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -298,7 +299,7 @@ public class XMLUtilities {
               +"\nattribValue = "+attribValue
               +"\nrootNode = "+rootNode);
 
-    if (xpath.indexOf("@")<0) {
+    if (xpath.indexOf(ATTRIB_XPATH_SYMBOL)<0) {
       DOMException de1 = new DOMException(DOMException.SYNTAX_ERR, 
                                   "call to addAttributeNodeToDOMTree() with an "
                                   +"xpath that does not contain an attribute "
@@ -350,7 +351,7 @@ public class XMLUtilities {
         throw de3;
       }
       
-      if (nextNodeName.startsWith("@")) {
+      if (nextNodeName.startsWith(ATTRIB_XPATH_SYMBOL)) {
       
         //we've found the attribute - break and add it
         break;
@@ -373,7 +374,8 @@ public class XMLUtilities {
       Attr attribNode = (Attr)lastRealNode;
       attribNode.setValue(attribValue);
 
-    } else if (nextNodeName!=null && nextNodeName.startsWith("@")) {
+    } else if (nextNodeName!=null 
+                              && nextNodeName.startsWith(ATTRIB_XPATH_SYMBOL)) {
 
       String attribName = (attribExists)? 
                                       nextNodeName : nextNodeName.substring(1);
@@ -765,6 +767,85 @@ public class XMLUtilities {
   } 
    
    
+
+  
+  /**
+   *  Given a DOM root Node and a Map of name=value pairs containing xpaths and 
+   *  element/attribute values, this method inserts corresponding nodes into the  
+   *  DOM document
+   *
+   *  @param  rootNode the root Node of the DOM Document to which the values in 
+   *          the Map will be added - NOTE that this method has no return value
+   *          the results are added to this DOM Document
+   *
+   *  @param  xpathMap the Map containing the name=value pairs comprising xpaths 
+   *          and element/attribute values
+   *
+   *  @throws DOMException if something goes wrong 
+   *
+   *  @throws TransformerException if something goes wrong 
+   */
+  public static void getXPathMapAsDOMTree(Map xpathMap, Node rootNode) 
+                                                  throws  DOMException, 
+                                                          TransformerException {
+    if (xpathMap==null || rootNode==null) return;
+    
+    String nextKey = null;
+    String nextVal = null;
+
+    Iterator  it = xpathMap.keySet().iterator();
+  
+    if (it==null) return;
+
+    while (it.hasNext()) {
+
+      nextKey = (String)it.next();
+
+      if (nextKey==null || nextKey.trim().equals("")) continue;
+
+      nextVal = (String)xpathMap.get(nextKey);
+
+      if (   nextKey.indexOf(ATTRIB_XPATH_SYMBOL) > 0 
+          && nextKey.indexOf(ATTRIB_XPATH_SYMBOL) > nextKey.lastIndexOf("/")) {
+        
+        // IT'S AN ATTRIBUTE //////////
+        Node attribNode = getAttributeNodeWithXPath(rootNode, nextKey);
+
+        if (attribNode==null) {
+          // if node doesn't exist, we need to add it to the DOM tree
+          log.debug("Attribute node doesn't exist - need to create");
+      
+          addAttributeNodeToDOMTree(rootNode, nextKey, nextVal);
+        
+        } else {
+    
+          attribNode.setNodeValue(nextVal);
+          log.debug("Existing attribute node set to new value: "
+                                                    +attribNode.getNodeValue());
+        } 
+    
+      } else {
+    
+        // IT'S A TEXT NODE //////////
+        Node textNode = getTextNodeWithXPath(rootNode, nextKey);
+  
+        if (textNode==null) {
+          // if node doesn't exist, we need to add it to the DOM tree
+          log.debug("Text node doesn't exist - need to create");
+  
+          addTextNodeToDOMTree(rootNode, nextKey, nextVal);
+  
+        } else {
+     
+          textNode.setNodeValue(nextVal);
+          log.debug("Existing text node set to new value: "
+                                                      +textNode.getNodeValue());
+        } 
+      }  
+    }
+  }
+  
+  
    
    
  
@@ -1174,5 +1255,4 @@ public class XMLUtilities {
     
     return existingPath.substring(0, existingPath.lastIndexOf("/"));
   }
-  
 }

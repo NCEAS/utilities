@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-07-17 21:30:00 $'
- * '$Revision: 1.1 $'
+ *     '$Date: 2003-09-13 00:57:33 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -792,6 +792,77 @@ public class XMLUtilitiesTest extends TestCase
     assertNull(XMLUtilities.getDOMTreeAsXPathMap(null));
   }
   
+
+  public void testGetXPathMapAsDOMTree() {
+  
+    System.out.println("getXPathMapAsDOMTree() test...");
+
+    Node rootNode = null;
+
+    ////////////////
+    System.out.println("getting test rootnode...");
+
+    try {
+      rootNode = XMLUtilities.getXMLReaderAsDOMTreeRootNode(
+                                            new StringReader(MINIMAL_TEST_XML));
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail( "unexpected exception while trying to call"
+           +" getXMLReaderAsDOMTreeRootNode");
+    }
+
+    assertNotNull(rootNode);
+
+    ////////////////
+    System.out.println("getting test xpathMap...");
+
+    OrderedMap xpathMap = getXPathMapTestResult();
+    
+    
+    ////////////////
+    System.out.println("testing getXPathMapAsDOMTree...");
+
+    try {
+      XMLUtilities.getXPathMapAsDOMTree(xpathMap, rootNode);
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail("unexpected Exception trying to do getXPathMapAsDOMTree() with good params"
+        +"\nException was: "+e);
+    }
+    
+    assertEquals( StringUtil.stripAllWhiteSpace(XPATH_MAP_TEST_XML), 
+                  StringUtil.stripAllWhiteSpace(
+                                    XMLUtilities.getDOMTreeAsString(rootNode)));
+
+    ////////////////
+    System.out.println("calling with NULL rootnode...");
+    
+    Node nullRootNode = null;
+    try {
+      XMLUtilities.getXPathMapAsDOMTree(xpathMap, nullRootNode);
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail("unexpected Exception trying to do getXPathMapAsDOMTree() with null Root Node"
+        +"\nException was: "+e);
+    }
+    assertNull(nullRootNode);
+
+    ////////////////
+    System.out.println("calling with NULL xpathMap...");
+  
+    try {
+      XMLUtilities.getXPathMapAsDOMTree(null, rootNode);
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail("unexpected Exception trying to do getXPathMapAsDOMTree() with null xpath Map"
+        +"\nException was: "+e);
+    }
+    
+    assertEquals(StringUtil.stripAllWhiteSpace(XPATH_MAP_TEST_XML), 
+                 StringUtil.stripAllWhiteSpace(
+                                    XMLUtilities.getDOMTreeAsString(rootNode)));
+  }
+  
   
   ////////////////////////////////////////////////////////////////////////////////
   //                      E N D   T E S T   M E T H O D S                       //
@@ -807,7 +878,7 @@ public class XMLUtilitiesTest extends TestCase
   private final String XPATH_MAP_TEST_XML 
     = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     + "<properties>"
-    + "  <property1>THIS_IS_PROPERTY_1</property1>"
+    + "  <property1 attrib1=\"ATTRIB_1\">THIS_IS_PROPERTY_1</property1>"
     + "  <property2>THIS_IS_PROPERTY_2[1]</property2>"
     + "  <property2>THIS_IS_PROPERTY_2[2]</property2>"
     + "  <propertyListA>"
@@ -828,6 +899,7 @@ public class XMLUtilitiesTest extends TestCase
   
     OrderedMap map = new OrderedMap();
     
+    map.put("/properties/property1[1]/@attrib1",     "ATTRIB_1");
     map.put("/properties/property1[1]",             "THIS_IS_PROPERTY_1");
     map.put("/properties/property2[1]",             "THIS_IS_PROPERTY_2[1]");
     map.put("/properties/property2[2]",             "THIS_IS_PROPERTY_2[2]");
@@ -842,5 +914,10 @@ public class XMLUtilitiesTest extends TestCase
 
     return map;
   }
+
+  private final String MINIMAL_TEST_XML 
+    = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    + "<properties/>";
+  
 }
 
