@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-09-13 00:57:33 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2004-03-18 22:17:03 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package edu.ucsb.nceas.utiltest;
+package edu.ucsb.nceas.utilities;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -61,7 +61,7 @@ public class XMLUtilitiesTest extends TestCase
   private static Node testRootNode = null;
 
   private static Logger log = Logger.getLogger(XMLUtilitiesTest.class.getName());
-  
+
 
   private static String TEST_XML;
   private static String TEST_XML_NOHEADER;
@@ -69,7 +69,7 @@ public class XMLUtilitiesTest extends TestCase
   static  {
     testRootNode = getNewTestRootNode();
   }
-  
+
  /**
   * Constructor to build the test
   *
@@ -78,10 +78,10 @@ public class XMLUtilitiesTest extends TestCase
   public XMLUtilitiesTest(String name) { super(name); }
 
   /**
-  * NOTE - this gets called before *each* *test* 
+  * NOTE - this gets called before *each* *test*
   */
   public void setUp() {
-    InputStreamReader isr 
+    InputStreamReader isr
     = IOUtil.getResourceAsInputStreamReader(XML_TEST_FILENAME);
     try {
       TEST_XML = IOUtil.getAsStringBuffer(isr, true).toString();
@@ -92,7 +92,7 @@ public class XMLUtilitiesTest extends TestCase
     }
 
     //get rid of <xml...> tag
-    TEST_XML_NOHEADER 
+    TEST_XML_NOHEADER
     = TEST_XML.substring(1+TEST_XML.indexOf("\n"));
   }
 
@@ -103,7 +103,7 @@ public class XMLUtilitiesTest extends TestCase
   }
 
   private static Node getNewTestRootNode() {
-  
+
     Node testRootNode = null;
     try {
       testRootNode = XMLUtilities.getXMLAsDOMTreeRootNode(XML_TEST_FILENAME);
@@ -123,7 +123,7 @@ public class XMLUtilitiesTest extends TestCase
 
 
   public void testGetXMLAsDOMTreeRootNode() {
-  
+
     System.out.println("getXMLAsDOMTreeRootNode() test...");
 
     Node rootNode = null;
@@ -139,7 +139,7 @@ public class XMLUtilitiesTest extends TestCase
     }
     assertNotNull(rootNode);
     assertTrue(rootNode.hasChildNodes());
-    assertEquals( StringUtil.stripAllWhiteSpace(TEST_XML), 
+    assertEquals( StringUtil.stripAllWhiteSpace(TEST_XML),
                   StringUtil.stripAllWhiteSpace(XMLUtilities.getDOMTreeAsString(rootNode)));
 
     ////////////////
@@ -163,7 +163,7 @@ public class XMLUtilitiesTest extends TestCase
   }
 
   public void testGetXMLReaderAsDOMTreeRootNode() {
-  
+
     System.out.println("getXMLReaderAsDOMTreeRootNode() test...");
 
     Node rootNode = null;
@@ -181,14 +181,14 @@ public class XMLUtilitiesTest extends TestCase
     assertTrue(rootNode.hasChildNodes());
 
     assertEquals( StringUtil.stripAllWhiteSpace(
-                                    XMLUtilities.getDOMTreeAsString(rootNode)), 
+                                    XMLUtilities.getDOMTreeAsString(rootNode)),
                   StringUtil.stripAllWhiteSpace(XPATH_MAP_TEST_XML));
 
     rootNode = null;
 
     ////////////////
     System.out.println("calling with NULL rootnode...");
-    
+
     try {
       XMLUtilities.getXMLReaderAsDOMTreeRootNode(null);
     } catch (IOException ioe) {
@@ -196,12 +196,12 @@ public class XMLUtilitiesTest extends TestCase
                         +" getXMLReaderAsDOMTreeRootNode with NULL filename");
     }
   }
-  
-  
 
-  
+
+
+
   public void testGetXMLAsDOMDocument() {
-  
+
     System.out.println("getXMLAsDOMDocument() test...");
 
     Document doc = null;
@@ -218,7 +218,7 @@ public class XMLUtilitiesTest extends TestCase
     }
     assertNotNull(doc);
     assertTrue(doc.hasChildNodes());
-    assertEquals( StringUtil.stripAllWhiteSpace(TEST_XML), 
+    assertEquals( StringUtil.stripAllWhiteSpace(TEST_XML),
                   StringUtil.stripAllWhiteSpace(XMLUtilities.getDOMTreeAsString(doc.getDocumentElement())));
 
     ////////////////
@@ -244,7 +244,7 @@ public class XMLUtilitiesTest extends TestCase
 
 
   public void testGetXMLReaderAsDOMDocument() {
-  
+
     System.out.println("getXMLReaderAsDOMDocument() test...");
 
     Document doc = null;
@@ -287,14 +287,14 @@ public class XMLUtilitiesTest extends TestCase
   }
 
 
-  
+
   public void testAddTextNodeToDOMTree() {
-  
+
     String xpath = "/acc:access/test_element/sub_test_element/text_element";
     String textVal1 = "ACTUAL_TEXT_VALUE_1";
     String textVal2 = "ACTUAL_TEXT_VALUE_2";
     assertNotNull(testRootNode);
-    
+
     // set first new val /////////
     try {
       XMLUtilities.addTextNodeToDOMTree(testRootNode, xpath, textVal1);
@@ -305,22 +305,22 @@ public class XMLUtilitiesTest extends TestCase
             +"\n xpath = "+xpath
             +"\n value = ACTUAL_TEXT_VALUE");
     }
-    
+
     // now get it again from doc
     String actualVal1 = null;
     try {
-      actualVal1 = 
-          XMLUtilities.getTextNodeWithXPath(testRootNode, xpath).getNodeValue(); 
+      actualVal1 =
+          XMLUtilities.getTextNodeWithXPath(testRootNode, xpath).getNodeValue();
     } catch (Exception e) {
       e.printStackTrace();
       fail("unexpected exception while trying to call"
             +" getTextNodeWithXPath() with testRootNode = "+testRootNode
-            +"\n xpath = "+xpath);    
+            +"\n xpath = "+xpath);
     }
     assertEquals( textVal1, actualVal1);
-    
+
     ////////////////////////////////////////////////////////////////////////////
-    
+
     // set second new val (should overwrite first val)/////
     try {
       XMLUtilities.addTextNodeToDOMTree(testRootNode, xpath, textVal2);
@@ -335,29 +335,29 @@ public class XMLUtilitiesTest extends TestCase
     // now get it again from doc
     String actualVal2 = null;
     try {
-      actualVal2 = 
-          XMLUtilities.getTextNodeWithXPath(testRootNode, xpath).getNodeValue(); 
+      actualVal2 =
+          XMLUtilities.getTextNodeWithXPath(testRootNode, xpath).getNodeValue();
     } catch (Exception e) {
       e.printStackTrace();
       fail("unexpected exception while trying to call"
             +" getTextNodeWithXPath() with testRootNode = "+testRootNode
-            +"\n xpath = "+xpath);    
+            +"\n xpath = "+xpath);
     }
     assertEquals( textVal2, actualVal2);
-    
+
   }
-  
 
 
-  
+
+
   public void testAddAttributeNodeToDOMTree() {
-  
+
     String xpath1 = "/acc:access/test_element/sub_test_element/@testAttrib1";
     String xpath2 = "/acc:access/test_element/sub_test_element/testAttrib2";
     String attribVal1 = "ACTUAL_ATTRIB_VALUE_1";
     String attribVal2 = "ACTUAL_ATTRIB_VALUE_2";
     assertNotNull(testRootNode);
-    
+
     // set first new val /////////
     try {
       System.out.println("// set first new val ///////// = "+attribVal1);
@@ -374,8 +374,8 @@ public class XMLUtilitiesTest extends TestCase
     System.out.println("// now get it again from doc /////////");
     String actualVal1 = null;
     try {
-      actualVal1 = 
-          XMLUtilities.getAttributeNodeWithXPath(testRootNode, xpath1).getNodeValue(); 
+      actualVal1 =
+          XMLUtilities.getAttributeNodeWithXPath(testRootNode, xpath1).getNodeValue();
     } catch (Exception e) {
       e.printStackTrace();
       fail("unexpected exception while trying to call"
@@ -384,9 +384,9 @@ public class XMLUtilitiesTest extends TestCase
     }
     System.out.println("doing assertEquals( "+attribVal1+", "+actualVal1+")");
     assertEquals( attribVal1, actualVal1);
-    
+
     ////////////////////////////////////////////////////////////////////////////
-    
+
     // set second new val (should overwrite first val)/////
     try {
       System.out.println("// set second new val (should overwrite first val) ///////// = "+attribVal2);
@@ -403,8 +403,8 @@ public class XMLUtilitiesTest extends TestCase
     String actualVal2 = null;
     System.out.println("// now get it again from doc /////////");
     try {
-      actualVal2 = 
-          XMLUtilities.getAttributeNodeWithXPath(testRootNode, xpath1).getNodeValue(); 
+      actualVal2 =
+          XMLUtilities.getAttributeNodeWithXPath(testRootNode, xpath1).getNodeValue();
     } catch (Exception e) {
       e.printStackTrace();
       fail("unexpected exception while trying to call"
@@ -413,9 +413,9 @@ public class XMLUtilitiesTest extends TestCase
     }
     System.out.println("doing assertEquals( "+attribVal2+", "+actualVal2+")");
     assertEquals( attribVal2, actualVal2);
-    
+
   ////////////////////////////////////////////////////////////////////////////
-  
+
     // try an xpath with no "@" in it (should throw a DOMException) /////
     try {
       XMLUtilities.addAttributeNodeToDOMTree(testRootNode, xpath2, attribVal2);
@@ -424,9 +424,9 @@ public class XMLUtilitiesTest extends TestCase
             +" addAttributeNodeToDOMTree with testRootNode = "+testRootNode
             +"\n xpath = "+xpath2
             +"\n value = "+attribVal2);
-            
+
     } catch (Exception e) {
-    
+
       e.printStackTrace();
       fail("unexpected exception while trying to call"
           +" addAttributeNodeToDOMTree with testRootNode = "+testRootNode
@@ -434,10 +434,10 @@ public class XMLUtilitiesTest extends TestCase
           +"\n value = "+attribVal2);
     }
   }
-  
+
 
   public void testGetTextNodeWithXPath() {
-  
+
     System.out.println("getTextNodeWithXPath() test...");
 
     String xpath = "/acc:access/allow[1]/principal[1]";
@@ -454,17 +454,17 @@ public class XMLUtilitiesTest extends TestCase
     }
 
     assertNotNull(textNode);
-    
+
     assertEquals(textNode.getNodeValue(), textVal1);
 
     textNode = null;
 
   }
-  
-  
+
+
 
   public void testGetAttributeNodeWithXPath() {
-  
+
     System.out.println("getAttributeNodeWithXPath() test...");
 
     String xpath = "/acc:access/@id";
@@ -481,17 +481,17 @@ public class XMLUtilitiesTest extends TestCase
     }
 
     assertNotNull(attNode);
-    
+
     assertEquals(attNode.getNodeValue(), attribVal1);
 
     attNode = null;
 
   }
-  
-  
+
+
 
   public void testGetNodeWithXPath() {
-  
+
     System.out.println("getNodeWithXPath() test...");
 
     String xpath = "/acc:access/allow[1]/principal[1]";
@@ -508,7 +508,7 @@ public class XMLUtilitiesTest extends TestCase
     }
 
     assertNotNull(testNode);
-    
+
     //assume first child is the text node containing this node's "value"
     assertEquals(textVal1, testNode.getFirstChild().getNodeValue());
 
@@ -534,11 +534,11 @@ public class XMLUtilitiesTest extends TestCase
                               +" getNodeWithXPath with NULL root node");
     }
   }
-  
+
 
 
   public void testGetNodeListWithXPath() {
-  
+
     System.out.println("getNodeListWithXPath() test...");
 
     String xpath = "/acc:access/allow";
@@ -585,11 +585,11 @@ public class XMLUtilitiesTest extends TestCase
                               +" getNodeListWithXPath with NULL root node");
     }
   }
-  
+
 
 
   public void testGetNodeListAsNodeArray() {
-  
+
     System.out.println("getNodeListAsNodeArray() test...");
 
     String xpath = "/acc:access/allow";
@@ -620,12 +620,62 @@ public class XMLUtilitiesTest extends TestCase
 
     assertNull(XMLUtilities.getNodeListAsNodeArray(null));
   }
-  
-  
+
+
+
+  public void testRemoveAllChildren() {
+
+    System.out.println("removeAllChildren() test...");
+
+    Node origRootNode = null;
+    Node clonedRootNode = null;
+
+    try {
+      origRootNode = XMLUtilities.getXMLReaderAsDOMTreeRootNode(
+          new StringReader(XPATH_MAP_TEST_XML));
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail("unexpected exception while trying to call"
+           + " getXMLReaderAsDOMTreeRootNode");
+    }
+    assertNotNull(origRootNode);
+    assertTrue(origRootNode.hasChildNodes());
+
+
+    ////////////////
+    System.out.println("calling with real rootnode...");
+
+    clonedRootNode = origRootNode.cloneNode(true);
+    assertNotNull(clonedRootNode);
+    assertTrue(clonedRootNode.hasChildNodes());
+
+    try {
+      XMLUtilities.removeAllChildren(clonedRootNode);
+    } catch (Throwable t) {
+      t.printStackTrace();
+      fail("unexpected exception while trying to call"
+         + " removeAllChildren(): "+t);
+    }
+
+    assertNotNull(clonedRootNode);
+    assertTrue(!clonedRootNode.hasChildNodes());
+
+    ////////////////
+    System.out.println("calling with NULL rootnode...");
+
+    try {
+      XMLUtilities.removeAllChildren(null);
+    } catch (Throwable t) {
+      t.printStackTrace();
+      fail("unexpected exception while trying to call"
+           + " removeAllChildren(): "+t);
+    }
+  }
+
 
 
   public void testGetDOMTreeAsString() {
-  
+
     System.out.println("getDOMTreeAsString() test...");
 
     String xmlString = null;
@@ -650,7 +700,7 @@ public class XMLUtilitiesTest extends TestCase
     assertNull(XMLUtilities.getDOMTreeAsString(null));
   }
 
-  
+
   public void testPrint() {
 
     String resultString         = null;
@@ -660,13 +710,13 @@ public class XMLUtilitiesTest extends TestCase
 
     ////////////////////////////////////////////////////////////////////////////
     System.out.println("print(testRootNode, printWriter) test...");
-    
+
     baos = new ByteArrayOutputStream();
     printWriter = new PrintWriter(baos);
     XMLUtilities.print(testRootNode, printWriter);
-    
+
     resultString = baos.toString();
-    
+
     assertNotNull(resultString);
 
     assertEquals( StringUtil.stripAllWhiteSpace(TEST_XML),
@@ -677,13 +727,13 @@ public class XMLUtilitiesTest extends TestCase
 
     ////////////////////////////////////////////////////////////////////////////
     System.out.println("print(testRootNode, printWriter, \"UTF-8\") test...");
-    
+
     baos = new ByteArrayOutputStream();
     printWriter = new PrintWriter(baos);
     XMLUtilities.print(testRootNode, printWriter, "UTF-8");
-    
+
     resultString = baos.toString();
-    
+
     assertNotNull(resultString);
 
     assertEquals( StringUtil.stripAllWhiteSpace(TEST_XML),
@@ -695,10 +745,10 @@ public class XMLUtilitiesTest extends TestCase
     ////////////////////////////////////////////////////////////////////////////
     baos = new ByteArrayOutputStream();
     printWriter = new PrintWriter(baos);
-  
+
     System.out.println("print(null, printWriter, \"UTF-8\") test...");
     try {
-      XMLUtilities.print(null, printWriter, "UTF-8"); 
+      XMLUtilities.print(null, printWriter, "UTF-8");
     } catch (Exception e) {
       e.printStackTrace();
       fail( "unexpected exception while trying to call"
@@ -714,7 +764,7 @@ public class XMLUtilitiesTest extends TestCase
     System.out.println("print(testRootNode, null, \"UTF-8\") test...");
     PrintWriter nullPW = null;
     try {
-      XMLUtilities.print(testRootNode, nullPW, "UTF-8"); 
+      XMLUtilities.print(testRootNode, nullPW, "UTF-8");
     } catch (Exception e) {
       e.printStackTrace();
       fail( "unexpected exception while trying to call"
@@ -724,14 +774,14 @@ public class XMLUtilitiesTest extends TestCase
 
     ////////////////////////////////////////////////////////////////////////////
     System.out.println("print(testRootNode, printWriter, \"\") test...");
-  
+
     baos = new ByteArrayOutputStream();
     printWriter = new PrintWriter(baos);
-    
+
     XMLUtilities.print(testRootNode, printWriter, "");
-  
+
     resultString = baos.toString();
-  
+
     assertNotNull(resultString);
 
     assertEquals( StringUtil.stripAllWhiteSpace(TEST_XML),
@@ -745,7 +795,7 @@ public class XMLUtilitiesTest extends TestCase
 
     baos = new ByteArrayOutputStream();
     printWriter = new PrintWriter(baos);
-  
+
     XMLUtilities.print(testRootNode, printWriter, null);
 
     resultString = baos.toString();
@@ -758,10 +808,10 @@ public class XMLUtilitiesTest extends TestCase
 
 
   }
-  
+
 
   public void testGetDOMTreeAsXPathMap() {
-  
+
     System.out.println("getDOMTreeAsXPathMap() test...");
 
     Node rootNode = null;
@@ -782,7 +832,7 @@ public class XMLUtilitiesTest extends TestCase
     assertTrue(rootNode.hasChildNodes());
 
     System.out.println("testing getDOMTreeAsXPathMap...");
-    assertEquals(   XPATH_MAP_TEST_RESULT, 
+    assertEquals(   XPATH_MAP_TEST_RESULT,
                     XMLUtilities.getDOMTreeAsXPathMap(rootNode));
 
     rootNode = null;
@@ -791,10 +841,10 @@ public class XMLUtilitiesTest extends TestCase
     System.out.println("calling with NULL rootnode...");
     assertNull(XMLUtilities.getDOMTreeAsXPathMap(null));
   }
-  
+
 
   public void testGetXPathMapAsDOMTree() {
-  
+
     System.out.println("getXPathMapAsDOMTree() test...");
 
     Node rootNode = null;
@@ -817,8 +867,8 @@ public class XMLUtilitiesTest extends TestCase
     System.out.println("getting test xpathMap...");
 
     OrderedMap xpathMap = getXPathMapTestResult();
-    
-    
+
+
     ////////////////
     System.out.println("testing getXPathMapAsDOMTree...");
 
@@ -829,14 +879,14 @@ public class XMLUtilitiesTest extends TestCase
       fail("unexpected Exception trying to do getXPathMapAsDOMTree() with good params"
         +"\nException was: "+e);
     }
-    
-    assertEquals( StringUtil.stripAllWhiteSpace(XPATH_MAP_TEST_XML), 
+
+    assertEquals( StringUtil.stripAllWhiteSpace(XPATH_MAP_TEST_XML),
                   StringUtil.stripAllWhiteSpace(
                                     XMLUtilities.getDOMTreeAsString(rootNode)));
 
     ////////////////
     System.out.println("calling with NULL rootnode...");
-    
+
     Node nullRootNode = null;
     try {
       XMLUtilities.getXPathMapAsDOMTree(xpathMap, nullRootNode);
@@ -849,7 +899,7 @@ public class XMLUtilitiesTest extends TestCase
 
     ////////////////
     System.out.println("calling with NULL xpathMap...");
-  
+
     try {
       XMLUtilities.getXPathMapAsDOMTree(null, rootNode);
     } catch (Exception e) {
@@ -857,13 +907,13 @@ public class XMLUtilitiesTest extends TestCase
       fail("unexpected Exception trying to do getXPathMapAsDOMTree() with null xpath Map"
         +"\nException was: "+e);
     }
-    
-    assertEquals(StringUtil.stripAllWhiteSpace(XPATH_MAP_TEST_XML), 
+
+    assertEquals(StringUtil.stripAllWhiteSpace(XPATH_MAP_TEST_XML),
                  StringUtil.stripAllWhiteSpace(
                                     XMLUtilities.getDOMTreeAsString(rootNode)));
   }
-  
-  
+
+
   ////////////////////////////////////////////////////////////////////////////////
   //                      E N D   T E S T   M E T H O D S                       //
   ////////////////////////////////////////////////////////////////////////////////
@@ -874,8 +924,8 @@ public class XMLUtilitiesTest extends TestCase
     junit.textui.TestRunner.run(XMLUtilitiesTest.class);
     System.exit(0);
   }
-  
-  private final String XPATH_MAP_TEST_XML 
+
+  private final String XPATH_MAP_TEST_XML
     = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     + "<properties>"
     + "  <property1 attrib1=\"ATTRIB_1\">THIS_IS_PROPERTY_1</property1>"
@@ -892,13 +942,13 @@ public class XMLUtilitiesTest extends TestCase
     + "    </propertySubListB>"
     + "  </propertyListB>"
     + "</properties>";
-  
-  private final OrderedMap XPATH_MAP_TEST_RESULT = getXPathMapTestResult(); 
-  
+
+  private final OrderedMap XPATH_MAP_TEST_RESULT = getXPathMapTestResult();
+
   private OrderedMap getXPathMapTestResult() {
-  
+
     OrderedMap map = new OrderedMap();
-    
+
     map.put("/properties/property1[1]/@attrib1",     "ATTRIB_1");
     map.put("/properties/property1[1]",             "THIS_IS_PROPERTY_1");
     map.put("/properties/property2[1]",             "THIS_IS_PROPERTY_2[1]");
@@ -915,9 +965,9 @@ public class XMLUtilitiesTest extends TestCase
     return map;
   }
 
-  private final String MINIMAL_TEST_XML 
+  private final String MINIMAL_TEST_XML
     = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     + "<properties/>";
-  
+
 }
 

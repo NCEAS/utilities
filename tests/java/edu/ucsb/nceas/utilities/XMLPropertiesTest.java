@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-07-17 21:30:00 $'
- * '$Revision: 1.1 $'
+ *     '$Date: 2004-03-18 22:17:03 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package edu.ucsb.nceas.utiltest;
+package edu.ucsb.nceas.utilities;
 
 import edu.ucsb.nceas.utilities.IOUtil;
 import edu.ucsb.nceas.utilities.StringUtil;
@@ -54,15 +54,15 @@ import org.apache.log4j.Logger;
  * @author brooke
  */
 public class XMLPropertiesTest extends TestCase {
-  
+
   private static String xmlInputFileName = "/edu/ucsb/nceas/utilities/test_xmlproperties.xml";
-  
+
   private static XMLProperties xmlPropsObject = new XMLProperties();
 
   private static InputStream xmlInputStream;
 
   private final String[][] testprops =
-  { 
+  {
       { "/properties/does_not_exist",                        null },
       { "/properties/nodetype_definitions_filename",
                                     "/edu/ucsb/nceas/jalama/nodetype_defs.xml" },
@@ -81,7 +81,7 @@ public class XMLPropertiesTest extends TestCase {
             +"       </eml:eml>" }
   };
 
-       
+
   static {
     xmlInputStream = XMLPropertiesTest.class.getResourceAsStream(xmlInputFileName);
     assertNotNull(xmlInputStream);
@@ -93,46 +93,46 @@ public class XMLPropertiesTest extends TestCase {
                                                                +xmlInputStream);
     }
   }
-  
+
   public XMLPropertiesTest(java.lang.String testName) {
     super(testName);
   }
-  
+
   public static Test suite() {
     TestSuite suite = new TestSuite(XMLPropertiesTest.class);
     return suite;
   }
-  
+
   /** Test of load method, of class edu.ucsb.nceas.utilities.XMLProperties. */
   public void testLoad() {
-    
+
     System.out.println("testLoad");
     xmlInputStream = XMLPropertiesTest.class.getResourceAsStream(xmlInputFileName);
     assertNotNull(xmlPropsObject);
     assertNotNull(xmlInputStream);
     try {
-      xmlPropsObject.load(xmlInputStream);       
+      xmlPropsObject.load(xmlInputStream);
     } catch (Exception e) {
       e.printStackTrace();
       fail("unexpected exception doing xmlPropsObject.load() with xmlInputStream="
                                                                +xmlInputStream);
     }
   }
-  
+
   /** Test of getProperty method, of class edu.ucsb.nceas.utilities.XMLProperties. */
   public void testGetProperty() {
     System.out.println("testGetProperty");
     assertNotNull(xmlPropsObject);
     assertNotNull(testprops);
     assertTrue(testprops.length > 0);
-    
+
     for (int i=0; i<testprops.length; i++) {
       nextGetTest(testprops[i][0], testprops[i][1]);
     }
   }
-  
+
   private void nextGetTest(String key, String expectedValue) {
-          
+
     System.out.println("KEY = "+key);
     System.out.println("EXPECTED = "+expectedValue);
 
@@ -144,25 +144,25 @@ public class XMLPropertiesTest extends TestCase {
                                                                         +key);
     }
     String returnedVal = null;
-    
+
     if (expectedValue!=null) {
       assertNotNull(returnedValsArray);
       assertTrue(returnedValsArray.length == 1);
       returnedVal = returnedValsArray[0];
     } else {
-      returnedVal = (returnedValsArray!=null && returnedValsArray.length>0)? 
-                                                    returnedValsArray[0] : null;    
+      returnedVal = (returnedValsArray!=null && returnedValsArray.length>0)?
+                                                    returnedValsArray[0] : null;
     }
     System.out.println("RETURNED = "+returnedVal);
-    assertEquals( StringUtil.stripAllWhiteSpace(expectedValue), 
+    assertEquals( StringUtil.stripAllWhiteSpace(expectedValue),
                   StringUtil.stripAllWhiteSpace(returnedVal));
   }
-  
-  
+
+
   /** Test of setProperty method, of class edu.ucsb.nceas.utilities.XMLProperties. */
   public void testSetProperty() {
     System.out.println("testSetProperty");
-    String xpathA = "/properties/new_setproperty_test/element_A"; 
+    String xpathA = "/properties/new_setproperty_test/element_A";
     String xpathB = "/properties/new_setproperty_test/subelement/element_B";
     String val1   = "SET_PROP_TEST_VAL_1";
     String val2   = "SET_PROP_TEST_VAL_2";
@@ -173,7 +173,7 @@ public class XMLPropertiesTest extends TestCase {
       fail("unexpected exception doing xmlPropsObject.setProperty() ");
     }
     assertNull(prevVal);
-    
+
     try {
       prevVal = xmlPropsObject.setProperty(xpathA, val2);
     } catch (Exception e) {
@@ -187,9 +187,9 @@ public class XMLPropertiesTest extends TestCase {
     } catch (Exception e) {
       fail("unexpected exception doing xmlPropsObject.setProperty() ");
     }
-    assertNull(prevVal); 
+    assertNull(prevVal);
 }
-  
+
   /** Test of store method, of class edu.ucsb.nceas.utilities.XMLProperties. */
   public void testStore() {
     System.out.println("testStore");
@@ -197,7 +197,7 @@ public class XMLPropertiesTest extends TestCase {
     // re-initialize xml to original file contents:
     InputStream is = XMLPropertiesTest.class.getResourceAsStream(xmlInputFileName);
     try {
-      xmlPropsObject.load(is);       
+      xmlPropsObject.load(is);
     } catch (Exception e) {
       fail("unexpected exception doing xmlPropsObject.load() with InputStream="
                                                                +is);
@@ -205,14 +205,14 @@ public class XMLPropertiesTest extends TestCase {
       try { if (is!=null) is.close(); }
       catch (Exception e) {}
     }
-    
+
     // call method
     OutputStream out = new ByteArrayOutputStream();
     xmlPropsObject.store(out);
     assertNotNull(out);
     try {
       out.flush();
-      out.close();      
+      out.close();
     } catch (Exception e) {
       fail("unexpected exception doing out.flush() & out.close() ");
     }
@@ -231,7 +231,7 @@ public class XMLPropertiesTest extends TestCase {
     assertEquals( StringUtil.stripAllWhiteSpace(expected),
                   StringUtil.stripAllWhiteSpace(out.toString()) );
   }
-  
+
   /** Test of list method, of class edu.ucsb.nceas.utilities.XMLProperties. */
   public void testList() {
     System.out.println("testList");
@@ -239,7 +239,7 @@ public class XMLPropertiesTest extends TestCase {
     // re-initialize xml to original file contents:
     InputStream is = XMLPropertiesTest.class.getResourceAsStream(xmlInputFileName);
     try {
-      xmlPropsObject.load(is);       
+      xmlPropsObject.load(is);
     } catch (Exception e) {
       fail("unexpected exception doing xmlPropsObject.load() with InputStream="
                                                                +is);
@@ -247,14 +247,14 @@ public class XMLPropertiesTest extends TestCase {
       try { if (is!=null) is.close(); }
       catch (Exception e) {}
     }
-    
+
     // call method
     OutputStream out = new ByteArrayOutputStream();
     xmlPropsObject.list(new PrintWriter(out));
     assertNotNull(out);
     try {
       out.flush();
-      out.close();      
+      out.close();
     } catch (Exception e) {
       fail("unexpected exception doing out.flush() & out.close() ");
     }
@@ -271,13 +271,13 @@ public class XMLPropertiesTest extends TestCase {
     String expected = buff.toString();
     assertNotNull(expected);
     assertEquals( StringUtil.stripAllWhiteSpace(expected),
-                  StringUtil.stripAllWhiteSpace(out.toString()) );   
+                  StringUtil.stripAllWhiteSpace(out.toString()) );
   }
-  
+
   /** Test of propertyNames method, of class edu.ucsb.nceas.utilities.XMLProperties. */
   public void testPropertyNames() {
     System.out.println("testPropertyNames");
-    
+
     Iterator it = xmlPropsObject.propertyNames();
     assertNotNull(it);
     List resultList = new ArrayList();
@@ -288,29 +288,29 @@ public class XMLPropertiesTest extends TestCase {
     assertTrue(resultList.size() > 0);
     String[] resultArray = new String[resultList.size()];
     resultList.toArray(resultArray);
-    assertNotNull(resultArray); 
+    assertNotNull(resultArray);
     assertTrue(resultArray.length > 0);
-    
+
     for (int idx=0; idx < resultArray.length; idx++) {
 
       System.out.println("RESULT["+idx+"] = "+resultArray[idx]);
     }
-    
+
     assertEquals(allTestXPathsArray.length, resultArray.length);
-    
+
     for (int idx=0; idx < allTestXPathsArray.length; idx++) {
 
       assertEquals(allTestXPathsArray[idx], resultArray[idx]);
     }
   }
 
-  
+
   public static void main(String args[]) {
     TestRunner.run(XMLPropertiesTest.class);
     System.exit(0);
   }
-  
-  private String[] allTestXPathsArray = 
+
+  private String[] allTestXPathsArray =
   {   "/properties/nodetype_definitions_filename[1]",
       "/properties/generic_doctype[1]",
       "/properties/generic_xpath[1]",
@@ -336,5 +336,5 @@ public class XMLPropertiesTest extends TestCase {
       "/properties/editor_default[1]/height[1]",
       "/properties/new_wizard_document_xml[1]"
   };
-    
+
 }
