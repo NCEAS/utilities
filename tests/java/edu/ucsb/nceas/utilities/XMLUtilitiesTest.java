@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2004-03-18 22:17:03 $'
- * '$Revision: 1.3 $'
+ *     '$Date: 2004-03-22 18:41:17 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -670,6 +670,62 @@ public class XMLUtilitiesTest extends TestCase
       fail("unexpected exception while trying to call"
            + " removeAllChildren(): "+t);
     }
+  }
+
+
+
+
+  public void testRemoveAllPredicates() {
+
+    System.out.println("removeAllPredicates() test...");
+
+    System.out.println("calling with xpath containing predicates...");
+    String xpathOut
+        = XMLUtilities.removeAllPredicates(
+        "/properties/propertyListB[1]/propertySubListB[1]/propertyBS1[1]");
+
+    assertNotNull(xpathOut);
+
+    assertEquals("/properties/propertyListB/propertySubListB/propertyBS1",
+                 xpathOut);
+
+    ////////////////
+
+    System.out.println("calling with xpath containing NO predicates...");
+
+    xpathOut
+        = XMLUtilities.removeAllPredicates(
+        "/properties/propertyListB/propertySubListB/propertyBS1");
+
+    assertNotNull(xpathOut);
+
+    assertEquals("/properties/propertyListB/propertySubListB/propertyBS1",
+                 xpathOut);
+
+
+    ////////////////
+
+    System.out.println("calling with xpath containing badly-formed predicates...");
+
+    xpathOut
+        = XMLUtilities.removeAllPredicates(
+        "/properties/propertyListB/propertySubListB[1_NO_BRACKET_/propertyBS1[1]");
+
+    assertNotNull(xpathOut);
+
+    assertEquals("/properties/propertyListB/propertySubListB", xpathOut);
+
+
+    ////////////////
+    System.out.println("calling with NULL xpath...");
+
+    assertNull(XMLUtilities.removeAllPredicates(null));
+
+    ////////////////
+    System.out.println("calling with empty string xpath...");
+
+    assertEquals("", XMLUtilities.removeAllPredicates(""));
+
   }
 
 
