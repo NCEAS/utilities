@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: higgins $'
- *     '$Date: 2003-09-10 23:20:35 $'
- * '$Revision: 1.3 $'
+ *   '$Author: sambasiv $'
+ *     '$Date: 2004-04-02 21:52:52 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,50 @@ public class OrderedMap extends HashMap {
                   +((m==null)? " - *NULL* Map received!!" : " - received: "+m));
     }
   }
-
+	
+	/** 
+   *  The <tt>removeAll()</tt> method defined in the Map interface expects a Map as 
+   *  the input parameter. <em>NOTE</em>, however, that for this method to make 
+   *  sense for the OrderedMap, the <code>removeAll()</code> method must receive  
+   *  another <code>OrderedMap</code> object as input. Therefore, this method's 
+   *  signature has a <code>Map</code> as input, but the method body carries out 
+   *  further validation to ensure that the passed object can actually be cast 
+   *  to an instance of <code>OrderedMap</code>. If not, the method throws an 
+   *  UnsupportedOperationException.
+	 *
+	 *	This method is used to remove all elements that belong to the given set.
+   *  
+   *  @param m a Map object that can be cast to an instance of 
+   *              <code>OrderedMap</code>. 
+   *   
+   *  @throws UnsupportedOperationException, if the passed Map cannot be cast to 
+   *              an instance of <code>OrderedMap</code>.
+   */
+  public void removeAll(Map m) throws UnsupportedOperationException {
+  
+    if (m!=null && (m instanceof OrderedMap)) {
+    
+      Iterator keysIt = m.keySet().iterator();
+      if (keysIt==null) return;
+      
+      Object nextKey = null;
+      
+      while (keysIt.hasNext()) {
+        
+        nextKey = keysIt.next();
+        
+        if (nextKey==null) continue;
+        else this.remove(nextKey);       
+      }
+      
+    } else {
+      throwUnsupportedOperationException(
+          "Map object received by removeAll() must be an instance of OrderedMap"
+                  +((m==null)? " - *NULL* Map received!!" : " - received: "+m));
+    }
+  }
+	
+	
   /**
    * Removes all mappings from this map 
    */
