@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: higgins $'
- *     '$Date: 2003-09-15 17:00:31 $'
- * '$Revision: 1.6 $'
+ *     '$Date: 2003-09-21 23:28:51 $'
+ * '$Revision: 1.7 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ import javax.xml.transform.TransformerException;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.apache.xpath.XPathAPI;
+import org.apache.xpath.objects.XObject;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -390,6 +391,7 @@ public class XMLUtilities {
       attribNode.setValue(attribValue);
 
     } else if (nextNodeName!=null 
+
                               && nextNodeName.startsWith(ATTRIB_XPATH_SYMBOL)) {
 
       String attribName = (attribExists)? 
@@ -940,8 +942,98 @@ public class XMLUtilities {
 
   } // normalize(String):String
 
- 
+
+  
+  /**
+   *  This method checks to see if an evaluation of the XPath results in
+   *     a String
+   *
+   *  @param contextNode   the context node of a DOM subtree where the
+   *                        XPath evaluation starts
+   *
+   *  @param xpath      A <code>String</code> representation of an XPATH
+   *                    expression 
+   */
+  public static boolean isXPathEvalAString(Node contextNode, String XPath) 
+                                        throws TransformerException {
+    boolean res = false;
+    XObject xobj = XPathAPI.eval(contextNode, XPath);
+    if (xobj.getType()==XObject.CLASS_STRING) res=true;
+    return res;
+  }
+  
+  /**
+   *  This method checks to see if an evaluation of the XPath results in
+   *     a boolean
+   *
+   *  @param contextNode   the context node of a DOM subtree where the
+   *                        XPath evaluation starts
+   *
+   *  @param xpath      A <code>String</code> representation of an XPATH
+   *                    expression 
+   */
+  public static boolean isXPathEvalABoolean(Node contextNode, String XPath) 
+                                        throws TransformerException {
+    boolean res = false;
+    XObject xobj = XPathAPI.eval(contextNode, XPath);
+    if (xobj.getType()==XObject.CLASS_BOOLEAN) res=true;
+    return res;
+  }
+
+  /**
+   *  This method checks to see if an evaluation of the XPath results in
+   *     a number
+   *
+   *  @param contextNode   the context node of a DOM subtree where the
+   *                        XPath evaluation starts
+   *
+   *  @param xpath      A <code>String</code> representation of an XPATH
+   *                    expression 
+   */
+  public static boolean isXPathEvalANumber(Node contextNode, String XPath) 
+                                        throws TransformerException {
+    boolean res = false;
+    XObject xobj = XPathAPI.eval(contextNode, XPath);
+    if (xobj.getType()==XObject.CLASS_NUMBER) res=true;
+    return res;
+  }
    
+  /**
+   *  This method checks to see if an evaluation of the XPath results in
+   *     a Nodeset
+   *
+   *  @param contextNode   the context node of a DOM subtree where the
+   *                        XPath evaluation starts
+   *
+   *  @param xpath      A <code>String</code> representation of an XPATH
+   *                    expression 
+   */
+  public static boolean isXPathEvalANodeset(Node contextNode, String XPath) 
+                                        throws TransformerException {
+    boolean res = false;
+    XObject xobj = XPathAPI.eval(contextNode, XPath);
+    if (xobj.getType()==XObject.CLASS_NODESET) res=true;
+    return res;
+  }
+
+  /**
+   *  This method checks to see if an evaluation of the XPath results in
+   *     a Null
+   *
+   *  @param contextNode   the context node of a DOM subtree where the
+   *                        XPath evaluation starts
+   *
+   *  @param xpath      A <code>String</code> representation of an XPATH
+   *                    expression 
+   */
+  public static boolean isXPathEvalANull(Node contextNode, String XPath) 
+                                        throws TransformerException {
+    boolean res = false;
+    XObject xobj = XPathAPI.eval(contextNode, XPath);
+    if (xobj.getType()==XObject.CLASS_NULL) res=true;
+    return res;
+  }
+  
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 //
