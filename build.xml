@@ -5,9 +5,9 @@
   *    Copyright: 2000 Regents of the University of California and the
   *               National Center for Ecological Analysis and Synthesis
   *
-  *   '$Author: brooke $'
-  *   '$Date: 2003-07-17 21:30:22 $'
-  *   '$Revision: 1.5 $'
+  *   '$Author: jones $'
+  *   '$Date: 2003-08-08 23:00:13 $'
+  *   '$Revision: 1.6 $'
 -->
 <project name="utilities" default="usage" basedir=".">
 
@@ -63,9 +63,10 @@
 -->
       <property name="xercesjar" value="${libdir}/xercesImpl.jar" />
       <property name="log4jjar"  value="${libdir}/log4j-1.2.8.jar" />
+      <property name="httpjar"  value="${libdir}/httpclient.jar" />
       <!-- CLASSPATH -->
       <property name="cpath"          
-                value="${xercesjar}:${log4jjar}" />
+                value="${xercesjar}:${log4jjar}:${httpjar}" />
                 
       <echo message="classpath is:   ${cpath}"/>
  
