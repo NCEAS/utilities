@@ -1,0 +1,13 @@
+#  '$RCSfile: README,v $' 
+#  Copyright: 2000 Regents of the University of California and the
+#             National Center for Ecological Analysis and Synthesis
+# 
+#   '$Author: jones $'
+#     '$Date: 2003-03-19 19:58:50 $'
+# '$Revision: 1.1 $'
+
+This directory contains the source code for all Java-based utility modules.
+Each module is separated into a disctinct java package, although some
+utilities might span several packages.  The ant build file targets are
+configured to sort out code dependencies and make sure that everything 
+needed is present to build each module.

@@ -1,0 +1,57 @@
+#  '$RCSfile: README,v $' 
+#  Copyright: 2000 Regents of the University of California and the
+#             National Center for Ecological Analysis and Synthesis
+# 
+#   '$Author: jones $'
+#     '$Date: 2003-03-19 19:58:49 $'
+# '$Revision: 1.1 $'
+
+Utilities: Common code utilities for EcoInformatics
+---------------------------------------------------
+
+Feedback and bugs to: utilties-dev@ecoinformatics.org
+                      http://bugzilla.ecoinformatics.org
+
+Contributors:
+    Chad Berkley (berkley@nceas.ucsb.edu)
+    Matthew Brooke (brooke@nceas.ucsb.edu)
+    Matt Jones (jones@nceas.ucsb.edu)
+    Dan Higgins (higgins@nceas.ucsb.edu)
+
+Utilities is a collection of programming utilties intended to factor out
+some commonly needed classes and functions for informatics software
+development.  The ant build system (http://ant.apache.org) is used to
+build release distributions for each of the utility modules. The current
+modules that we have created are:
+  1) ConfigXML: an XML configuration file utility in Java
+  2) IOUtils: a collection of IO routines that are useful in Java
+  3) IteratorTask: an ant task for repeatedly invoking a target
+
+The build.xml file contains a target for building each of the modules
+into distributable files.
+
+Iterator uses JUnit tests to test each publicly accessible method
+in each publicly accessible class.  If you make modifications to the 
+utilities and wish to have your changes absorbed by ecoinformatics.org, 
+we ask that you also write JUnit tests for each class and method that 
+you write.  The JUnit tests can be run by issuing the command 
+'ant clean test' on the command line.  Note
+that you must have ant version 1.4 or higher.
+
+What is JUnit?  Visit http://www.junit.org
+What is Ant?  Visit http://jakarta.apache.org/ant
+
+Please visit http://www.ecoinformatics.org for more information on this as
+well as other projects that we are currently involved with.
+
+Legalese
+--------
+This software is copyrighted by The Regents of the University of California
+and the National Center for Ecological Analysis and Synthesis and licensed
+under the GNU GPL; see the 'LICENSE' file for details.
+
+This material is based upon work supported by the National Science Foundation
+under Grant No. DEB99-80154 and DBI99-04777. Any opinions, findings and
+conclusions or recomendations expressed in this material are those of the
+author(s) and do not necessarily reflect  the views of the National Science
+Foundation (NSF).
