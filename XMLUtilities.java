@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: sambasiv $'
- *     '$Date: 2003-12-24 00:26:59 $'
- * '$Revision: 1.10 $'
+ *     '$Date: 2003-12-24 02:07:34 $'
+ * '$Revision: 1.11 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -840,12 +840,26 @@ public class XMLUtilities {
    
   public static OrderedMap getDOMTreeAsXPathMap(Node rootNode) {
   
-    if (rootNode==null) return null;
-    OrderedMap returnMap = new OrderedMap();
-    getDOMTreeAsXPathMap(rootNode, "/"+rootNode.getNodeName(), returnMap);
-    return returnMap;
+    return getDOMTreeAsXPathMap(rootNode, "");
   } 
-   
+  
+	/**
+   *  Returns an <code>edu.ucsb.nceas.utilities.OrderedMap</code> containing the 
+   *  entire DOM tree rooted at the rootNode, encoded as key/value pairs, where 
+   *  the "key" is the XPath of the node, and the "value" is its text value. The
+	 *	"keys" are prefixed with the relative xpath that is provided, rather than "/"
+   *
+   *  @param rootNode      the root node of the DOM tree to be encoded as 
+   *                        XPath/Value mappings
+   *
+	 *  @param path      		 the xpath that is prefixed to all the keys in the 
+   *                        XPath/Value mapping that is returned
+	 *
+   *  @return returnNVPMap  an <code>edu.ucsb.nceas.utilities.OrderedMap</code> 
+   *                        containing the resulting xpath/value pairs in the 
+   *                        correct order
+   */
+	 
   public static OrderedMap getDOMTreeAsXPathMap(Node rootNode, String path) {
   
     if (rootNode==null) return null;
