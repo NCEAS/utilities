@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: higgins $'
- *     '$Date: 2003-09-26 20:10:42 $'
- * '$Revision: 1.9 $'
+ *   '$Author: sambasiv $'
+ *     '$Date: 2003-12-24 00:26:59 $'
+ * '$Revision: 1.10 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -846,6 +846,14 @@ public class XMLUtilities {
     return returnMap;
   } 
    
+  public static OrderedMap getDOMTreeAsXPathMap(Node rootNode, String path) {
+  
+    if (rootNode==null) return null;
+		if(path == null) path = "";
+    OrderedMap returnMap = new OrderedMap();
+    getDOMTreeAsXPathMap(rootNode, path+"/"+rootNode.getNodeName(), returnMap);
+    return returnMap;
+  } 
    
 
   
