@@ -4,8 +4,8 @@
  *              National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: sgarg $'
- *     '$Date: 2004-08-19 20:43:01 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2004-09-02 21:25:16 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ public class HttpMessage
   }
 
   /**
-   * Open a new post connection, preparing the request headers, including 
+   * Open a new post connection, preparing the request headers, including
    * cookies
    */
   private void openPostConnection() throws IOException
@@ -101,7 +101,71 @@ public class HttpMessage
   }
 
   /**
-   * Sends post data using multipart/form-data encoding. This method can send 
+     * Sends post data using multipart/form-data encoding. This method can send
+     * large data files because the files are streamed directly from disk to the
+     * HttpURLConnection.  Assuming that we are using the HTTClient or another
+     * similar library that provides a streaming HttpURLConnection, then the
+     * data is sent to the connection as it is read from disk (in contrast to the
+     * default Sun HttpURLConnection that reads the whole data stream into memory
+     * before sending it.
+     *
+     * @param args a property file containing the name-value pairs that are to be
+     *             sent to the server
+     * @param fileNames a property file containing the name for a formfield
+     *                  that represents a file and the filename (as the property
+     *                  value)
+     * @param fileDate  the inputStream for the file data to be sent to Metacat
+     * @param size      the size of the data being sent to Metacat
+     * @return the response stream that comes from the server
+     * @exception IOException If any file operation fails.
+     */
+    public InputStream sendPostData(Properties args, Properties fileNames,
+                                    InputStream fileData, int size)
+                       throws IOException
+    {
+      openPostConnection();
+
+      // Prepare the parameters
+      int len = args.size();
+      NVPair[] opts = new NVPair[len];
+      Enumeration names = args.propertyNames();
+      for (int i=0; i<len; i++) {
+        String name = (String)names.nextElement();
+        String value = args.getProperty(name);
+        opts[i] = new NVPair(name, value);
+      }
+      // Prepare the data files
+      len = fileNames.size();
+      NVPair[] data = new NVPair[len];
+      Enumeration dataNames = fileNames.propertyNames();
+      for (int i=0; i<len; i++) {
+        String name = (String)dataNames.nextElement();
+        String value = fileNames.getProperty(name);
+        data[i] = new NVPair(name, value);
+      }
+
+      // Create the multipart/form-data form object
+      MultipartForm myform = new MultipartForm(opts, data, fileData, size);
+
+      // Set some addition request headers
+      ((HttpURLConnection)con).setRequestMethod("POST");
+      String ctype = myform.getContentType();
+      ((HttpURLConnection)con).setRequestProperty("Content-Type", ctype);
+      long contentLength = myform.getLength();
+      ((HttpURLConnection)con).setRequestProperty("Content-Length",
+               new Long(contentLength).toString());
+
+      // Open the output stream and write the encoded data to it
+      out = con.getOutputStream();
+      myform.writeEncodedMultipartForm(out);
+
+      // close the connection and return the response stream
+      InputStream res = closePostConnection();
+      return res;
+    }
+
+  /**
+   * Sends post data using multipart/form-data encoding. This method can send
    * large data files because the files are streamed directly from disk to the
    * HttpURLConnection.  Assuming that we are using the HTTClient or another
    * similar library that provides a streaming HttpURLConnection, then the
@@ -111,13 +175,13 @@ public class HttpMessage
    *
    * @param args a property file containing the name-value pairs that are to be
    *             sent to the server
-   * @param fileNames a property file containing the name for a formfield 
-   *                  that represents a file and the filename (as the property 
+   * @param fileNames a property file containing the name for a formfield
+   *                  that represents a file and the filename (as the property
    *                  value)
    * @return the response stream that comes from the server
    * @exception IOException If any file operation fails.
    */
-  public InputStream sendPostData(Properties args, Properties fileNames) 
+  public InputStream sendPostData(Properties args, Properties fileNames)
                      throws IOException
   {
     openPostConnection();
@@ -155,7 +219,7 @@ public class HttpMessage
     // Open the output stream and write the encoded data to it
     out = con.getOutputStream();
     myform.writeEncodedMultipartForm(out);
-    
+
     // close the connection and return the response stream
     InputStream res = closePostConnection();
     return res;
@@ -250,7 +314,7 @@ public class HttpMessage
   }
 
   /**
-   * Converts a Properties list to a URL-encoded query string    
+   * Converts a Properties list to a URL-encoded query string
    */
   private String toEncodedString(Properties args)
   {
