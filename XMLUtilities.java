@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: brooke $'
- *     '$Date: 2003-09-24 01:21:38 $'
- * '$Revision: 1.8 $'
+ *   '$Author: higgins $'
+ *     '$Date: 2003-09-26 20:10:42 $'
+ * '$Revision: 1.9 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1097,6 +1097,43 @@ public class XMLUtilities {
     return res;
   }
   
+  /**
+   *  This method evaluates an XPath expression and retruns information about
+   *  the type of the reult i.e. is it a boolean, a string, a nodeset, etc.
+   *  Designed primarily for testing since result infor is displayed in an error
+   *  dialog.
+   *
+   *  @param contextNode   the context node of a DOM subtree where the
+   *                        XPath evaluation starts
+   *
+   *  @param xpath      A <code>String</code> representation of an XPATH
+   *                    expression 
+   */
+    public static void xPathEvalTypeTest( Node contextNode, String xpath) {
+    try{
+      XObject xobj = XPathAPI.eval(contextNode, xpath);
+      if (xobj.getType()==XObject.CLASS_BOOLEAN) {
+        Log.debug(1,"Boolean: "+xobj.bool());
+      }
+      else if (xobj.getType()==XObject.CLASS_STRING) {
+        Log.debug(1,"String: "+xobj.str());
+      }
+      else if (xobj.getType()==XObject.CLASS_NUMBER) {
+        Log.debug(1,"Number: "+xobj.num());
+      }
+      if (xobj.getType()==XObject.CLASS_NODESET) {
+        NodeList ns = xobj.nodelist();
+        Log.debug(1,"Nodeset: nodeset length: "+ns.getLength());
+      }
+      if (xobj.getType()==XObject.CLASS_NULL) {
+        Log.debug(1,"Null: ");
+      }
+    }
+    catch (Exception w) {
+      Log.debug(4,"exception in evalXPathTest --- "+w.toString());
+    }
+  }
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 //
