@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2003-07-17 21:31:24 $'
- * '$Revision: 1.1 $'
+ *     '$Date: 2003-08-29 23:22:17 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,17 +98,44 @@ public class OrderedMap extends HashMap {
 
   // Bulk Operations
 
-  /** This API method is not supported
-   *
-   *  @param m Map - the <tt>putAll</tt> method is not supported by this map.
+  /** 
+   *  The <tt>putAll()</tt> method defined in the Map interface expects a Map as 
+   *  the input parameter. <em>NOTE</em>, however, that for this method to make 
+   *  sense for the OrderedMap, the <code>putAll()</code> method must receive  
+   *  another <code>OrderedMap</code> object as input. Therefore, this method's 
+   *  signature has a <code>Map</code> as input, but the method body carries out 
+   *  further validation to ensure that the passed object can actually be cast 
+   *  to an instance of <code>OrderedMap</code>. If not, the method throws an 
+   *  UnsupportedOperationException.
+   *  
+   *  @param m a Map object that can be cast to an instance of 
+   *              <code>OrderedMap</code>.
    *   
-   *  @throws UnsupportedOperationException, since the <tt>putAll</tt> method is
-   * 	not supported by this map.
+   *  @throws UnsupportedOperationException, if the passed Map cannot be cast to 
+   *              an instance of <code>OrderedMap</code>.
    */
   public void putAll(Map m) throws UnsupportedOperationException {
   
-    throwUnsupportedOperationException(
-            "putAll() is not supported by this Map. Use multiple put() calls");
+    if (m!=null && (m instanceof OrderedMap)) {
+    
+      Iterator keysIt = m.keySet().iterator();
+      if (keysIt==null) return;
+      
+      Object nextKey = null;
+      
+      while (keysIt.hasNext()) {
+        
+        nextKey = keysIt.next();
+        
+        if (nextKey==null) continue;
+        else this.put(nextKey, m.get(nextKey));       
+      }
+      
+    } else {
+      throwUnsupportedOperationException(
+          "Map object received by putAll() must be an instance of OrderedMap"
+                  +((m==null)? " - *NULL* Map received!!" : " - received: "+m));
+    }
   }
 
   /**
