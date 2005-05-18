@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: brooke $'
- *     '$Date: 2005-05-18 19:07:14 $'
- * '$Revision: 1.4 $'
+ *     '$Date: 2005-05-18 22:52:09 $'
+ * '$Revision: 1.5 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 package edu.ucsb.nceas.utilities;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -96,6 +97,23 @@ public class XMLProperties
    */
   public XMLProperties() {}
 
+
+  /**
+   *  Reads properties from the XML input stream.
+   *
+   *  @param xmlPropsFile   <code>File</code> from which the properties
+   *                          XML is to be read and parsed
+   *
+   *  @throws IOException if File cannot be opened or processed
+   */
+  public void load(File xmlPropsFile) throws IOException {
+
+    this.xmlPropsFile = xmlPropsFile;
+    InputStream xmlPropsSource = new FileInputStream(xmlPropsFile);
+    this.load(xmlPropsSource);
+  }
+
+
   /**
    *  Reads properties from the XML input stream.
    *
@@ -110,6 +128,7 @@ public class XMLProperties
 
     init(xmlPropsSource);
   }
+
 
 
   private void init(InputStream xmlPropsSource) throws IOException {
@@ -181,19 +200,15 @@ public class XMLProperties
 
 
   /**
-   *  used to set a value corresponding to 'key'; value is changed
-   *  in DOM structure in memory. Returns the previous <code>String</code> value
-   *  for this parameter, or null if it didn't exist
+   * used to set a value corresponding to 'key'; value is changed in DOM
+   * structure in memory. Returns the previous <code>String</code> value for
+   * this parameter, or null if it didn't exist
    *
-   *  @param key   the xpath identifying the element name.
-   *
-   *  @param value new value to be inserted in ith key
-   *
-   *  @return      the previous <code>String</code> value for this parameter, or
-   *              null if it didn't exist
-   *
-   *  @throws <code>javax.xml.transform.TransformerException</code> if there is
-   *                    a problem executing the XPATH expression
+   * @param key the xpath identifying the element name.
+   * @param value new value to be inserted in ith key
+   * @return the previous <code>String</code> value for this parameter, or null
+   *   if it didn't exist
+   * @throws TransformerException
    */
   public String setProperty(String key, String value)
                                                   throws TransformerException {
@@ -211,27 +226,35 @@ public class XMLProperties
    *  The stream is written using UTF-8 character encoding.
    *  After the entries have been written, the output stream is flushed and
    *  closed.
+   *
+   *  @throws IOException if original file cannot be found or written to
    */
-  public void store() {
+  public void store() throws IOException {
 
     FileOutputStream out = null;
 
-    if (!xmlPropsFile.canWrite()) {
-      JOptionPane.showMessageDialog(null, "Cannot write to properties file: "
-                                        +xmlPropsFile.getName()+ " !", "alert",
-                                        JOptionPane.ERROR_MESSAGE);
+    if (xmlPropsFile==null) {
+      throw new IOException(
+          "Cannot find properties file - xmlPropsFile==null");
+
+    } else if (!xmlPropsFile.canWrite()) {
+
+      throw new IOException(
+          "Cannot write to properties file (xmlPropsFile.canWrite() is false): "
+                                    + xmlPropsFile.getName());
     } else {
+
       try {
         out = new FileOutputStream(xmlPropsFile);
         store(out);
-      } catch(Exception e) {
-        JOptionPane.showMessageDialog(null, "Cannot write to properties file: "
-                                        +xmlPropsFile.getName()+ " !", "alert",
-                                        JOptionPane.ERROR_MESSAGE);
       } finally {
-        if (out!=null) {
-          out.flush();
-          out.close();
+        if (out != null) {
+          try {
+            out.flush();
+            out.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
         }
       }
     }
@@ -255,27 +278,37 @@ public class XMLProperties
     this.list(pw);
   }
 
+
   /**
-   *  Prints this property list out to the specified output stream.
-   *  This method is useful for debugging.
+   * Prints this property list out to the specified output stream. This method
+   * is useful for debugging.
+   *
+   * @param out PrintWriter
    */
   public void list(PrintWriter out) {
 
     XMLUtilities.print(root, out, OUTPUT_FORMAT);
   }
+
+
   /**
-   *  Prints this property list out to the specified output stream.
-   *  This method is useful for debugging.
+   * Prints this property list out to the specified output stream. This method
+   * is useful for debugging.
+   *
+   * @param out PrintStream
    */
   public void list(PrintStream out) {
 
     this.store(out);
   }
 
+
   /**
-   *  Returns an enumeration of all the XPath keys in this properties object
+   * Returns an enumeration of all the XPath keys in this properties object
+   *
+   * @return Iterator
    */
-   public Iterator propertyNames() {
+  public Iterator propertyNames() {
 
     OrderedMap nvpMap = XMLUtilities.getDOMTreeAsXPathMap(root);
     if (nvpMap==null) return emptyIterator;
