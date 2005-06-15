@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: brooke $'
- *     '$Date: 2004-03-22 18:45:51 $'
- * '$Revision: 1.14 $'
+ *   '$Author: cjones $'
+ *     '$Date: 2005-06-15 19:27:27 $'
+ * '$Revision: 1.15 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringReader;
 
 import java.util.Stack;
 import java.util.Map;
@@ -810,6 +811,53 @@ public class XMLUtilities {
   /**
    *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>.
    *  This method can walk a DOM subtree (based at the passed Node), and
+   *  return it as a java.io.Reader
+   *
+   *  @param node the root node of a DOM subtree
+   *
+   *  @param preserveWhitespace - if set to true, will preserve spaces. <br>
+   *                              <em>NOTES:</em><ul><li>*false* - Setting
+   *                              this to false means that any elements that
+   *                              contain only whitespace will be printed out as
+   *                              being *empty*, but the layout of the output
+   *                              will have "nice" line endings and indentation.
+   *                              </li><li>*true* - Setting it to true can mess
+   *                              up line endings/formatting of output, but will
+   *                              mean that elements containing only whitespace
+   *                              will be printed out in their original form.
+   *                              </li></ul>
+   *
+   *  @return <code>Reader</code> representation of the DOM tree
+   */
+  public static Reader getDOMTreeAsReader(Node node, boolean preserveWhitespace) {
+
+      if (node==null) return null;
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      PrintWriter printWriter = new PrintWriter(baos);
+
+      try {
+        print(node, printWriter, DEFAULT_OUTPUT_FORMAT, preserveWhitespace);
+      } catch (Exception e) {
+        String msg = "getDOMTreeAsReader() - unexpected Exception: "+e+"\n";
+//        log.error(msg);
+        printWriter.println(msg);
+        e.printStackTrace(printWriter);
+      } finally {
+        try {
+          printWriter.flush();
+          baos.flush();
+          baos.close();
+          printWriter.close();
+        } catch (IOException ioe) {}
+      }
+      StringReader sreader = new StringReader(baos.toString());
+      Reader DOMreader = (Reader) sreader;
+      return DOMreader;
+  }
+
+  /**
+   *  <em>NOTE - NONE OF THESE METHODS ARE THREAD_SAFE</em>.
+   *  This method can walk a DOM subtree (based at the passed Node), and
    *  print it to the PrintWriter provided, using the encoding defined
    *  in the DEFAULT_OUTPUT_FORMAT variable elsewhere in this class.
    *  Does *not* flush or close PrintWriter after use
@@ -880,19 +928,19 @@ public class XMLUtilities {
       try {
         // Read the entire document into memory
 
-        Document document = node.getOwnerDocument();
-        if (document==null) return;
-        OutputFormat format
-         = new OutputFormat(document, encoding, true);
+         Document document = node.getOwnerDocument();
+         if (document==null) return;
+         OutputFormat format
+          = new OutputFormat(document, encoding, true);
 
-        format.setLineSeparator(System.getProperty("line.separator"));
-        format.setLineWidth(72);
-        format.setIndent(2);
+         format.setLineSeparator(System.getProperty("line.separator"));
+         format.setLineWidth(72);
+         format.setIndent(2);
 
-        format.setPreserveSpace(preserveWhitespace);
-        XMLSerializer serializer
-         = new XMLSerializer(printWriter, format);
-        serializer.serialize(document);
+         format.setPreserveSpace(preserveWhitespace);
+         XMLSerializer serializer
+          = new XMLSerializer(printWriter, format);
+         serializer.serialize(document);
       } catch (IOException e) {
 //        log.error("IOException doing print(): "+e);
         e.printStackTrace(printWriter);
