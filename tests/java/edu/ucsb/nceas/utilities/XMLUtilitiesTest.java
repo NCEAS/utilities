@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: brooke $'
- *     '$Date: 2004-03-22 18:41:17 $'
- * '$Revision: 1.4 $'
+ *   '$Author: cjones $'
+ *     '$Date: 2005-06-15 19:28:36 $'
+ * '$Revision: 1.5 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 package edu.ucsb.nceas.utilities;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.PrintWriter;
@@ -756,6 +757,35 @@ public class XMLUtilitiesTest extends TestCase
     assertNull(XMLUtilities.getDOMTreeAsString(null));
   }
 
+
+  public void testGetDOMTreeAsReader() {
+
+    System.out.println("getDOMTreeAsReader() test...");
+
+    Reader xmlReader = null;
+
+    testRootNode = getNewTestRootNode();
+    assertNotNull(testRootNode);
+    try {
+      xmlReader = XMLUtilities.getDOMTreeAsReader(testRootNode, true);
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail("unexpected exception while trying to call"
+        +" getDOMTreeAsNVP with VALID params");
+    }
+    assertNotNull(xmlReader);
+
+    String xmlString = null;
+    xmlString = xmlReader.toString();
+    assertEquals( StringUtil.stripAllWhiteSpace(TEST_XML),
+                  StringUtil.stripAllWhiteSpace(xmlString));
+
+    xmlReader = null;
+
+    ////////////////
+    System.out.println("calling with NULL rootnode...");
+    assertNull(XMLUtilities.getDOMTreeAsString(null));
+  }
 
   public void testPrint() {
 
