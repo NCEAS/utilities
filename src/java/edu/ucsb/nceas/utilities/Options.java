@@ -3,9 +3,9 @@
  *  Copyright: 2003 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: jones $'
- *     '$Date: 2003-12-05 18:04:33 $'
- * '$Revision: 1.1 $'
+ *   '$Author: tao $'
+ *     '$Date: 2005-08-29 22:52:02 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ package edu.ucsb.nceas.utilities;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -40,6 +41,7 @@ public class Options
 {
     private static Options options = null;
     private Properties appConfig = null;
+    private File propertyFile    = null;
 
     /**
      * Private constructor because this is a Singleton.
@@ -51,6 +53,7 @@ public class Options
     {
         // locate, open, and read the properties
         appConfig = new Properties();
+        this.propertyFile = propertyFile;
         FileInputStream fis = new FileInputStream(propertyFile);
         appConfig.load(fis);
         fis.close();
@@ -91,9 +94,40 @@ public class Options
      * @param optionName the name of the option requested
      * @return the String value for the given property, or null if not found
      */
-    public String getOption(String optionName) {
+    public synchronized String getOption(String optionName) {
         String value = (String)appConfig.get(optionName);
   
         return value;
+    }
+    
+    /**
+     * Reset value for given option name or set a new option pair in the
+     * peroperty file. This method will also call a save method to save
+     * the new values into properties file. Note: the comment in property
+     * file will be gone and order of keys will be change
+     * @param key  the option name
+     * @param value  the new option value
+     */
+    public synchronized void setOption(String key, String value)
+    {
+        appConfig.setProperty(key, value);
+        storePropertyFile();
+    }
+    
+    /*
+     * This method will store the new property value into file
+     */
+    private void storePropertyFile()
+    {
+        try
+        {
+            FileOutputStream writer = new FileOutputStream(propertyFile);
+            appConfig.store(writer, null);
+            writer.close();
+        }
+        catch (IOException e)
+        {
+            System.err.println("Could save the new property into file");
+        }
     }
 }
