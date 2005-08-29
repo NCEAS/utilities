@@ -3,9 +3,9 @@
  *  Copyright: 2003 Regents of the University of California and the
  *              National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: jones $'
- *     '$Date: 2003-12-05 18:04:33 $'
- * '$Revision: 1.1 $'
+ *   '$Author: tao $'
+ *     '$Date: 2005-08-29 22:52:46 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,7 @@ public class OptionsTest extends TestCase
         suite.addTest(new OptionsTest("initInstance"));
         suite.addTest(new OptionsTest("getInstance"));
         suite.addTest(new OptionsTest("getProperty"));
+        suite.addTest(new OptionsTest("setProperty"));
         return suite;
     }
   
@@ -158,6 +159,29 @@ public class OptionsTest extends TestCase
             assertTrue(prop4.equals("three"));
         } catch (IOException ioe) {
             fail("Initialization of instance failed:\n" + ioe.getMessage());
+        }
+    }
+    
+    /**
+     * This method will test reset peroperties.
+     *
+     */
+    public void setProperty()
+    {
+        try
+        {
+           Options options = Options.initialize(propertyFile);
+           String key = "my.first";
+           String newValue = "one";
+           assertNotNull(options);
+           options.setOption(key, newValue);
+           String retrieveValue = options.getOption(key);
+           System.out.println("the new retrive value is "+ retrieveValue);
+           assertTrue(retrieveValue.equals(newValue));
+        }
+        catch(IOException e)
+        {
+            fail("Initialization of instance failed:\n" + e.getMessage());
         }
     }
 }
