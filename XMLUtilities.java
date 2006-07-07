@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: cjones $'
- *     '$Date: 2005-06-15 19:27:27 $'
- * '$Revision: 1.15 $'
+ *   '$Author: tao $'
+ *     '$Date: 2006-07-07 22:22:40 $'
+ * '$Revision: 1.16 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1527,10 +1527,11 @@ public class XMLUtilities {
       //
       // see http://xml.apache.org/xerces2-j/features.html
       ////////////////////////////////////////////////////////////////////////
-
-      factory.setAttribute(
+      
+      //comment out this line because xerces doesn't support this property any more.
+      /*factory.setAttribute(
             "http://apache.org/xml/features/nonvalidating/load-external-dtd",
-            new Boolean(false));
+            new Boolean(false));*/
 
       ////////////////////////////////////////////////////////////////////////
       ////////////////////////////////////////////////////////////////////////
