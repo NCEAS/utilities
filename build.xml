@@ -5,9 +5,9 @@
   *    Copyright: 2000 Regents of the University of California and the
   *               National Center for Ecological Analysis and Synthesis
   *
-  *   '$Author: brooke $'
-  *   '$Date: 2003-09-23 23:08:20 $'
-  *   '$Revision: 1.8 $'
+  *   '$Author: sgarg $'
+  *   '$Date: 2006-08-18 21:44:45 $'
+  *   '$Revision: 1.9 $'
 -->
 <project name="utilities" default="usage" basedir=".">
 
@@ -56,9 +56,9 @@
       <filter token="name" value="${name}"/>
 
       <!-- classpath jar files (including relative path from basedir) -->
-<!--
       <property name="xmlapijar" value="${libdir}/xml-apis.jar" />
       <property name="xalanjar"  value="${libdir}/xalan.jar" />
+<!--
       <property name="extresjar" value="${libdir}/ExternalResources.jar" />
 -->
       <property name="xercesjar" value="${libdir}/xercesImpl.jar" />
@@ -66,7 +66,7 @@
       <property name="httpjar"  value="${libdir}/httpclient.jar" />
       <!-- CLASSPATH -->
       <property name="cpath"          
-                value="${xercesjar}:${log4jjar}:${httpjar}" />
+	      value="${xercesjar}:${log4jjar}:${httpjar}:${xalanjar}:${xmlapijar}" />
                 
       <echo message="classpath is:   ${cpath}"/>
  
