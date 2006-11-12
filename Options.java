@@ -3,9 +3,9 @@
  *  Copyright: 2003 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: tao $'
- *     '$Date: 2005-08-29 22:52:02 $'
- * '$Revision: 1.2 $'
+ *   '$Author: jones $'
+ *     '$Date: 2006-11-12 09:51:51 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
 
 /**
@@ -114,7 +115,16 @@ public class Options
         storePropertyFile();
     }
     
-    /*
+    /**
+     * Return a list of the options that are configured.
+     * 
+     * @return an Enumeration of the names of the options available
+     */
+    public Enumeration propertyNames() {
+        return appConfig.propertyNames();
+    }
+    
+    /**
      * This method will store the new property value into file
      */
     private void storePropertyFile()
