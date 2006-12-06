@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: jones $'
- *     '$Date: 2006-11-23 08:14:37 $'
- * '$Revision: 1.1 $'
+ *     '$Date: 2006-12-06 16:14:51 $'
+ * '$Revision: 1.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ public class OptionsMetadata {
     
     /**
      * Get a Set of the keys for properties that are members of a given group.
-     * @param target the target group to be searche for matching keys
+     * @param target the target group to be searched for matching keys
      * @return Set of the keys found within the given group
      */
     public synchronized SortedMap getKeysInGroup(String target) {
@@ -154,7 +154,7 @@ public class OptionsMetadata {
             String group = getOptionGroup(key);
             int index = getOptionIndex(key);
             if (group.equals(target)) {
-                options.put(index, key);
+                options.put(new Integer(index), key);
             }
         }
         return options;
