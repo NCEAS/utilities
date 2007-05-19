@@ -3,9 +3,9 @@
  *  Copyright: 2000 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: sgarg $'
- *     '$Date: 2004-09-02 21:28:33 $'
- * '$Revision: 1.2 $'
+ *   '$Author: barteau $'
+ *     '$Date: 2007-05-19 00:40:25 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,32 +103,31 @@ import java.io.InputStream;
  * may mean you'll have to set your own).
  *
  */
-public class MultipartForm
-{
+public class MultipartForm {
     private static BitSet  BoundChar;
     private final static String ContDisp =
-                                "\r\nContent-Disposition: form-data; name=\"";
+            "\r\nContent-Disposition: form-data; name=\"";
     private final static String FileName = "\"; filename=\"";
     private final static String ContType = "\r\nContent-Type: ";
     private final static String Boundary =
-       "\r\n----------ieoau._._+2_8_8.3-dskdfJwSJKl234324jfLdsjfdAuaoei-----";
+            "\r\n----------ieoau._._+2_8_8.3-dskdfJwSJKl234324jfLdsjfdAuaoei-----";
     private static NVPair[] dummy = new NVPair[0];
-
+    
     // Class Initializer
     static
     {
-	// rfc-2046 & rfc-2045: (bcharsnospace & token)
-	// used for multipart codings
-	BoundChar = new BitSet(256);
-	for (int ch='0'; ch <= '9'; ch++)  BoundChar.set(ch);
-	for (int ch='A'; ch <= 'Z'; ch++)  BoundChar.set(ch);
-	for (int ch='a'; ch <= 'z'; ch++)  BoundChar.set(ch);
-	BoundChar.set('+');
-	BoundChar.set('_');
-	BoundChar.set('-');
-	BoundChar.set('.');
+        // rfc-2046 & rfc-2045: (bcharsnospace & token)
+        // used for multipart codings
+        BoundChar = new BitSet(256);
+        for (int ch='0'; ch <= '9'; ch++)  BoundChar.set(ch);
+        for (int ch='A'; ch <= 'Z'; ch++)  BoundChar.set(ch);
+        for (int ch='a'; ch <= 'z'; ch++)  BoundChar.set(ch);
+        BoundChar.set('+');
+        BoundChar.set('_');
+        BoundChar.set('-');
+        BoundChar.set('.');
     }
-
+    
     // Members
     private byte[] boundary, cont_disp, cont_type, filename;
     private long encodedLength;
@@ -138,9 +137,9 @@ public class MultipartForm
     private int fileSize;
     private FilenameMangler mangler;
     private NVPair content_header = null;
-
+    
     // Constructors
-
+    
     /**
      * Create a new form with form data and files using the multipart/form-data
      * encoding and use the given FilenameMangler to alter filenames
@@ -173,21 +172,20 @@ public class MultipartForm
      * @see #writeEncodedMultipartForm(OutputStream out, int bufferSize)
      */
     public MultipartForm(NVPair opts[], NVPair files[],
-                         FilenameMangler mangler,
-                         InputStream fileData, int fileSize) throws IOException
-    {
-      boundary  = Boundary.getBytes("8859_1");
-      cont_disp = ContDisp.getBytes("8859_1");
-      cont_type = ContType.getBytes("8859_1");
-      filename  = FileName.getBytes("8859_1");
-      this.opts = opts;
-      this.files = files;
-      this.mangler = mangler;
-      this.fileData = fileData;
-      this.fileSize = fileSize;
-      this.encodedLength = calculateLength();
+            FilenameMangler mangler,
+            InputStream fileData, int fileSize) throws IOException {
+        boundary  = Boundary.getBytes("8859_1");
+        cont_disp = ContDisp.getBytes("8859_1");
+        cont_type = ContType.getBytes("8859_1");
+        filename  = FileName.getBytes("8859_1");
+        this.opts = opts;
+        this.files = files;
+        this.mangler = mangler;
+        this.fileData = fileData;
+        this.fileSize = fileSize;
+        this.encodedLength = calculateLength();
     }
-
+    
     /**
      * Create a new form with form data and files using the multipart/form-data
      * encoding and use the given FilenameMangler to alter filenames
@@ -215,11 +213,10 @@ public class MultipartForm
      * @see #writeEncodedMultipartForm(OutputStream out, int bufferSize)
      */
     public MultipartForm(NVPair opts[], NVPair files[],
-                         FilenameMangler mangler) throws IOException
-    {
+            FilenameMangler mangler) throws IOException {
         this(opts, files, mangler, null, 0);
     }
-
+    
     /**
      * Create a new form with form data and files using the multipart/form-data
      * encoding.
@@ -240,12 +237,11 @@ public class MultipartForm
      * @see #getLength()
      * @see #writeEncodedMultipartForm(OutputStream out, int bufferSize)
      */
-    public MultipartForm(NVPair opts[], NVPair files[]) throws IOException
-    {
-      this(opts, files, null, null, 0);
+    public MultipartForm(NVPair opts[], NVPair files[]) throws IOException {
+        this(opts, files, null, null, 0);
     }
-
-
+    
+    
     /**
      * Create a new form with form data and files using the multipart/form-data
      * encoding.
@@ -267,41 +263,37 @@ public class MultipartForm
      * @see #writeEncodedMultipartForm(OutputStream out, int bufferSize)
      */
     public MultipartForm(NVPair opts[], NVPair files[],
-                         InputStream fileData, int fileSize) throws IOException
-    {
-      this(opts, files, null, fileData, fileSize);
+            InputStream fileData, int fileSize) throws IOException {
+        this(opts, files, null, fileData, fileSize);
     }
-
+    
     /**
      * Calculate the length in bytes of this form after encoding.
      *
      * @exception IOException If any file operation fails.
      * @return the length of the encoded form in bytes
      */
-    private long calculateLength() throws IOException
-    {
-	int len = 0,
-	    hdr_len = boundary.length + cont_disp.length+1 + 2 +  2;
-	    //        \r\n --  bnd      \r\n C-D: ..; n=".." \r\n \r\n
-
-	if (opts == null)   opts  = dummy;
-	if (files == null)  files = dummy;
-
-
-	// Calculate the length of the parameters
-	for (int idx=0; idx<opts.length; idx++)
-	{
-	    if (opts[idx] == null)  continue;
-
-	    len += hdr_len + opts[idx].getName().length() +
-		   opts[idx].getValue().length();
-	}
-
-	// Calculate the length of the files
-	for (int idx=0; idx<files.length; idx++)
-	{
-	    if (files[idx] == null)  continue;
-
+    private long calculateLength() throws IOException {
+        int len = 0,
+                hdr_len = boundary.length + cont_disp.length+1 + 2 +  2;
+        //        \r\n --  bnd      \r\n C-D: ..; n=".." \r\n \r\n
+        
+        if (opts == null)   opts  = dummy;
+        if (files == null)  files = dummy;
+        
+        
+        // Calculate the length of the parameters
+        for (int idx=0; idx<opts.length; idx++) {
+            if (opts[idx] == null)  continue;
+            
+            len += hdr_len + opts[idx].getName().length() +
+                    opts[idx].getValue().length();
+        }
+        
+        // Calculate the length of the files
+        for (int idx=0; idx<files.length; idx++) {
+            if (files[idx] == null)  continue;
+            
             if(fileData == null) {
                 File file = new File(files[idx].getValue());
                 String fname = file.getName();
@@ -309,9 +301,9 @@ public class MultipartForm
                     fname = mangler.mangleFilename(fname, files[idx].getName());
                 if (fname != null) {
                     len += hdr_len + files[idx].getName().length() +
-                        filename.length;
+                            filename.length;
                     len += fname.length() + file.length();
-
+                    
                     String ct = CT.getContentType(file.getName());
                     if (ct != null)
                         len += cont_type.length + ct.length();
@@ -322,30 +314,30 @@ public class MultipartForm
                     fname = mangler.mangleFilename(fname, files[idx].getName());
                 if (fname != null) {
                     len += hdr_len + files[idx].getName().length() +
-                        filename.length;
+                            filename.length;
                     len += fname.length() + fileSize;
-
+                    
                     String ct = CT.getContentType(files[idx].getValue());
                     if (ct != null)
                         len += cont_type.length + ct.length();
                 }
             }
-	}
-
-	if (len == 0) {
-	    content_header = new NVPair("Content-Type", "application/octet-stream");
-	    return len;
-	} else {
-	    content_header = new NVPair("Content-Type",
-			       "multipart/form-data; boundary=" +
-			       new String(boundary, 4, boundary.length-4, "8859_1"));
         }
-
-	len -= 2;			// first CR LF is not written
-	len += boundary.length + 2 + 2;	// \r\n -- bnd -- \r\n
+        
+        if (len == 0) {
+            content_header = new NVPair("Content-Type", "application/octet-stream");
+            return len;
+        } else {
+            content_header = new NVPair("Content-Type",
+                    "multipart/form-data; boundary=" +
+                    new String(boundary, 4, boundary.length-4, "8859_1"));
+        }
+        
+        len -= 2;			// first CR LF is not written
+        len += boundary.length + 2 + 2;	// \r\n -- bnd -- \r\n
         return len;
     }
-
+    
     /**
      * Write the multipart/form-data encoded version of the form to the provided
      * output stream, using a default bufferSize of 4096 bytes for reading in the
@@ -354,11 +346,10 @@ public class MultipartForm
      * @param out the OutputStream to which the encoded form should be written
      * @exception IOException If any file operation fails.
      */
-    public void writeEncodedMultipartForm(OutputStream out) throws IOException
-    {
-      writeEncodedMultipartForm(out, 4096);
+    public void writeEncodedMultipartForm(OutputStream out) throws IOException {
+        writeEncodedMultipartForm(out, 4096);
     }
-
+    
     /**
      * Write the multipart/form-data encoded version of the form to the provided
      * output stream, using the provided bufferSize for reading in the files.
@@ -369,45 +360,42 @@ public class MultipartForm
      * @exception IOException If any file operation fails.
      */
     public void writeEncodedMultipartForm(OutputStream out, int bufferSize)
-                                      throws IOException
-    {
+    throws IOException {
         // Record the number of bytes written for error checking
-	int pos = 0;
+        int pos = 0;
         int dataSent = 0;
-
-	NewBound: for (int new_c=0x30303030; new_c!=0x7A7A7A7A; new_c++)
-	{
-	    pos = 0;
-
-	    // modify boundary in hopes that it will be unique
-	    while (!BoundChar.get(new_c     & 0xff)) new_c += 0x00000001;
-	    while (!BoundChar.get(new_c>>8  & 0xff)) new_c += 0x00000100;
-	    while (!BoundChar.get(new_c>>16 & 0xff)) new_c += 0x00010000;
-	    while (!BoundChar.get(new_c>>24 & 0xff)) new_c += 0x01000000;
+        
+        NewBound: for (int new_c=0x30303030; new_c!=0x7A7A7A7A; new_c++) {
+            pos = 0;
+            
+            // modify boundary in hopes that it will be unique
+            while (!BoundChar.get(new_c     & 0xff)) new_c += 0x00000001;
+            while (!BoundChar.get(new_c>>8  & 0xff)) new_c += 0x00000100;
+            while (!BoundChar.get(new_c>>16 & 0xff)) new_c += 0x00010000;
+            while (!BoundChar.get(new_c>>24 & 0xff)) new_c += 0x01000000;
 /*
-	    boundary[40] = (byte) (new_c     & 0xff);
-	    boundary[42] = (byte) (new_c>>8  & 0xff);
-	    boundary[44] = (byte) (new_c>>16 & 0xff);
-	    boundary[46] = (byte) (new_c>>24 & 0xff);
-*/
-	    int off = 2;
-
-	    for (int idx=0; idx<opts.length; idx++)
-	    {
-		if (opts[idx] == null)  continue;
-
+            boundary[40] = (byte) (new_c     & 0xff);
+            boundary[42] = (byte) (new_c>>8  & 0xff);
+            boundary[44] = (byte) (new_c>>16 & 0xff);
+            boundary[46] = (byte) (new_c>>24 & 0xff);
+ */
+            int off = 2;
+            
+            for (int idx=0; idx<opts.length; idx++) {
+                if (opts[idx] == null)  continue;
+                
                 out.write(boundary, off, boundary.length-off);
-		pos += boundary.length - off;
-		off  = 0;
-		int  start = pos;
-
+                pos += boundary.length - off;
+                off  = 0;
+                int  start = pos;
+                
                 out.write(cont_disp, 0, cont_disp.length);
-		pos += cont_disp.length;
-
-		int nlen = opts[idx].getName().length();
+                pos += cont_disp.length;
+                
+                int nlen = opts[idx].getName().length();
                 out.write(opts[idx].getName().getBytes("8859_1"), 0, nlen);
-		pos += nlen;
-
+                pos += nlen;
+                
                 out.write((byte) '"');
                 pos++;
                 out.write((byte) '\r');
@@ -418,56 +406,55 @@ public class MultipartForm
                 pos++;
                 out.write((byte) '\n');
                 pos++;
-
+                
                 out.flush();
-
-		int vlen = opts[idx].getValue().length();
+                
+                int vlen = opts[idx].getValue().length();
                 out.write(opts[idx].getValue().getBytes("8859_1"), 0, vlen);
                 out.flush();
-		pos += vlen;
-
+                pos += vlen;
+                
 /*
                 // Not sure why this is here -- seems unnecessary to me -- mbj
-		if ((pos-start) >= boundary.length  &&
-		    Util.findStr(boundary, bnd_cmp, res, start, pos) != -1)
-		    continue NewBound;
-*/
-	    }
-
-	    for (int idx=0; idx<files.length; idx++)
-	    {
+                if ((pos-start) >= boundary.length  &&
+                    Util.findStr(boundary, bnd_cmp, res, start, pos) != -1)
+                    continue NewBound;
+ */
+            }
+            
+            for (int idx=0; idx<files.length; idx++) {
                 if (files[idx] == null)continue;
-
+                
                 if (fileData == null) {
                     File file = new File(files[idx].getValue());
                     String fname = file.getName();
                     if (mangler != null)
                         fname = mangler.mangleFilename(fname,
-                            files[idx].getName());
+                                files[idx].getName());
                     if (fname == null)continue;
-
+                    
                     out.write(boundary, off, boundary.length - off);
                     pos += boundary.length - off;
                     off = 0;
                     int start = pos;
-
+                    
                     out.write(cont_disp, 0, cont_disp.length);
                     pos += cont_disp.length;
-
+                    
                     int nlen = files[idx].getName().length();
                     out.write(files[idx].getName().getBytes("8859_1"), 0, nlen);
                     pos += nlen;
-
+                    
                     out.write(filename, 0, filename.length);
                     pos += filename.length;
-
+                    
                     nlen = fname.length();
                     out.write(fname.getBytes("8859_1"), 0, nlen);
                     pos += nlen;
-
+                    
                     out.write( (byte) '"');
                     pos++;
-
+                    
                     String ct = CT.getContentType(file.getName());
                     if (ct != null) {
                         out.write(cont_type, 0, cont_type.length);
@@ -475,7 +462,7 @@ public class MultipartForm
                         out.write(ct.getBytes("8859_1"), 0, ct.length());
                         pos += ct.length();
                     }
-
+                    
                     out.write( (byte) '\r');
                     pos++;
                     out.write( (byte) '\n');
@@ -484,9 +471,9 @@ public class MultipartForm
                     pos++;
                     out.write( (byte) '\n');
                     pos++;
-
+                    
                     out.flush();
-
+                    
                     FileInputStream fs = new FileInputStream(file);
                     byte[] buf = new byte[bufferSize];
                     int cnt = 0;
@@ -499,7 +486,7 @@ public class MultipartForm
                         }
                     }
                     fs.close(); // added by DFH after e-mail from MJones
-
+                    
                     /*
                                      // Not sure why this is here -- seems unnecessary to me -- mbj
                        if ((pos-start) >= boundary.length  &&
@@ -512,28 +499,28 @@ public class MultipartForm
                         fname = mangler.mangleFilename(fname,
                                 files[idx].getName());
                     if (fname == null)continue;
-
+                    
                     out.write(boundary, off, boundary.length - off);
                     pos += boundary.length - off;
                     off = 0;
-
+                    
                     out.write(cont_disp, 0, cont_disp.length);
                     pos += cont_disp.length;
-
+                    
                     int nlen = files[idx].getName().length();
                     out.write(files[idx].getName().getBytes("8859_1"), 0, nlen);
                     pos += nlen;
-
+                    
                     out.write(filename, 0, filename.length);
                     pos += filename.length;
-
+                    
                     nlen = fname.length();
                     out.write(fname.getBytes("8859_1"), 0, nlen);
                     pos += nlen;
-
+                    
                     out.write( (byte) '"');
                     pos++;
-
+                    
                     String ct = CT.getContentType(files[idx].getValue());
                     if (ct != null) {
                         out.write(cont_type, 0, cont_type.length);
@@ -541,7 +528,7 @@ public class MultipartForm
                         out.write(ct.getBytes("8859_1"), 0, ct.length());
                         pos += ct.length();
                     }
-
+                    
                     out.write( (byte) '\r');
                     pos++;
                     out.write( (byte) '\n');
@@ -550,9 +537,9 @@ public class MultipartForm
                     pos++;
                     out.write( (byte) '\n');
                     pos++;
-
+                    
                     out.flush();
-
+                    
                     byte[] buf = new byte[bufferSize];
                     int cnt = 0;
                     dataSent = 0;
@@ -571,12 +558,12 @@ public class MultipartForm
                     fileData.close();
                 }
             }
-
+            
             break NewBound;
         }
-
+        
         out.write(boundary, 0, boundary.length);
-	pos += boundary.length;
+        pos += boundary.length;
         out.write((byte) '-');
         pos++;
         out.write((byte) '-');
@@ -585,27 +572,31 @@ public class MultipartForm
         pos++;
         out.write((byte) '\n');
         pos++;
-
+        
         out.flush();
         out.close();
-
-        if(dataSent != fileSize){
-            throw new Error("InputStream size not equal to fileSize specified");
+        
+        //*** File size check is bypassed if from a Web Upload Form, since it is
+        //*** not available ahead of time.  This is acheived by passing Integer.MAX_VALUE
+        //*** as the file size.
+        if (fileSize != Integer.MAX_VALUE) {
+            if(dataSent != fileSize)
+                throw new Error("InputStream size not equal to fileSize specified");
+            
+            if (pos != getLength())
+                throw new Error("Calculated "+getLength()+
+                        " bytes but wrote "+ pos+" bytes!");
         }
-
-	if (pos != getLength())
-	    throw new Error("Calculated "+getLength()+
-                            " bytes but wrote "+ pos+" bytes!");
-
-	/* the boundary parameter should be quoted (rfc-2046, section 5.1.1)
-	 * but too many script authors are not capable of reading specs...
-	 * So, I give up and don't quote it.
-	 */
-	content_header = new NVPair("Content-Type",
-			       "multipart/form-data; boundary=" +
-			       new String(boundary, 4, boundary.length-4, "8859_1"));
+        
+        /* the boundary parameter should be quoted (rfc-2046, section 5.1.1)
+         * but too many script authors are not capable of reading specs...
+         * So, I give up and don't quote it.
+         */
+        content_header = new NVPair("Content-Type",
+                "multipart/form-data; boundary=" +
+                new String(boundary, 4, boundary.length-4, "8859_1"));
     }
-
+    
     /**
      * Get the length in bytes of this form after encoding.
      * This method can be used to set "Content-Length" headers and in
@@ -614,11 +605,10 @@ public class MultipartForm
      *
      * @return the length of the encoded form in bytes
      */
-    public long getLength()
-    {
-      return encodedLength;
+    public long getLength() {
+        return encodedLength;
     }
-
+    
     /**
      * Get the content header after encoding.
      * This returns a String that contains the
@@ -628,19 +618,16 @@ public class MultipartForm
      *
      * @return the content header String
      */
-    public String getContentType()
-    {
-      return content_header.getValue();
+    public String getContentType() {
+        return content_header.getValue();
     }
-
-    private static class CT extends URLConnection
-    {
-	protected static final String getContentType(String fname)
-	{
-	    return guessContentTypeFromName(fname);
-	}
-
-	private CT() { super(null); }
-	public void connect() { }
+    
+    private static class CT extends URLConnection {
+        protected static final String getContentType(String fname) {
+            return guessContentTypeFromName(fname);
+        }
+        
+        private CT() { super(null); }
+        public void connect() { }
     }
 }
