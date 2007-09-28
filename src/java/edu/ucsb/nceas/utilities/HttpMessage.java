@@ -3,9 +3,9 @@
  *  Copyright: 2000 Regents of the University of California and the
  *              National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: sgarg $'
- *     '$Date: 2004-09-02 21:25:16 $'
- * '$Revision: 1.3 $'
+ *   '$Author: barteau $'
+ *     '$Date: 2007-09-28 22:58:34 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ import java.net.*;
 import java.util.*;
 
 import HTTPClient.NVPair;
+import java.util.Map.Entry;
 
 public class HttpMessage
 {
@@ -250,6 +251,38 @@ public class HttpMessage
     }
     InputStream res = closePostConnection();
     return res;
+  }
+  
+    /**
+     * This is an alternative method of sending post data.  This method allows multiple
+     * parameters with the same name.
+     * @param args Properties of arguments where,
+     *    key = param value
+     *    value = param name
+     * @return InputStream
+     * @throws java.io.IOException Input/Output Exception
+     */
+  public InputStream sendPostParameters(Properties args) throws IOException  {
+      String                        paramName, paramValue;
+      Iterator                      iterIt;
+      Map.Entry                     entry;
+      InputStream                   result;
+      
+    openPostConnection();
+    out = new DataOutputStream(con.getOutputStream());
+    iterIt = args.entrySet().iterator();
+    while (iterIt.hasNext()) {
+        entry = (Entry) iterIt.next();
+        paramValue = (String) entry.getKey();
+        paramName = (String) entry.getValue();
+        sendNameValuePair(paramName, paramValue);
+        if (iterIt.hasNext()) {
+            ((DataOutputStream)out).writeBytes("&");
+            out.flush();
+        }
+    }
+    result = closePostConnection();
+    return(result);
   }
 
   /**
