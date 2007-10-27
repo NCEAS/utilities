@@ -3,9 +3,9 @@
  *  Copyright: 2003 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: jones $'
- *     '$Date: 2006-11-12 09:51:51 $'
- * '$Revision: 1.3 $'
+ *   '$Author: tao $'
+ *     '$Date: 2007-10-27 01:00:30 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ import java.util.Properties;
 public class Options 
 {
     private static Options options = null;
-    private Properties appConfig = null;
-    private File propertyFile    = null;
+    private static Properties appConfig = null;
+    private static File propertyFile    = null;
 
     /**
      * Private constructor because this is a Singleton.
@@ -74,6 +74,19 @@ public class Options
             options = new Options(propertyFile);
         }
         return options;
+    }
+    
+    /**
+     * Reloads opitions. This method will overwrite the current options with new options
+     * from property file. This method should be used when the property file is changed by user.
+     * @return
+     *              the single instance of the Options
+     * @throws IOException if the property file can't be read
+     */
+    public static Options reload() throws IOException
+    {
+    	options =new Options(propertyFile);
+    	return options;
     }
 
     /**
