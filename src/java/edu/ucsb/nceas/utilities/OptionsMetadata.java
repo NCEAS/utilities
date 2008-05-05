@@ -3,9 +3,9 @@
  *  Copyright: 2003 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: jones $'
- *     '$Date: 2006-12-06 16:14:51 $'
- * '$Revision: 1.2 $'
+ *   '$Author: daigle $'
+ *     '$Date: 2008-05-05 17:14:44 $'
+ * '$Revision: 1.2.2.1 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ package edu.ucsb.nceas.utilities;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -36,6 +37,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Vector;
+
+import javax.xml.transform.TransformerException;
 
 /**
  * Encapsulate the meta-informaiton about Options so that this information can
@@ -54,10 +58,25 @@ public class OptionsMetadata {
      * @param reader a Reader containing the metadata to be loaded (csv format)
      */
     public OptionsMetadata(Reader reader) {
-        optionsMetadata = new HashMap();
+        optionsMetadata = new HashMap<String,Metadata>();
         
         // Load the metadata from the file
         load(reader);
+    }
+    
+    /**
+     * Construct a new instance of the OptionsMetadata class.
+     * @param xmlPropsFile the file object containing the metadata to be loaded (XML format)
+     */
+    public OptionsMetadata(File xmlPropsFile) throws IOException, TransformerException {
+        optionsMetadata = new HashMap<String,Metadata>();
+        
+        XMLProperties metadataProperties = new XMLProperties();
+        metadataProperties.load(xmlPropsFile);
+        
+        // Load the metadata from the file
+        //load(reader);
+        load(metadataProperties);
     }
     
     /**
@@ -126,12 +145,32 @@ public class OptionsMetadata {
     }
     
     /**
+     * Get the field type of this configuration value.
+     * @param key the key to look up
+     * @return the field type for this key
+     */
+    public synchronized String getOptionFieldType(String key) {
+        Metadata md = (Metadata)optionsMetadata.get(key);
+        return md.getFieldType();
+    }
+    
+    /**
+     * Get the field type of this configuration value.
+     * @param key the key to look up
+     * @return a vector of options for the dropdown field
+     */
+    public synchronized Vector<String> getFieldOptions(String key) {
+        Metadata md = (Metadata)optionsMetadata.get(key);
+        return md.getFieldOptions();
+    }
+    
+    /**
      * Get a Set of the groups that are common across all of the properties.
      * @return Set of the groups found for all properties
      */
-    public synchronized Set getGroups() {
-        HashSet groups = new HashSet();
-        Iterator iter = optionsMetadata.keySet().iterator();
+    public synchronized Set<String> getGroups() {
+        HashSet<String> groups = new HashSet<String>();
+        Iterator<String> iter = optionsMetadata.keySet().iterator();
         while (iter.hasNext()) {
             String key = (String)iter.next();
             String group = getOptionGroup(key);
@@ -142,15 +181,23 @@ public class OptionsMetadata {
     }
     
     /**
+     * Get a Set of all keys in the properties
+     * @return Set of all keys in the properties
+     */
+    public synchronized Set<String> getKeys() {        
+        return optionsMetadata.keySet();
+    }
+    
+    /**
      * Get a Set of the keys for properties that are members of a given group.
      * @param target the target group to be searched for matching keys
      * @return Set of the keys found within the given group
      */
-    public synchronized SortedMap getKeysInGroup(String target) {
-        TreeMap options = new TreeMap();
-        Iterator iter = optionsMetadata.keySet().iterator();
+    public synchronized SortedMap<Integer,String> getKeysInGroup(String target) {
+        TreeMap<Integer,String> options = new TreeMap<Integer,String>();
+        Iterator<String> iter = optionsMetadata.keySet().iterator();
         while (iter.hasNext()) {
-            String key = (String)iter.next();
+            String key = iter.next();
             String group = getOptionGroup(key);
             int index = getOptionIndex(key);
             if (group.equals(target)) {
@@ -180,15 +227,93 @@ public class OptionsMetadata {
     }
     
     /**
+     * Read the options from an XMLProperties object and store in memory.
+     * @param metadataProperties an XMLProperties object holding the 
+     * metadata information.
+     */
+    public synchronized void load(XMLProperties metadataProperties) throws TransformerException{
+        String[] configArray = 
+        	metadataProperties.getProperty("/metadataConfig/config");
+        for (int i = 1; i <= configArray.length; i++ ) {
+        	String xPathPrefix = "/metadataConfig/config[" + i + "]";
+        	String[] keyArray = 
+        		metadataProperties.getProperty(xPathPrefix + "/key");
+        	String[] labelArray = 
+        		metadataProperties.getProperty(xPathPrefix + "/label");
+        	String[] groupArray = 
+        		metadataProperties.getProperty(xPathPrefix + "/group");
+        	String[] indexArray = 
+        		metadataProperties.getProperty(xPathPrefix + "/index");
+        	String[] descriptionArray = 
+        		metadataProperties.getProperty(xPathPrefix + "/description");
+        	String[] fieldTypeArray = 
+        		metadataProperties.getProperty(xPathPrefix + "/fieldType");
+                	       	
+            if (keyArray == null || labelArray == null || 
+            		groupArray == null || indexArray == null) {
+            	throw new TransformerException("Could not process a metadata properties +" +
+            			"record. One of the following values is null: key, label, group or index");
+            }
+            
+            Integer intIndex;
+            try {
+        	    intIndex = Integer.parseInt(indexArray[0]);
+        	} catch (NumberFormatException nfe) {
+        		throw new TransformerException("Could not process a metadata properties record. " +
+        				"index was not a valid integer for key: " + keyArray[0]);
+        	}
+            	
+        	Metadata metadata = new Metadata();
+        	metadata.setKey(keyArray[0]);
+        	metadata.setLabel(labelArray[0]);
+        	metadata.setGroup(groupArray[0]);
+        	metadata.setIndex(intIndex);
+        	metadata.setDescription(descriptionArray[0]);
+        	
+            if (fieldTypeArray != null) {
+                metadata.setFieldType(fieldTypeArray[0]);
+                Vector<String> fieldOptions = new Vector<String>();
+                if (fieldTypeArray[0].equals("select")) {
+                    String[] optionArray = 
+                    	metadataProperties.getProperty(xPathPrefix + "/option");
+                    for(int j = 1; j <= optionArray.length; j++ ) {
+                    	String[] fieldOptionArray = 
+                    	    metadataProperties.getProperty(xPathPrefix + "/option[" + j + "]/name");
+                	    fieldOptions.add(fieldOptionArray[0]);    
+                    }
+                }
+                metadata.setFieldOptions(fieldOptions);
+            } else {
+            	metadata.setFieldType("text");
+            }
+        	
+        	optionsMetadata.put(keyArray[0], metadata);
+        }
+    	
+//        BufferedReader isr = new BufferedReader(reader);
+//        try {
+//            String line = "";
+//            while (line !=  null) {
+//                line = isr.readLine();
+//                if (line != null) {
+//                    parseLine(line);
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+    
+    /**
      * Write out a serialized version of the OptionsMetadata in CSV format.
      * @param writer the Writer to which the metadata should be written
      */
     public synchronized void store(Writer writer) {
          BufferedWriter osr = new BufferedWriter(writer);
-         Iterator iter = optionsMetadata.keySet().iterator();
+         Iterator<String> iter = optionsMetadata.keySet().iterator();
          while (iter.hasNext()) {
-             String key = (String)iter.next();
-             Metadata md = (Metadata)optionsMetadata.get(key);
+             String key = iter.next();
+             Metadata md = optionsMetadata.get(key);
              StringBuffer line = new StringBuffer();
              line.append("# ");
              line.append(md.getKey()+",");
@@ -234,7 +359,7 @@ public class OptionsMetadata {
      * used to store the option. Values are instances of the Metadata inner
      * class.
      */
-    private HashMap optionsMetadata;
+    private HashMap<String,Metadata> optionsMetadata;
     
     /**
      * A data structure to encapsulate the metadata about a property, including
@@ -246,6 +371,10 @@ public class OptionsMetadata {
         private String group;
         private int index;
         private String description;
+        private String fieldType;
+        private Vector<String> fieldOptions;
+        
+        public Metadata() {}
         
         public Metadata(String key, String label, String group, int index, 
                 String description) {
@@ -324,6 +453,34 @@ public class OptionsMetadata {
          */
         public void setKey(String key) {
             this.key = key;
+        }
+            
+        /**
+         * @return the field type
+         */
+        public String getFieldType() {
+            return fieldType;
+        }
+
+        /**
+         * @param fieldType the field type to set.
+         */
+        public void setFieldType(String fieldType) {
+            this.fieldType = fieldType;
+        }
+        
+        /**
+         * @return a vector of the field options
+         */
+        public Vector<String> getFieldOptions() {
+            return fieldOptions;
+        }
+
+        /**
+         * @param fieldType a vector of the field options to set.
+         */
+        public void setFieldOptions(Vector<String> fieldOptions) {
+            this.fieldOptions = fieldOptions;
         }
     }
 }
