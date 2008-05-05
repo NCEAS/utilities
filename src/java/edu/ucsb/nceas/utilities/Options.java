@@ -3,9 +3,9 @@
  *  Copyright: 2003 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: tao $'
- *     '$Date: 2007-10-27 01:00:30 $'
- * '$Revision: 1.4 $'
+ *   '$Author: daigle $'
+ *     '$Date: 2008-05-05 17:11:40 $'
+ * '$Revision: 1.4.2.1 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,9 @@
 package edu.ucsb.nceas.utilities;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Properties;
 
 /**
  * A class that reads options from a properties file.  This is a Singleton
@@ -41,7 +39,7 @@ import java.util.Properties;
 public class Options 
 {
     private static Options options = null;
-    private static Properties appConfig = null;
+    private static SortedProperties appConfig = null;
     private static File propertyFile    = null;
 
     /**
@@ -50,14 +48,12 @@ public class Options
      * @param propertyFile the file from which to read properties
      * @throws an IOException if the property file can't be read
      */
-    private Options(File propertyFile) throws IOException
+    private Options(File propFile) throws IOException
     {
         // locate, open, and read the properties
-        appConfig = new Properties();
-        this.propertyFile = propertyFile;
-        FileInputStream fis = new FileInputStream(propertyFile);
-        appConfig.load(fis);
-        fis.close();
+        appConfig = new SortedProperties(propFile.getPath());
+        propertyFile = propFile;
+        appConfig.load();
     }
 
     /**
@@ -77,10 +73,9 @@ public class Options
     }
     
     /**
-     * Reloads opitions. This method will overwrite the current options with new options
+     * Reloads options. This method will overwrite the current options with new options
      * from property file. This method should be used when the property file is changed by user.
-     * @return
-     *              the single instance of the Options
+     * @return the single instance of the Options
      * @throws IOException if the property file can't be read
      */
     public static Options reload() throws IOException
@@ -116,9 +111,8 @@ public class Options
     
     /**
      * Reset value for given option name or set a new option pair in the
-     * peroperty file. This method will also call a save method to save
-     * the new values into properties file. Note: the comment in property
-     * file will be gone and order of keys will be change
+     * property file. This method will also call a save method to save
+     * the new values into properties file. 
      * @param key  the option name
      * @param value  the new option value
      */
@@ -129,11 +123,33 @@ public class Options
     }
     
     /**
+     * Reset value for given option name or set a new option pair in the
+     * property file. This method will NOT save the values to a properties
+     * file.  This method should be used when many changes will be made to 
+     * the properties at one time and you don't want to keep writing the file.
+     * You must call persistOptions() once you've made all your changes 
+     * @param key  the option name
+     * @param value  the new option value
+     */
+    public synchronized void setOptionNoPersist(String key, String value)
+    {
+        appConfig.setProperty(key, value);
+    }
+    
+    /**
+     * Save the properties to a properties file. 
+     */
+    public synchronized void persistOptions()
+    {
+        storePropertyFile();
+    }
+    
+    /**
      * Return a list of the options that are configured.
      * 
      * @return an Enumeration of the names of the options available
      */
-    public Enumeration propertyNames() {
+    public Enumeration<String> propertyNames() {
         return appConfig.propertyNames();
     }
     
