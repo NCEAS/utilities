@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: brooke $'
- *     '$Date: 2003-07-17 21:31:24 $'
- * '$Revision: 1.1 $'
+ *   '$Author: daigle $'
+ *     '$Date: 2008-06-04 18:51:16 $'
+ * '$Revision: 1.1.2.1 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
  */
 
 package edu.ucsb.nceas.utilities;
+
+import java.util.Vector;
 
 
 /**
@@ -97,6 +99,35 @@ public class StringUtil
     }
     return stnlBuff.toString();
   }
+  
+	/**
+	 * Convert a comma delimited string into a Vector
+	 * 
+	 * @param list
+	 *            delimited list of values
+	 * @param delim
+	 *            character specifying the delimiter
+	 * @return a Vector holding individual values
+	 */
+	public static Vector<String> toVector(String list, char delim) {
+		Vector<String> subList = new Vector<String>();
+		if (list == null) {
+			return subList;
+		}
+
+		int fromIndex = 0;
+		int toIndex = -2;
+		while (toIndex != list.length()) {
+			toIndex = list.indexOf(delim, fromIndex);
+			if (toIndex == -1) {
+				toIndex = list.length();
+			}
+			subList.add(list.substring(fromIndex, toIndex));
+			fromIndex = toIndex + 1;
+		}
+
+		return subList;
+	} 
 }
 
 

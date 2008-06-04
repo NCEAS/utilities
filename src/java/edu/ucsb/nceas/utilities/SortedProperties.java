@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-05-05 17:15:42 $'
- * '$Revision: 1.1.2.1 $'
+ *     '$Date: 2008-06-04 18:51:16 $'
+ * '$Revision: 1.1.2.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,11 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
+
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -47,9 +48,12 @@ public class SortedProperties
 {
 	private String propertiesDirName = null;
 	private String propertiesFileName = null;
-	private LinkedHashMap<String,String> propertiesMap = null;
+	private LinkedHashMap<String,String> allLinesMap = null;
+	private HashMap<String,String> propertiesMap = null;
 
 	// Identifiers for non-property lines in file
+	private static String IS_PROPERTY = "true";
+	private static String IS_NOT_PROPERTY = "false";
 	private static String SPACE = "space";
     private static String COMMENT = "#";
     private static String UNKNOWN = "???";  
@@ -71,7 +75,8 @@ public class SortedProperties
     	File propFile = new File(propFileName);
     	propertiesFileName = propFileName;
     	propertiesDirName = propFile.getParent();
-    	propertiesMap = new LinkedHashMap<String,String>();     
+    	allLinesMap = new LinkedHashMap<String,String>();     
+    	propertiesMap = new HashMap<String, String>();
         
     }
     
@@ -87,9 +92,8 @@ public class SortedProperties
     {
         propertiesFileName = propFile.getPath();
         propertiesDirName = propFile.getParent();
-    	propertiesMap = new LinkedHashMap<String,String>();       
-        
-    	System.out.println("MCD: Created Sorted Properties (2) with filename: " + propertiesFileName);
+        allLinesMap = new LinkedHashMap<String,String>(); 
+        propertiesMap = new HashMap<String, String>();
     }
     
     /**
@@ -114,7 +118,10 @@ public class SortedProperties
 		    String fileLine;
 		    while ((fileLine = reader.readLine()) != null) {
 			    String parsedLine[] = parseLine(fileLine);
-			    propertiesMap.put(parsedLine[0], parsedLine[1]);
+			    allLinesMap.put(parsedLine[0], parsedLine[1]);
+			    if (parsedLine[2].equals("true")) {
+			    	propertiesMap.put(parsedLine[0], parsedLine[1]);
+			    }
 		    }
 		} finally {
 		    // Close our input stream
@@ -138,32 +145,38 @@ public class SortedProperties
         
     	int equalIndex;
     	String line = rawLine.trim();
-    	String[] parsedString = new String[2];    	
+    	String[] parsedString = new String[3];    	
                
     	if (line.matches("^#.*")) {                // line is a comment
     		nonPropertyCount++;
 			parsedString[0] = COMMENT + nonPropertyCount;
 			parsedString[1] = line;
+			parsedString[2] = IS_NOT_PROPERTY;
         } else if (line.matches("^$")) {          // line is blank
         	nonPropertyCount++;
         	parsedString[0] = SPACE + nonPropertyCount;
         	parsedString[1] = "";
+        	parsedString[2] = IS_NOT_PROPERTY;
         } else if ((equalIndex = line.indexOf('=')) != -1) {   // there is an = in the line
         	if (equalIndex == 0 ) {                     // the line starts with = 
         		nonPropertyCount++;
         		parsedString[0] = UNKNOWN + nonPropertyCount;
             	parsedString[1] = line;
+            	parsedString[2] = IS_NOT_PROPERTY;
         	} else if (equalIndex == line.length()) {    // the line ends with =
         		parsedString[0] = line.substring(0, equalIndex);
         		parsedString[1] = "";
+            	parsedString[2] = IS_PROPERTY;
         	} else {                                    // there is a key and a value
         		parsedString[0] = line.substring(0, equalIndex);
         		parsedString[1] = line.substring(equalIndex + 1);
+            	parsedString[2] = IS_PROPERTY;
         	}        	
         } else {                                     // something else going on here
         	nonPropertyCount++;
         	parsedString[0] = UNKNOWN + nonPropertyCount;
-        	parsedString[1] = line;
+        	parsedString[1] = line;            	
+        	parsedString[2] = IS_NOT_PROPERTY;
         }
     	
     	return parsedString;
@@ -171,15 +184,30 @@ public class SortedProperties
     
     /**
      * Reset value for given option name or set a new option pair in the
-     * property file. This method will also call a save method to save
+     * property file. This method will also call a store method to save
      * the new values into properties file. Note: the comments in property
      * file will be gone and order of keys will be changed
      * @param key  the option name
      * @param value  the new option value
      */
-    public synchronized void setProperty(String key, String value) {
+    public synchronized void setProperty(String key, String value) throws IOException {
+    	allLinesMap.put(key, value);
     	propertiesMap.put(key, value);
+    	store();
     }
+    
+    /**
+     * Reset value for given option name or set a new option pair in the
+     * property file. This method not call the store method to save
+     * the new values into properties file. Note: the comments in property
+     * file will be gone and order of keys will be changed
+     * @param key  the option name
+     * @param value  the new option value
+     */
+    public synchronized void setPropertyNoPersist(String key, String value) {
+    	allLinesMap.put(key, value);
+    	propertiesMap.put(key, value);
+    } 
     
     /**
      * Get an option value from the properties file
@@ -187,9 +215,13 @@ public class SortedProperties
      * @param optionName the name of the option requested
      * @return the String value for the given property, or null if not found
      */
-    public synchronized String get(String optionName) {
+    public synchronized String getProperty(String optionName) throws PropertyNotFoundException {
         String value = (String)propertiesMap.get(optionName);
   
+        if (value == null) {
+        	throw new PropertyNotFoundException("Could not find property: " + optionName);
+        }
+        
         return value;
     }
     
@@ -202,33 +234,13 @@ public class SortedProperties
     	
     	return (Enumeration<String>)Collections.enumeration(keySet);
     }
-    
-    /**
-     * Save the properties to a properties file. Ordering, comments and 
-     * blank lines will be preserved.  
-     */
-    public synchronized void store() throws IOException {
-    	store(null);
-    }
-    
-    /**
-     * Save the properties to a properties file. Ordering, comments and 
-     * blank lines will be preserved.  This is for compatibility with the 
-     * java Properties class.  We don't actually use the writer.
-     * @param outputStream - This is for backward compatibility with the 
-     *                  java Properties class.  We don't actually use the writer.
-     * @param comment - The comment to be added at the top of the file 
-     */
-    public synchronized void store(OutputStream outputStream, String comment) throws IOException {
-    	store(comment);
-    }
-    
+       
     /**
      * Save the properties to a properties file. Ordering, comments and 
      * blank lines will be preserved.
      * @param comment - The comment to be added at the top of the file 
      */
-    public synchronized void store(String comment) throws IOException {
+    public synchronized void store() throws IOException {
         int fileStatus = FileUtil.getFileStatus(propertiesFileName);
         
         if (fileStatus == FileUtil.DOES_NOT_EXIST) {
@@ -249,34 +261,19 @@ public class SortedProperties
 	    try {
 	    	output = new PrintWriter(new BufferedWriter(new FileWriter(propertiesFileName)));
 	    	
-	    	if (comment != null) {
-	    		output.println(comment);
-	    	}
-	    	
-            for (Iterator<String> it = propertiesMap.keySet().iterator(); it.hasNext(); ) {
+            for (Iterator<String> it = allLinesMap.keySet().iterator(); it.hasNext(); ) {
     	        String key = it.next();
     	        if (key.startsWith(SPACE)) {
     	        	output.println("");
     	        } else if (key.startsWith(COMMENT) || key.startsWith(UNKNOWN)) {
-    	        	output.println(propertiesMap.get(key));
+    	        	output.println(allLinesMap.get(key));
     	        } else {
-    	            output.println(key + "=" + propertiesMap.get(key));
+    	            output.println(key + "=" + allLinesMap.get(key));
     	        }
             }
     	} finally {
     	    output.close();
     	}
     }       
-    
-    /**
-     * Convenience method for debugging purposes.  Writes all lines including encoded
-     * comments and blank lines to standard output.
-     */
-    public void printProperties() {
-    	for (Iterator<String> it = propertiesMap.keySet().iterator(); it.hasNext(); ) {
-    	    String key = it.next();
-    	    String value = propertiesMap.get(key);
-    	    System.out.println(key + " = " + value);
-    	}
-    }
+   
 }

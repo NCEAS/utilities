@@ -1,11 +1,11 @@
 /**
- *  '$RCSfile: OptionsMetadata.java,v $'
+ *  '$RCSfile: PropertiesMetaData.java,v $'
  *  Copyright: 2003 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-05-05 17:14:44 $'
- * '$Revision: 1.2.2.1 $'
+ *     '$Date: 2008-06-04 18:51:16 $'
+ * '$Revision: 1.1.2.1 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,13 +51,13 @@ import javax.xml.transform.TransformerException;
  * 
  * @author Matt Jones
  */
-public class OptionsMetadata {
+public class PropertiesMetaData {
     
     /**
      * Construct a new instance of the OptionsMetadata class.
      * @param reader a Reader containing the metadata to be loaded (csv format)
      */
-    public OptionsMetadata(Reader reader) {
+    public PropertiesMetaData(Reader reader) {
         optionsMetadata = new HashMap<String,Metadata>();
         
         // Load the metadata from the file
@@ -68,7 +68,7 @@ public class OptionsMetadata {
      * Construct a new instance of the OptionsMetadata class.
      * @param xmlPropsFile the file object containing the metadata to be loaded (XML format)
      */
-    public OptionsMetadata(File xmlPropsFile) throws IOException, TransformerException {
+    public PropertiesMetaData(File xmlPropsFile) throws IOException, TransformerException {
         optionsMetadata = new HashMap<String,Metadata>();
         
         XMLProperties metadataProperties = new XMLProperties();

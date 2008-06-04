@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-05-05 17:09:29 $'
- * '$Revision: 1.1.2.1 $'
+ *     '$Date: 2008-06-04 18:51:16 $'
+ * '$Revision: 1.1.2.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,14 +50,27 @@ public class FileUtil
     public static int EXISTS_ONLY = 1;
     public static int EXISTS_READABLE = 2;
     public static int EXISTS_READ_WRITABLE = 3; 
-
-//    private static Class classRef = FileUtil.class;
+    
+    private static Character FILE_SEPARATOR = null;
     
     /**
      *  constructor
      */
     private FileUtil() {}
 
+    /**
+	 * Get the character that separates directories in a path
+	 * 
+	 * @returns character representation of the file separator
+	 */
+    public static char getFS() {
+    	if (FILE_SEPARATOR == null)  {
+    		FILE_SEPARATOR = File.separatorChar;
+    	}
+    	
+    	return FILE_SEPARATOR;
+    }
+    
     /**
      * Get the status of the file.  The status that is returned is the greatest
      * possible of:
