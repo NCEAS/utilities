@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-06-04 18:51:16 $'
- * '$Revision: 1.4.2.2 $'
+ *     '$Date: 2008-07-01 17:36:30 $'
+ * '$Revision: 1.4.2.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ public class Options
     {
         // locate, open, and read the properties
         appConfig = new Properties();
-        this.propertyFile = propertyFile;
+        Options.propertyFile = propertyFile;
         FileInputStream fis = new FileInputStream(propertyFile);
         appConfig.load(fis);
         fis.close();
