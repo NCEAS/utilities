@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-06-04 18:51:16 $'
- * '$Revision: 1.1.2.1 $'
+ *     '$Date: 2008-07-01 17:35:17 $'
+ * '$Revision: 1.1.2.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ package edu.ucsb.nceas.utilities;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -40,11 +41,12 @@ import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.Cipher;
 import javax.crypto.BadPaddingException;
-import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESedeKeySpec;
 
 
 /**
@@ -84,17 +86,28 @@ public class EncryptionUtil
 		return recovered;
 	}
 
-	public static void createNewKeyFile(String keyFileName) {
+	public static void createNewKeyFile(String keyFileName)
+			throws NoSuchAlgorithmException, KeyFileExistsException,
+			InvalidKeySpecException, IOException {
 		File keyFile = new File(keyFileName);
 		if (keyFile.exists()) {
 			throw new KeyFileExistsException(
 					"Cannot create encryption key file when one already exists: "
 							+ keyFileName);
 		}
-		
+
 		SecretKey key = generateKey();
-		writeKey(key, keyfile);
+		writeKeyToFile(key, keyFile);
 	}
+	
+    /** Generate a secret TripleDES encryption/decryption key */
+	public static SecretKey generateKey() throws NoSuchAlgorithmException {
+		// Get a key generator for Triple DES (a.k.a DESede)
+		KeyGenerator keygen = KeyGenerator.getInstance("DESede");
+		// Use it to generate a key
+		return keygen.generateKey();
+	}
+
 	
 	/** Read a TripleDES secret key from the specified file */
 	public static SecretKey readKeyFromFile(String keyFileName) throws IOException,
@@ -113,6 +126,23 @@ public class EncryptionUtil
 		SecretKey key = keyfactory.generateSecret(keyspec);
 		return key;
 	}
+	
+    /** Save the specified TripleDES SecretKey to the specified file */
+	public static void writeKeyToFile(SecretKey key, File f)
+			throws IOException, NoSuchAlgorithmException,
+			InvalidKeySpecException {
+		// Convert the secret key to an array of bytes like this
+		SecretKeyFactory keyfactory = SecretKeyFactory.getInstance("DESede");
+		DESedeKeySpec keyspec = (DESedeKeySpec) keyfactory.getKeySpec(key,
+				DESedeKeySpec.class);
+		byte[] rawkey = keyspec.getKey();
+
+		// Write the raw key to the file
+		FileOutputStream out = new FileOutputStream(f);
+		out.write(rawkey);
+		out.close();
+	}
+
 	
 	private static void createCipher() throws NoSuchPaddingException,
 			NoSuchAlgorithmException {
