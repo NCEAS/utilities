@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-06-04 18:51:16 $'
- * '$Revision: 1.1.2.2 $'
+ *     '$Date: 2008-07-01 17:38:28 $'
+ * '$Revision: 1.1.2.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,10 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * A class that reads options from a properties file.  Comments, spaces and order
@@ -48,8 +46,8 @@ public class SortedProperties
 {
 	private String propertiesDirName = null;
 	private String propertiesFileName = null;
-	private LinkedHashMap<String,String> allLinesMap = null;
-	private HashMap<String,String> propertiesMap = null;
+	private LinkedHashMap<String, String> allLinesMap = null;
+	private LinkedHashMap<String, String> propertiesMap = null;
 
 	// Identifiers for non-property lines in file
 	private static String IS_PROPERTY = "true";
@@ -75,25 +73,9 @@ public class SortedProperties
     	File propFile = new File(propFileName);
     	propertiesFileName = propFileName;
     	propertiesDirName = propFile.getParent();
-    	allLinesMap = new LinkedHashMap<String,String>();     
-    	propertiesMap = new HashMap<String, String>();
+    	allLinesMap = new LinkedHashMap<String, String>();     
+    	propertiesMap = new LinkedHashMap<String, String>();
         
-    }
-    
-    /**
-     * Constructor.  Populates the file and directory names of the properties
-     * file and creates the map which will hold the properties.  Loading of 
-     * the file will need to be done explicitly.  This is because we may be
-     * creating a new properties file.
-     *
-     * @param propFile the file object for the file from which to read properties.
-     */
-    public SortedProperties(File propFile)  
-    {
-        propertiesFileName = propFile.getPath();
-        propertiesDirName = propFile.getParent();
-        allLinesMap = new LinkedHashMap<String,String>(); 
-        propertiesMap = new HashMap<String, String>();
     }
     
     /**
@@ -135,9 +117,9 @@ public class SortedProperties
      * Parse a single line from a properties file.  Preserve comments, blank
      * lines and unknown (un-parsable) values using unique keys that look like:
      *                     Key                        value
-     *    Comments:   #<unique number>       <the whole comment line>
-     *    Blank line space<unique number>               ""
-     *    Unknown    ???<unique number>      <the whole comment line>
+     * -- Comments:   #<unique number>       <the whole comment line>
+     * -- Blank line space<unique number>               ""
+     * -- Unknown    ???<unique number>      <the whole comment line>
      * @param rawLine a string holding the line read from a properties file.
      * @return a two element string array holding the key and value
      */
@@ -212,29 +194,72 @@ public class SortedProperties
     /**
      * Get an option value from the properties file
      *
-     * @param optionName the name of the option requested
+     * @param key the name of the property requested
      * @return the String value for the given property, or null if not found
      */
-    public synchronized String getProperty(String optionName) throws PropertyNotFoundException {
-        String value = (String)propertiesMap.get(optionName);
-  
-        if (value == null) {
-        	throw new PropertyNotFoundException("Could not find property: " + optionName);
-        }
-        
-        return value;
-    }
+    public synchronized String getProperty(String key)
+			throws PropertyNotFoundException {
+		String value = (String) propertiesMap.get(key);
+
+		if (value == null && !propertiesMap.containsKey(key)) {
+			throw new PropertyNotFoundException("Could not find property: " + key);
+		}
+
+		return value;
+	}
     
     /**
-     * Get an enumeration of all property names.
-     * @return enumeration of property names  
+     * Get all properties
+     *
+     * @return a linked hash map of all properties
      */
-    public Enumeration<String> propertyNames() {
+    public synchronized LinkedHashMap<String, String> getProperties()
+			throws PropertyNotFoundException {
+		
+		return propertiesMap;
+	}
+    
+    /**
+	 * Get a Vector of all property names.
+	 * 
+	 * @return Vector of property names
+	 */
+    public Vector<String> getPropertyNames() {
+    	Vector<String> groupKeySet = new Vector<String>();
     	Set<String> keySet = propertiesMap.keySet();
     	
-    	return (Enumeration<String>)Collections.enumeration(keySet);
+    	for (String key : keySet) {
+    			groupKeySet.add(key);
+    	}
+    	
+    	return groupKeySet;
     }
        
+    /**
+     * Get an enumeration of all property names that start with the 
+     * groupName prefix.
+     * 
+     * @param groupName the key prefix to look for.
+     * @return enumeration of property names  
+     */
+    public Vector<String> getPropertyNamesByGroup(String groupName) {
+    	groupName = groupName.trim();
+    	if (!groupName.endsWith(".")) {
+    		groupName += (".");
+    	}
+    	
+    	Set<String> keySet = propertiesMap.keySet();    	   	
+    	Vector<String> groupKeySet = new Vector<String>();  
+    	
+    	for (String key : keySet) {
+    		if (key.startsWith(groupName)) {
+    			groupKeySet.add(key);
+    		}
+    	}
+    	
+    	return groupKeySet;
+    }
+    
     /**
      * Save the properties to a properties file. Ordering, comments and 
      * blank lines will be preserved.
@@ -274,6 +299,5 @@ public class SortedProperties
     	} finally {
     	    output.close();
     	}
-    }       
-   
+    }        
 }
