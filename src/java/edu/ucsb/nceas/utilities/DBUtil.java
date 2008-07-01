@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-06-04 18:51:16 $'
- * '$Revision: 1.1.2.1 $'
+ *     '$Date: 2008-07-01 17:34:20 $'
+ * '$Revision: 1.1.2.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,11 @@ public class DBUtil
 	 * @param password database password
 	 * @returns Connection object
 	 */
-	public static Connection getConnection(String jdbcConnectString, String user, String password) throws SQLException {
-		Connection connection = DriverManager.getConnection(jdbcConnectString,
-				user, password);
+	public static Connection getConnection(String jdbcConnectString,
+			String user, String password) throws SQLException {
+		
+		Connection connection = 
+			DriverManager.getConnection(jdbcConnectString, user, password);
 
 		return connection;
 	}
@@ -70,7 +72,9 @@ public class DBUtil
 	 * @param tableName the name of the table to check
 	 * @returns boolean which is true if column is found, false otherwise
 	 */
-	public static boolean tableExists(Connection connection, String tableName) throws SQLException {
+	public static boolean tableExists(Connection connection, String tableName)
+			throws SQLException {
+
 		// Gets the database metadata
 		DatabaseMetaData dbMetaData = connection.getMetaData();
 		
@@ -99,7 +103,9 @@ public class DBUtil
 	 * @param columnName the name of the column we are looking for
 	 * @returns boolean which is true if column is found, false otherwise
 	 */
-	public static boolean columnExists(Connection connection, String tableName, String columnName) throws SQLException {
+	public static boolean columnExists(Connection connection, String tableName,
+			String columnName) throws SQLException {
+
 		// Gets the database metadata
 		DatabaseMetaData dbMetaData = connection.getMetaData();
 		
