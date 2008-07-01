@@ -7,8 +7,8 @@
  *    Authors: Matt Jones
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-06-04 18:51:16 $'
- * '$Revision: 1.1.2.1 $'
+ *     '$Date: 2008-07-01 17:37:26 $'
+ * '$Revision: 1.1.2.2 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,13 +38,18 @@ package edu.ucsb.nceas.utilities;
  *   4) DELETE mode, and no accession # provided
  *   5) DELETE mode, and accession # doesn't exist in xml_documents table
  */
-public class PropertyNotFoundException extends Exception {
-  /**
-   * Create a new AccessionNumberException.
-   *
-   * @param message The error or warning message.
-   */
-  public PropertyNotFoundException(String message) {
-    super(message);
-  }
+public class PropertyNotFoundException extends GeneralPropertyException {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1596055823732831833L;
+
+	/**
+	 * Create a new AccessionNumberException.
+	 *
+	 * @param message The error or warning message.
+	 */
+	public PropertyNotFoundException(String message) {
+		super(message);
+	}
 }
