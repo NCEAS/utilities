@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-07 04:27:27 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2008-07-07 20:52:57 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,6 +120,7 @@ public class SortedProperties
      * -- Comments:   #<unique number>       <the whole comment line>
      * -- Blank line space<unique number>               ""
      * -- Unknown    ???<unique number>      <the whole comment line>
+     * 
      * @param rawLine a string holding the line read from a properties file.
      * @return a two element string array holding the key and value
      */
@@ -165,34 +166,79 @@ public class SortedProperties
     }
     
     /**
-     * Reset value for given option name or set a new option pair in the
-     * property file. This method will also call a store method to save
-     * the new values into properties file. Note: the comments in property
-     * file will be gone and order of keys will be changed
-     * @param key  the option name
-     * @param value  the new option value
+     * Reset value for given property.  A GeneralPropertyException will
+     * be thrown if the property name does not already exist.  This method 
+     * will also call a store method to save the new values into properties file. 
+     * 
+     * @param key  the property name
+     * @param value  the new property value
      */
-    public synchronized void setProperty(String key, String value) throws IOException {
+    public synchronized void setProperty(String key, String value) throws GeneralPropertyException {
+    	if (!propertiesMap.containsKey(key)) {
+    		throw new PropertyNotFoundException("Property: " + key + " could not be updated to: " 
+    				+ value + " because it does not already exist in properties.");
+    	}
     	allLinesMap.put(key, value);
     	propertiesMap.put(key, value);
     	store();
     }
     
     /**
-     * Reset value for given option name or set a new option pair in the
-     * property file. This method not call the store method to save
-     * the new values into properties file. Note: the comments in property
-     * file will be gone and order of keys will be changed
-     * @param key  the option name
-     * @param value  the new option value
+     * Reset value for given property.  A GeneralPropertyException will
+     * be thrown if the property name does not already exist. The property will not be  
+     * persisted to the properties file.  the store() method should be called to
+     * do this.
+     * 
+     * @param key  the property name
+     * @param value  the new property value
      */
-    public synchronized void setPropertyNoPersist(String key, String value) {
+    public synchronized void setPropertyNoPersist(String key, String value) throws PropertyNotFoundException{
+    	if (!propertiesMap.containsKey(key)) {
+    		throw new PropertyNotFoundException("Property: " + key + " could not be updated to: " 
+    				+ value + " because it does not already exist in properties.");
+    	}
     	allLinesMap.put(key, value);
     	propertiesMap.put(key, value);
     } 
     
     /**
-     * Get an option value from the properties file
+     * Add a new property name to properties. A GeneralPropertyException will
+     * be thrown if the property name already exists. This method will also 
+     * call the store() method to save the new values into properties file. 
+     * 
+     * @param key  the property name
+     * @param value  the new property value
+     */
+    public synchronized void addProperty(String key, String value) throws GeneralPropertyException {
+    	if (propertiesMap.containsKey(key)) {
+    		throw new PropertyNotFoundException("Property: " + key + " could not be added with value: " 
+    				+ value + " because it already exists in properties.");
+    	}
+    	allLinesMap.put(key, value);
+    	propertiesMap.put(key, value);
+    	store();
+    }
+    
+    /**
+     * Add a new property name to properties. A GeneralPropertyException will
+     * be thrown if the property name already exists. The property will not be  
+     * persisted to the properties file.  the store() method should be called to
+     * do this.
+     * 
+     * @param key  the property name
+     * @param value  the new property value
+     */
+    public synchronized void addPropertyNoPersist(String key, String value) throws PropertyNotFoundException{
+    	if (propertiesMap.containsKey(key)) {
+    		throw new PropertyNotFoundException("Property: " + key + " could not be added with value: " 
+    				+ value + " because it already exists in properties.");
+    	}
+    	allLinesMap.put(key, value);
+    	propertiesMap.put(key, value);
+    } 
+    
+    /**
+     * Get an property value from the properties file
      *
      * @param key the name of the property requested
      * @return the String value for the given property, or null if not found
@@ -265,39 +311,42 @@ public class SortedProperties
      * blank lines will be preserved.
      * @param comment - The comment to be added at the top of the file 
      */
-    public synchronized void store() throws IOException {
-        int fileStatus = FileUtil.getFileStatus(propertiesFileName);
-        
-        if (fileStatus == FileUtil.DOES_NOT_EXIST) {
-        	int dirStatus = FileUtil.getFileStatus(propertiesDirName);
-        	if (dirStatus == FileUtil.DOES_NOT_EXIST) {
-        		throw new IOException("Could not write property file. Directory: " + 
-        				propertiesDirName + " not found.");
-        	} else if (dirStatus < FileUtil.EXISTS_READ_WRITABLE ) {
-        		throw new IOException("Could not write property file. Directory: " + 
-        				propertiesDirName + " is not writable.");
-        	}
-        } else if (fileStatus < FileUtil.EXISTS_READ_WRITABLE ) {
-        	throw new IOException("Could not write property file. File: " + 
-    				propertiesFileName + " is not writable.");
-        }
-        
-        PrintWriter output = null;      
-	    try {
-	    	output = new PrintWriter(new BufferedWriter(new FileWriter(propertiesFileName)));
-	    	
-            for (Iterator<String> it = allLinesMap.keySet().iterator(); it.hasNext(); ) {
-    	        String key = it.next();
-    	        if (key.startsWith(SPACE)) {
-    	        	output.println("");
-    	        } else if (key.startsWith(COMMENT) || key.startsWith(UNKNOWN)) {
-    	        	output.println(allLinesMap.get(key));
-    	        } else {
-    	            output.println(key + "=" + allLinesMap.get(key));
-    	        }
-            }
-    	} finally {
-    	    output.close();
-    	}
-    }        
+    public synchronized void store() throws GeneralPropertyException {
+		int fileStatus = FileUtil.getFileStatus(propertiesFileName);
+		PrintWriter output = null;
+
+		try {
+			if (fileStatus == FileUtil.DOES_NOT_EXIST) {
+				int dirStatus = FileUtil.getFileStatus(propertiesDirName);
+				if (dirStatus == FileUtil.DOES_NOT_EXIST) {
+					throw new IOException("Could not write property file. Directory: "
+							+ propertiesDirName + " not found.");
+				} else if (dirStatus < FileUtil.EXISTS_READ_WRITABLE) {
+					throw new IOException("Could not write property file. Directory: "
+							+ propertiesDirName + " is not writable.");
+				}
+			} else if (fileStatus < FileUtil.EXISTS_READ_WRITABLE) {
+				throw new IOException("Could not write property file. File: "
+						+ propertiesFileName + " is not writable.");
+			}
+			output = new PrintWriter(new BufferedWriter(
+					new FileWriter(propertiesFileName)));
+
+			for (Iterator<String> it = allLinesMap.keySet().iterator(); it.hasNext();) {
+				String key = it.next();
+				if (key.startsWith(SPACE)) {
+					output.println("");
+				} else if (key.startsWith(COMMENT) || key.startsWith(UNKNOWN)) {
+					output.println(allLinesMap.get(key));
+				} else {
+					output.println(key + "=" + allLinesMap.get(key));
+				}
+			}
+		} catch (IOException ioe) {
+			throw new GeneralPropertyException("Could not save properties: "
+					+ ioe.getMessage());
+		} finally {
+			output.close();
+		}
+	}        
 }
