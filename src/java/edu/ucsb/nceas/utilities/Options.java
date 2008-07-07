@@ -3,9 +3,9 @@
  *  Copyright: 2003 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *
- *   '$Author: tao $'
- *     '$Date: 2007-10-27 01:00:30 $'
- * '$Revision: 1.4 $'
+ *   '$Author: daigle $'
+ *     '$Date: 2008-07-07 04:27:27 $'
+ * '$Revision: 1.5 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ public class Options
     {
         // locate, open, and read the properties
         appConfig = new Properties();
-        this.propertyFile = propertyFile;
+        Options.propertyFile = propertyFile;
         FileInputStream fis = new FileInputStream(propertyFile);
         appConfig.load(fis);
         fis.close();

@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: brooke $'
- *     '$Date: 2005-05-18 22:52:09 $'
- * '$Revision: 1.5 $'
+ *   '$Author: daigle $'
+ *     '$Date: 2008-07-07 04:27:27 $'
+ * '$Revision: 1.6 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,7 +301,6 @@ public class XMLProperties
 
     this.store(out);
   }
-
 
   /**
    * Returns an enumeration of all the XPath keys in this properties object
