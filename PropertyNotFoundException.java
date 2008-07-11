@@ -7,8 +7,8 @@
  *    Authors: Matt Jones
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-07 04:27:27 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2008-07-11 20:36:06 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +28,8 @@
 package edu.ucsb.nceas.utilities;
 
 /**
- * Exception thrown when an error occurs because an AccessionNumber was 
- * invalid or used incorrectly.
- *
- * Accession numbers are invalid under the following conditions:
- *   1) INSERT mode, and the provided accesion # doesn't contain "sep"
- *   2) UPDATE mode, and no accession # provided
- *   3) UPDATE mode, and accession # doesn't exist in xml_documents table
- *   4) DELETE mode, and no accession # provided
- *   5) DELETE mode, and accession # doesn't exist in xml_documents table
+ * Exception thrown when an error occurs because property could not be
+ * found. 
  */
 public class PropertyNotFoundException extends GeneralPropertyException {
     /**
