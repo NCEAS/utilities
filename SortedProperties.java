@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-07 20:52:57 $'
- * '$Revision: 1.3 $'
+ *     '$Date: 2008-07-11 20:35:49 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -211,7 +212,7 @@ public class SortedProperties
      */
     public synchronized void addProperty(String key, String value) throws GeneralPropertyException {
     	if (propertiesMap.containsKey(key)) {
-    		throw new PropertyNotFoundException("Property: " + key + " could not be added with value: " 
+    		throw new PropertyExistsException("Property: " + key + " could not be added with value: " 
     				+ value + " because it already exists in properties.");
     	}
     	allLinesMap.put(key, value);
@@ -228,9 +229,9 @@ public class SortedProperties
      * @param key  the property name
      * @param value  the new property value
      */
-    public synchronized void addPropertyNoPersist(String key, String value) throws PropertyNotFoundException{
+    public synchronized void addPropertyNoPersist(String key, String value) throws PropertyExistsException{
     	if (propertiesMap.containsKey(key)) {
-    		throw new PropertyNotFoundException("Property: " + key + " could not be added with value: " 
+    		throw new PropertyExistsException("Property: " + key + " could not be added with value: " 
     				+ value + " because it already exists in properties.");
     	}
     	allLinesMap.put(key, value);
@@ -282,11 +283,11 @@ public class SortedProperties
     }
        
     /**
-     * Get an enumeration of all property names that start with the 
+     * Get a vector of all property names that start with the 
      * groupName prefix.
      * 
      * @param groupName the key prefix to look for.
-     * @return enumeration of property names  
+     * @return Vector of property names  
      */
     public Vector<String> getPropertyNamesByGroup(String groupName) {
     	groupName = groupName.trim();
@@ -304,6 +305,26 @@ public class SortedProperties
     	}
     	
     	return groupKeySet;
+    }
+    
+    /**
+     * Get a map of all properties that start with the 
+     * groupName prefix.
+     * 
+     * @param groupName the key prefix to look for.
+     * @return map of property name / values  
+     */
+    public HashMap<String, String> getPropertiesByGroup(String groupName)
+			throws PropertyNotFoundException {
+    	 
+    	HashMap<String, String> groupPropertyMap = new HashMap<String, String>();
+    	Vector<String> groupKeySet = getPropertyNamesByGroup(groupName);
+    	
+    	for (String key : groupKeySet) {
+    		groupPropertyMap.put(key, getProperty(key));
+    	}
+    	
+    	return groupPropertyMap;
     }
     
     /**
@@ -346,7 +367,9 @@ public class SortedProperties
 			throw new GeneralPropertyException("Could not save properties: "
 					+ ioe.getMessage());
 		} finally {
-			output.close();
+			if (output != null) {
+				output.close();
+			}
 		}
 	}        
 }
