@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-07 04:27:27 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2008-07-11 20:37:34 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,6 +186,7 @@ public class PropertiesMetaData {
         	groupMap.put(intIndex, group);
         }
     	
+        // populate the property information 
     	String[] configArray = 
         	metadataProperties.getProperty("/metadataConfig/config");
         for (int i = 1; i <= configArray.length; i++ ) {
@@ -235,17 +236,26 @@ public class PropertiesMetaData {
         	
             if (fieldTypeArray != null) {
                 metadata.setFieldType(fieldTypeArray[0]);
-                Vector<String> fieldOptions = new Vector<String>();
+                Vector<String> fieldOptionNames = new Vector<String>();
+                Vector<String> fieldOptionValues = new Vector<String>();
                 if (fieldTypeArray[0].equals("select")) {
                     String[] optionArray = 
                     	metadataProperties.getProperty(xPathPrefix + "/option");
                     for(int j = 1; j <= optionArray.length; j++ ) {
                     	String[] fieldOptionArray = 
                     	    metadataProperties.getProperty(xPathPrefix + "/option[" + j + "]/name");
-                	    fieldOptions.add(fieldOptionArray[0]);    
+                    	String[] fieldValueArray = 
+                    	    metadataProperties.getProperty(xPathPrefix + "/option[" + j + "]/value");
+                    	if (fieldOptionArray == null || fieldValueArray == null) {
+                    		throw new TransformerException("Both name and value must be specified for " + 
+                    				"metadata element: ");
+                    	}
+                	    fieldOptionValues.add(fieldOptionArray[0]); 
+                	    fieldOptionNames.add(fieldValueArray[0]);                 	    
                     }
                 }
-                metadata.setFieldOptions(fieldOptions);
+                metadata.setFieldOptionNames(fieldOptionNames);
+                metadata.setFieldOptionValues(fieldOptionValues);
             } else {
             	metadata.setFieldType("text");
             }
