@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-07 04:27:27 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2008-07-11 20:37:34 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ public class MetaDataProperty extends MetaDataElement {
     private String label;
     private int groupId;
     private String fieldType;
-    private Vector<String> fieldOptions;
+    private Vector<String> fieldOptionNames;
+    private Vector<String> fieldOptionValues;
     
     public MetaDataProperty() {}
     
@@ -118,14 +119,28 @@ public class MetaDataProperty extends MetaDataElement {
     /**
      * @return a vector of the field options
      */
-    public Vector<String> getFieldOptions() {
-        return fieldOptions;
+    public Vector<String> getFieldOptionNames() {
+        return fieldOptionNames;
     }
 
     /**
      * @param fieldType a vector of the field options to set.
      */
-    public void setFieldOptions(Vector<String> fieldOptions) {
-        this.fieldOptions = fieldOptions;
+    public void setFieldOptionNames(Vector<String> fieldOptions) {
+        this.fieldOptionNames = fieldOptions;
+    }
+    
+    /**
+     * @return a vector of the field options
+     */
+    public Vector<String> getFieldOptionValues() {
+        return fieldOptionValues;
+    }
+
+    /**
+     * @param fieldType a vector of the field options to set.
+     */
+    public void setFieldOptionValues(Vector<String> fieldOptionValues) {
+        this.fieldOptionValues = fieldOptionValues;
     }
 }
