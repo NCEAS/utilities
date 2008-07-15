@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-07 04:27:27 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2008-07-15 17:22:09 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,9 @@ public class StringUtil
 	 */
 	public static Vector<String> toVector(String list, char delim) {
 		Vector<String> subList = new Vector<String>();
-		if (list == null) {
+		int strLen = list.length();
+		System.out.println("Strlen: " + strLen);
+		if (list == null || list.length() == 0) {
 			return subList;
 		}
 
