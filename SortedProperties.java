@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-11 20:35:49 $'
- * '$Revision: 1.4 $'
+ *     '$Date: 2008-07-15 17:22:28 $'
+ * '$Revision: 1.5 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,21 +69,21 @@ public class SortedProperties
      *
      * @param propertyFileName the name of file from which to read properties
      */
-    public SortedProperties(String propFileName) 
-    {
-    	File propFile = new File(propFileName);
-    	propertiesFileName = propFileName;
-    	propertiesDirName = propFile.getParent();
-    	allLinesMap = new LinkedHashMap<String, String>();     
-    	propertiesMap = new LinkedHashMap<String, String>();
-        
-    }
+    public SortedProperties(String propFileName) {
+		File propFile = new File(propFileName);
+		propertiesFileName = propFileName;
+		propertiesDirName = propFile.getParent();
+		allLinesMap = new LinkedHashMap<String, String>();
+		propertiesMap = new LinkedHashMap<String, String>();
+
+	}
     
     /**
-     * Load the values from the properties file into the map which will
-     * hold the properties.
-     * @return true if the file exists and is readable, false otherwise.
-     */
+	 * Load the values from the properties file into the map which will hold the
+	 * properties.
+	 * 
+	 * @return true if the file exists and is readable, false otherwise.
+	 */
     public boolean load() throws IOException {		
     	
     	if (FileUtil.getFileStatus(propertiesFileName) < FileUtil.EXISTS_READABLE) {
