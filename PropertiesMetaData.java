@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-11 20:37:34 $'
- * '$Revision: 1.3 $'
+ *     '$Date: 2008-07-24 00:26:28 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,8 +250,8 @@ public class PropertiesMetaData {
                     		throw new TransformerException("Both name and value must be specified for " + 
                     				"metadata element: ");
                     	}
-                	    fieldOptionValues.add(fieldOptionArray[0]); 
-                	    fieldOptionNames.add(fieldValueArray[0]);                 	    
+                	    fieldOptionNames.add(fieldOptionArray[0]); 
+                	    fieldOptionValues.add(fieldValueArray[0]);                 	    
                     }
                 }
                 metadata.setFieldOptionNames(fieldOptionNames);
