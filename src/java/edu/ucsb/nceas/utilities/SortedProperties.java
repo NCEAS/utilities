@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-15 17:22:28 $'
- * '$Revision: 1.5 $'
+ *     '$Date: 2008-08-26 23:35:31 $'
+ * '$Revision: 1.6 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ public class SortedProperties
             	parsedString[2] = IS_PROPERTY;
         	} else {                                    // there is a key and a value
         		parsedString[0] = line.substring(0, equalIndex);
-        		parsedString[1] = line.substring(equalIndex + 1);
+        		parsedString[1] = line.substring(equalIndex + 1).trim();
             	parsedString[2] = IS_PROPERTY;
         	}        	
         } else {                                     // something else going on here
