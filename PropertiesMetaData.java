@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-24 00:26:28 $'
- * '$Revision: 1.4 $'
+ *     '$Date: 2008-08-26 23:34:59 $'
+ * '$Revision: 1.5 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ public class PropertiesMetaData {
         if (metaData == null) {
         	metaData = new MetaDataProperty(key, label, groupId, index, description, helpFile);
         } else {
-        	metaData.setLabel(key);
+        	metaData.setKey(key);
         	metaData.setLabel(label);
         	metaData.setGroupId(groupId);
         	metaData.setIndex(index);
@@ -105,11 +105,20 @@ public class PropertiesMetaData {
     }
     
     /**
-     * Get a Set of the groups that are common across all of the properties.
+     * Get a Map of the groups that are common across all of the properties.
      * @return Set of the groups found for all properties
      */
     public synchronized Map<Integer, MetaDataGroup> getGroups() {       
         return groupMap;
+    }
+    
+    /**
+     * Get a Map of all properties metadata
+     * 
+     * @return a Map of properties metadata
+     */
+    public synchronized Map<String, MetaDataProperty> getProperties() {
+    	return propertyMap;
     }
            
     /**
