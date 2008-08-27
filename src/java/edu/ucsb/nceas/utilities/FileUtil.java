@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-07 04:27:27 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2008-08-27 04:40:22 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,8 +139,9 @@ public class FileUtil
 	 */
 	public static boolean replaceInFile(String filePath,
 			Hashtable<String, String> replacementList) throws IOException {
-		if (getFileStatus(filePath) < EXISTS_READ_WRITABLE) {
-			throw new IOException("File: " + filePath + " is not writeable.");
+		if (getFileStatus(filePath) != DOES_NOT_EXIST) {
+			throw new IOException("Cannot create file: " + filePath 
+					+ ". File already exists.");
 		}
 
 		Vector<String> fileLines = new Vector<String>();
@@ -178,6 +179,33 @@ public class FileUtil
 			while (iter.hasNext()) {
 				output.println(iter.next());
 			}
+		} finally {
+			output.close();
+		}
+
+		return true;
+	}
+	
+    /**
+	 * Replace values in a file and overwrite the original file.
+	 * 
+	 * @param filePath
+	 *            the full pathname of the file to create
+	 * @param content
+	 *            a string holding the contents to be written to the file
+	 * @returns boolean representing success or failure of file creation
+	 */
+	public static boolean writeNewFile(String filePath, String content) throws IOException {
+		if (getFileStatus(filePath) != EXISTS_READ_WRITABLE) {
+			throw new IOException("File: " + filePath + " is not writeable.");
+		}
+
+		PrintWriter output = null;
+		try {
+			output = new PrintWriter(new BufferedWriter(
+					new FileWriter(filePath)));
+
+			output.print(content);
 		} finally {
 			output.close();
 		}
