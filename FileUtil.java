@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-08-27 04:40:22 $'
- * '$Revision: 1.3 $'
+ *     '$Date: 2008-09-22 17:06:53 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -139,9 +141,8 @@ public class FileUtil
 	 */
 	public static boolean replaceInFile(String filePath,
 			Hashtable<String, String> replacementList) throws IOException {
-		if (getFileStatus(filePath) != DOES_NOT_EXIST) {
-			throw new IOException("Cannot create file: " + filePath 
-					+ ". File already exists.");
+		if (getFileStatus(filePath) != EXISTS_READ_WRITABLE) {
+			throw new IOException("File: " + filePath + " is not writeable.");
 		}
 
 		Vector<String> fileLines = new Vector<String>();
@@ -187,7 +188,7 @@ public class FileUtil
 	}
 	
     /**
-	 * Replace values in a file and overwrite the original file.
+	 * Create and write content to a new file
 	 * 
 	 * @param filePath
 	 *            the full pathname of the file to create
@@ -196,9 +197,12 @@ public class FileUtil
 	 * @returns boolean representing success or failure of file creation
 	 */
 	public static boolean writeNewFile(String filePath, String content) throws IOException {
-		if (getFileStatus(filePath) != EXISTS_READ_WRITABLE) {
-			throw new IOException("File: " + filePath + " is not writeable.");
+		if (getFileStatus(filePath) != DOES_NOT_EXIST) {
+			throw new IOException("Cannot create file: " + filePath 
+					+ ". File already exists.");
 		}
+		
+		createFile(filePath);
 
 		PrintWriter output = null;
 		try {
@@ -211,6 +215,45 @@ public class FileUtil
 		}
 
 		return true;
+	}
+	
+    /**
+	 * Read the contents of a file
+	 * 
+	 * @param filePath
+	 *            the full pathname of the file to read
+	 * @returns a string holding the contents of the file
+	 */
+	public static String readFileToString(String filePath) throws IOException {
+		if (getFileStatus(filePath) < EXISTS_READABLE) {
+			throw new IOException("Cannot read file: " + filePath);
+		}
+
+		BufferedReader input = null;
+		String contents = "";
+		String nextLine;
+
+		try {
+			input = new BufferedReader(new FileReader(filePath));
+			boolean firstLine = true;
+			while ((nextLine = input.readLine()) != null) {
+				if (!firstLine) {
+					contents += "\n";
+				} else {
+					firstLine = false;
+				}
+				contents += nextLine;
+			}
+
+		} finally {
+			input.close();
+		}
+		
+		if (contents.equals("")) {
+			return null;
+		}
+
+		return contents;
 	}
 }
 
