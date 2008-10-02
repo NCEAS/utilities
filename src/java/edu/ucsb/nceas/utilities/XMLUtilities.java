@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: tao $'
- *     '$Date: 2006-07-07 22:22:40 $'
- * '$Revision: 1.16 $'
+ *   '$Author: leinfelder $'
+ *     '$Date: 2008-10-02 15:59:09 $'
+ * '$Revision: 1.17 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,6 +278,54 @@ public class XMLUtilities {
       //otherwise, just add a new text node
       Text newElement = doc.createTextNode(textValue);
       lastRealNode.appendChild(newElement);
+    }
+  }
+
+public static void addNodeToDOMTree(Node rootNode, String xpath,
+                  Node newNode) throws DOMException, TransformerException {
+
+//    log.debug("XMLUtilities.addTextNodeToDOMTree(); xpath="+xpath
+//              +"\nrootnode = "+rootNode);
+
+    Node lastRealNode  = getLastExistingNodeInXPath(rootNode, xpath);
+
+    //lastRealNode is now the last node in the xpath that actually exists
+
+    String nextNodeName = null;
+    Document doc = rootNode.getOwnerDocument();
+
+    while (!nodesToCreate.isEmpty()) {
+
+      nextNodeName = popNextNodeString(nodesToCreate);
+//      log.debug("in while loop; -> nextNodeName = "+nextNodeName);
+
+      if (nextNodeName==null) {
+        DOMException de2 = new DOMException(DOMException.SYNTAX_ERR,
+                                    "tried to create a node with null name!"
+                                    +"\n parent = "+lastRealNode.getNodeName());
+        de2.fillInStackTrace();
+        throw de2;
+      }
+
+
+      Element newElement = doc.createElement(stripXPathIndex(nextNodeName));
+//      log.debug("in while loop; -> newElement created = "+newElement);
+
+      lastRealNode.appendChild(newElement);
+//      log.debug("in while loop; -> DONE lastRealNode.appendChild(newElement)");
+      lastRealNode = newElement;
+    }
+    //check to see if last real node has any children already...
+    NodeList nl = lastRealNode.getChildNodes();
+    if (nl!=null && nl.getLength()>0) {
+      // if so, and if one of these is a text element, change it to new value
+      // NOTE: if there's more than one node, only the first one gets
+      // changed!
+      Node[] childArray = getNodeListAsNodeArray(nl);
+      childArray[0].getParentNode().replaceChild(newNode, childArray[0]);
+    } else {
+      //otherwise, just add a new node
+      lastRealNode.appendChild(newNode);
     }
   }
 
