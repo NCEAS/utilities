@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-28 22:42:49 $'
- * '$Revision: 1.5 $'
+ *     '$Date: 2008-10-09 17:07:13 $'
+ * '$Revision: 1.6 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,6 +127,37 @@ public class StringUtil
 		}
 
 		return subList;
+	} 
+  
+	/**
+	 * Replace any duplicate spaces with single spaces.
+	 * 
+	 * @param oldString
+	 *            the string in which we want to replace duplicate spaces
+	 * @return a string holding the modified oldString
+	 */
+	public static String replaceDuplicateSpaces(String oldString) {		
+		while (oldString.contains("  ")) {
+			oldString = oldString.replaceAll("  ", " ");
+		}
+
+		return oldString;
+	} 
+	
+	/**
+	 * Replace any duplicate spaces with single spaces.
+	 * 
+	 * @param oldString
+	 *            the string in which we want to replace duplicate spaces
+	 * @return a string holding the modified oldString
+	 */
+	public static String replaceTabsNewLines(String oldString) {		
+
+		oldString = oldString.replaceAll("\r", " ");
+		oldString = oldString.replaceAll("\n", " ");
+		oldString = oldString.replaceAll("\t", " ");
+
+		return oldString;
 	} 
 }
 
