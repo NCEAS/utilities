@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-07 04:27:27 $'
- * '$Revision: 1.2 $'
+ *     '$Date: 2008-10-09 17:06:03 $'
+ * '$Revision: 1.3 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,8 @@ public class DBUtil
 		// Get the table names
 		while (resultSet.next()) {
 			// Get the table name
-			if (resultSet.getString(3).equals(tableName)) {
+			String dbResultSet = resultSet.getString(3);
+			if (dbResultSet!= null && dbResultSet.equalsIgnoreCase(tableName)) {
 				return true;
 			}
 		}
@@ -112,7 +113,8 @@ public class DBUtil
 		ResultSet resultSet = dbMetaData.getColumns(null, null,
 				tableName, null);
 		while (resultSet.next()) {
-			if (resultSet.getString("COLUMN_NAME").equals(columnName)) {
+			String dbColumnName = resultSet.getString("COLUMN_NAME");
+			if (dbColumnName != null && dbColumnName.equalsIgnoreCase(columnName)) {
 				return true;
 			}
 		}
@@ -134,10 +136,11 @@ public class DBUtil
 		// Gets the database metadata
 		DatabaseMetaData dbMetaData = connection.getMetaData();
 		
-		ResultSet resultSet = dbMetaData.getIndexInfo(null, null, tableName,
+		ResultSet resultSet = dbMetaData.getIndexInfo(null, null, tableName.toUpperCase(),
 				false, false);
 		while (resultSet.next()) {
-			if (resultSet.getString("INDEX_NAME").equals(indexName)) {
+			String dbIndexName = resultSet.getString("INDEX_NAME");
+			if (dbIndexName != null && dbIndexName.equalsIgnoreCase(indexName)) {
 				return true;
 			}
 		}
