@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-09-22 17:06:53 $'
- * '$Revision: 1.4 $'
+ *     '$Date: 2008-10-11 00:18:10 $'
+ * '$Revision: 1.5 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,12 +108,14 @@ public class FileUtil
 	 * @param dirPath the full pathname of the directory to create
 	 * @returns boolean representing success or failure of directory creation
 	 */
-	public static boolean createDirectory(String dirPath) throws IOException {
+	public static void createDirectory(String dirPath) throws IOException {
 		File file = new File(dirPath);
-		if (!file.exists()) {
-			return file.mkdirs();
+		if (file.exists() && file.isDirectory()) {
+			return;
 		}
-		return true;
+		if (!file.mkdirs()) {
+			throw new IOException("Could not create directory: " + dirPath);
+		}
 	}	
     
     /**
@@ -122,12 +124,30 @@ public class FileUtil
 	 * @param filePath the full pathname of the file to create
 	 * @returns boolean representing success or failure of file creation
 	 */
-	public static boolean createFile(String filePath) throws IOException {
+	public static void createFile(String filePath) throws IOException {
+		File file = new File(filePath);
+		if (file.exists() && !file.isDirectory()) {
+			return;
+		}
+		if (!file.createNewFile()) {
+			throw new IOException("Could not create file: " + filePath);
+		}
+	}
+	
+    /**
+	 * Delete a file
+	 * 
+	 * @param filePath the full pathname of the file to delete
+	 * @returns boolean representing success or failure of file creation
+	 */
+	public static void deleteFile(String filePath) throws IOException {
 		File file = new File(filePath);
 		if (!file.exists()) {
-			return file.createNewFile();
+			throw new FileNotFoundException("Could not find and delete file: " + filePath);
 		}
-		return true;
+		if (!file.delete()) {
+			throw new IOException("Could not delete file: " + filePath);
+		}
 	}
 	
     /**
