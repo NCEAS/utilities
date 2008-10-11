@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-10-09 17:07:13 $'
- * '$Revision: 1.6 $'
+ *     '$Date: 2008-10-11 00:18:30 $'
+ * '$Revision: 1.7 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ public class StringUtil
   }
   
 	/**
-	 * Convert a comma delimited string into a Vector
+	 * Convert a delimited string into a Vector
 	 * 
 	 * @param list
 	 *            delimited list of values
@@ -145,10 +145,11 @@ public class StringUtil
 	} 
 	
 	/**
-	 * Replace any duplicate spaces with single spaces.
+	 * Replace any tabs, newlines and carriage returns with single spaces.
 	 * 
 	 * @param oldString
-	 *            the string in which we want to replace duplicate spaces
+	 *            the string in which we want to replace tabs, newlines and
+	 *            carriage returns
 	 * @return a string holding the modified oldString
 	 */
 	public static String replaceTabsNewLines(String oldString) {		
