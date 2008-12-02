@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-08-26 23:34:59 $'
- * '$Revision: 1.5 $'
+ *     '$Date: 2008-12-02 00:55:02 $'
+ * '$Revision: 1.6 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +198,11 @@ public class PropertiesMetaData {
         // populate the property information 
     	String[] configArray = 
         	metadataProperties.getProperty("/metadataConfig/config");
-        for (int i = 1; i <= configArray.length; i++ ) {
+    	int configArrayLength = 0;
+    	if (configArray != null) {
+    		configArrayLength = configArray.length;
+    	}
+        for (int i = 1; i <= configArrayLength; i++ ) {
         	String xPathPrefix = "/metadataConfig/config[" + i + "]";
         	String[] keyArray = 
         		metadataProperties.getProperty(xPathPrefix + "/key");
