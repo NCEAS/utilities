@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-10-11 00:18:10 $'
- * '$Revision: 1.5 $'
+ *     '$Date: 2008-12-09 23:14:20 $'
+ * '$Revision: 1.6 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,6 +274,18 @@ public class FileUtil
 		}
 
 		return contents;
+	}
+	
+	/**
+	 * Adapt a path to the current OS. Currently this only replaces forward
+	 * slashes.
+	 * 
+	 * @param path
+	 *            the path that needs to be normalized
+	 * @return a path that will work on the current OS.
+	 */
+	public static String normalizePath(String path) {
+		return path.replace('/', getFS());
 	}
 }
 
