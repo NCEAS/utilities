@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-10-11 00:18:30 $'
- * '$Revision: 1.7 $'
+ *     '$Date: 2008-12-11 23:35:47 $'
+ * '$Revision: 1.8 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
 
 package edu.ucsb.nceas.utilities;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Vector;
 
 
@@ -160,6 +162,23 @@ public class StringUtil
 
 		return oldString;
 	} 
+	
+	/**
+	 * Convert a reader to a string
+	 * @param reader the initialized reader
+	 * @return string extracted from reader
+	 */
+	public static String readerToString(Reader reader) throws IOException {
+		String xmlString = "";
+		int tmp = reader.read();
+		while (tmp != -1) {
+			xmlString += (char) tmp;
+			tmp = reader.read();
+		}
+
+		reader.reset();
+		return xmlString;
+	}
 }
 
 
