@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-10-09 17:06:03 $'
- * '$Revision: 1.3 $'
+ *     '$Date: 2008-12-19 21:52:12 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ public class DBUtil
 		// Gets the database metadata
 		DatabaseMetaData dbMetaData = connection.getMetaData();
 		
-		ResultSet resultSet = dbMetaData.getIndexInfo(null, null, tableName.toUpperCase(),
+		ResultSet resultSet = dbMetaData.getIndexInfo(null, null, tableName,
 				false, false);
 		while (resultSet.next()) {
 			String dbIndexName = resultSet.getString("INDEX_NAME");
