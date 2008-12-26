@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-12-09 23:14:20 $'
- * '$Revision: 1.6 $'
+ *     '$Date: 2008-12-26 21:27:53 $'
+ * '$Revision: 1.7 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +101,19 @@ public class FileUtil
     	}
     }
 
+    /**
+	 * Wrap the File.isDirectory method
+	 * 
+	 * @param path
+	 *            the path to check
+	 * 
+	 * @return true if the path is a directory. False otherwise.
+	 */
+    public static boolean isDirectory(String path) {
+    	File file = new File(path);
+    	return file.isDirectory();
+    }
+     
     /**
 	 * Create a directory if it does not already exist.  This will attempt
 	 * to create any parent directories if necessary.
@@ -228,6 +241,32 @@ public class FileUtil
 		try {
 			output = new PrintWriter(new BufferedWriter(
 					new FileWriter(filePath)));
+
+			output.print(content);
+		} finally {
+			output.close();
+		}
+
+		return true;
+	}
+
+    /**
+	 * Replace a file or create a new one if it does not exist
+	 * 
+	 * @param filePath
+	 *            the full pathname of the file to create/replace
+	 * @param content
+	 *            a string holding the contents to be written to the file
+	 * @returns boolean representing success or failure of file creation
+	 */
+	public static boolean writeFile(String filePath, String content) throws IOException {	
+		File file = new File(filePath);
+		file.createNewFile();
+
+		PrintWriter output = null;
+		try {
+			output = new PrintWriter(new BufferedWriter(
+					new FileWriter(file, false)));
 
 			output.print(content);
 		} finally {
