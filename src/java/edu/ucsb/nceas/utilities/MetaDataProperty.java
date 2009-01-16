@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-07-11 20:37:34 $'
- * '$Revision: 1.3 $'
+ *     '$Date: 2009-01-16 17:50:56 $'
+ * '$Revision: 1.4 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ public class MetaDataProperty extends MetaDataElement {
     private String fieldType;
     private Vector<String> fieldOptionNames;
     private Vector<String> fieldOptionValues;
+    private boolean isRequired = false;
     
     public MetaDataProperty() {}
     
@@ -142,5 +143,19 @@ public class MetaDataProperty extends MetaDataElement {
      */
     public void setFieldOptionValues(Vector<String> fieldOptionValues) {
         this.fieldOptionValues = fieldOptionValues;
+    }
+    
+    /**
+     * @return a boolean stating whether field is required
+     */
+    public boolean getIsRequired() {
+        return isRequired;
+    }
+
+    /**
+     * @param boolean stating whether field is required
+     */
+    public void setIsRequired(boolean isRequired) {
+        this.isRequired = isRequired;
     }
 }
