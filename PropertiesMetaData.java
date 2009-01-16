@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-12-02 00:55:02 $'
- * '$Revision: 1.6 $'
+ *     '$Date: 2009-01-16 17:50:56 $'
+ * '$Revision: 1.7 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,6 +218,8 @@ public class PropertiesMetaData {
         		metadataProperties.getProperty(xPathPrefix + "/helpFile");
         	String[] fieldTypeArray = 
         		metadataProperties.getProperty(xPathPrefix + "/fieldType");
+        	String[] isRequired = 
+        		metadataProperties.getProperty(xPathPrefix + "/required");
                 	       	
             if (keyArray == null || labelArray == null || 
             		groupIdArray == null || indexArray == null) {
@@ -272,6 +274,10 @@ public class PropertiesMetaData {
             } else {
             	metadata.setFieldType("text");
             }
+        	
+            if (isRequired != null && isRequired[0].equals("true")) {
+            	metadata.setIsRequired(true);
+        	}
         	
             propertyMap.put(keyArray[0], metadata);
         }   	
