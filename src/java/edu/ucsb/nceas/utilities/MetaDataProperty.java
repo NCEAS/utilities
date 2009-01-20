@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2009-01-16 17:50:56 $'
- * '$Revision: 1.4 $'
+ *     '$Date: 2009-01-20 18:16:29 $'
+ * '$Revision: 1.5 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 package edu.ucsb.nceas.utilities;
 
 import java.util.Vector;
+import java.util.HashSet;
 
 /**
  * Encapsulate the meta-information about SortedProperties so that this information 
@@ -40,13 +41,29 @@ import java.util.Vector;
  * accessor methods for all fields.
  */
 public class MetaDataProperty extends MetaDataElement {
-    private String key;
+
+	public static final String TEXT_TYPE = "text";
+	public static final String SELECT_TYPE = "select";
+	public static final String PASSWORD_TYPE = "password";
+	public static final String CHECKBOX_TYPE = "checkbox";
+	public static final String RADIO_TYPE = "radio";
+	
+	static final HashSet<String> fieldTypeSet = new HashSet<String>();
+	static {
+		fieldTypeSet.add(TEXT_TYPE);
+		fieldTypeSet.add(SELECT_TYPE);
+		fieldTypeSet.add(PASSWORD_TYPE);
+		fieldTypeSet.add(CHECKBOX_TYPE);
+		fieldTypeSet.add(RADIO_TYPE);
+	}
+	private String key;
     private String label;
     private int groupId;
-    private String fieldType;
+    private String fieldType = TEXT_TYPE;
     private Vector<String> fieldOptionNames;
     private Vector<String> fieldOptionValues;
     private boolean isRequired = false;
+    
     
     public MetaDataProperty() {}
     
@@ -113,7 +130,10 @@ public class MetaDataProperty extends MetaDataElement {
     /**
      * @param fieldType the field type to set.
      */
-    public void setFieldType(String fieldType) {
+    public void setFieldType(String fieldType) throws GeneralPropertyException {
+    	if (fieldType == null || !fieldTypeSet.contains(fieldType)) {
+    		throw new GeneralPropertyException("cannot set field type to: " + fieldType);
+    	}
         this.fieldType = fieldType;
     }
     

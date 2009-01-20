@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2009-01-16 17:50:56 $'
- * '$Revision: 1.7 $'
+ *     '$Date: 2009-01-20 18:16:29 $'
+ * '$Revision: 1.8 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,82 +202,86 @@ public class PropertiesMetaData {
     	if (configArray != null) {
     		configArrayLength = configArray.length;
     	}
-        for (int i = 1; i <= configArrayLength; i++ ) {
-        	String xPathPrefix = "/metadataConfig/config[" + i + "]";
-        	String[] keyArray = 
-        		metadataProperties.getProperty(xPathPrefix + "/key");
-        	String[] labelArray = 
-        		metadataProperties.getProperty(xPathPrefix + "/label");
-        	String[] groupIdArray = 
-        		metadataProperties.getProperty(xPathPrefix + "/group");
-        	String[] indexArray = 
-        		metadataProperties.getProperty(xPathPrefix + "/index");
-        	String[] descriptionArray = 
-        		metadataProperties.getProperty(xPathPrefix + "/description");
-        	String[] helpFileArray = 
-        		metadataProperties.getProperty(xPathPrefix + "/helpFile");
-        	String[] fieldTypeArray = 
-        		metadataProperties.getProperty(xPathPrefix + "/fieldType");
-        	String[] isRequired = 
-        		metadataProperties.getProperty(xPathPrefix + "/required");
-                	       	
-            if (keyArray == null || labelArray == null || 
-            		groupIdArray == null || indexArray == null) {
-            	throw new TransformerException("Could not process a metadata properties +" +
-            			"record. One of the following values is null: key, label, group or index");
-            }
-            
-            Integer intIndex;
-            Integer intGroupId;
-            try {
-        	    intIndex = Integer.parseInt(indexArray[0]);
-        	    intGroupId = Integer.parseInt(groupIdArray[0]);
-        	} catch (NumberFormatException nfe) {
-        		throw new TransformerException("Could not process a metadata properties record. " +
-        				"index was not a valid integer for key: " + keyArray[0]);
-        	}
-            	
-        	MetaDataProperty metadata = new MetaDataProperty();
-        	metadata.setKey(keyArray[0]);
-        	metadata.setLabel(labelArray[0]);
-        	metadata.setGroupId(intGroupId);
-        	metadata.setIndex(intIndex);
-        	if (descriptionArray != null) {
-        		metadata.setDescription(descriptionArray[0]);
-        	}        	
-        	if (helpFileArray != null) {
-        		metadata.setHelpFile(helpFileArray[0]);
-        	}
-        	
-            if (fieldTypeArray != null) {
-                metadata.setFieldType(fieldTypeArray[0]);
-                Vector<String> fieldOptionNames = new Vector<String>();
-                Vector<String> fieldOptionValues = new Vector<String>();
-                if (fieldTypeArray[0].equals("select")) {
-                    String[] optionArray = 
-                    	metadataProperties.getProperty(xPathPrefix + "/option");
-                    for(int j = 1; j <= optionArray.length; j++ ) {
-                    	String[] fieldOptionArray = 
-                    	    metadataProperties.getProperty(xPathPrefix + "/option[" + j + "]/name");
-                    	String[] fieldValueArray = 
-                    	    metadataProperties.getProperty(xPathPrefix + "/option[" + j + "]/value");
-                    	if (fieldOptionArray == null || fieldValueArray == null) {
-                    		throw new TransformerException("Both name and value must be specified for " + 
-                    				"metadata element: ");
-                    	}
-                	    fieldOptionNames.add(fieldOptionArray[0]); 
-                	    fieldOptionValues.add(fieldValueArray[0]);                 	    
-                    }
-                }
-                metadata.setFieldOptionNames(fieldOptionNames);
-                metadata.setFieldOptionValues(fieldOptionValues);
-            } else {
-            	metadata.setFieldType("text");
-            }
-        	
-            if (isRequired != null && isRequired[0].equals("true")) {
-            	metadata.setIsRequired(true);
-        	}
+        for (int i = 1; i <= configArrayLength; i++) {
+			String xPathPrefix = "/metadataConfig/config[" + i + "]";
+			String[] keyArray = 
+				metadataProperties.getProperty(xPathPrefix + "/key");
+			String[] labelArray = 
+				metadataProperties.getProperty(xPathPrefix + "/label");
+			String[] groupIdArray = 
+				metadataProperties.getProperty(xPathPrefix + "/group");
+			String[] indexArray = 
+				metadataProperties.getProperty(xPathPrefix + "/index");
+			String[] descriptionArray = 
+				metadataProperties.getProperty(xPathPrefix + "/description");
+			String[] helpFileArray = 
+				metadataProperties.getProperty(xPathPrefix + "/helpFile");
+			String[] fieldTypeArray = 
+				metadataProperties.getProperty(xPathPrefix + "/fieldType");
+			String[] isRequired = 
+				metadataProperties.getProperty(xPathPrefix + "/required");
+
+			if (keyArray == null || labelArray == null || groupIdArray == null
+					|| indexArray == null) {
+				throw new TransformerException("Could not process a metadata properties +"
+						+ "record. One of the following values is null: key, label, group or index");
+			}
+
+			Integer intIndex;
+			Integer intGroupId;
+			try {
+				intIndex = Integer.parseInt(indexArray[0]);
+				intGroupId = Integer.parseInt(groupIdArray[0]);
+			} catch (NumberFormatException nfe) {
+				throw new TransformerException("Could not process a metadata properties record. "
+						+ "index was not a valid integer for key: " + keyArray[0]);
+			}
+
+			MetaDataProperty metadata = new MetaDataProperty();
+			metadata.setKey(keyArray[0]);
+			metadata.setLabel(labelArray[0]);
+			metadata.setGroupId(intGroupId);
+			metadata.setIndex(intIndex);
+			if (descriptionArray != null) {
+				metadata.setDescription(descriptionArray[0]);
+			}
+			if (helpFileArray != null) {
+				metadata.setHelpFile(helpFileArray[0]);
+			}
+
+			try {
+				if (fieldTypeArray != null) {
+					metadata.setFieldType(fieldTypeArray[0]);
+					Vector<String> fieldOptionNames = new Vector<String>();
+					Vector<String> fieldOptionValues = new Vector<String>();
+					if (fieldTypeArray[0].equals("select")) {
+						String[] optionArray = 
+							metadataProperties.getProperty(xPathPrefix + "/option");
+						for (int j = 1; j <= optionArray.length; j++) {
+							String[] fieldOptionArray = 
+								metadataProperties.getProperty(xPathPrefix + "/option[" + j + "]/name");
+							String[] fieldValueArray = 
+								metadataProperties.getProperty(xPathPrefix + "/option[" + j + "]/value");
+							if (fieldOptionArray == null || fieldValueArray == null) {
+								throw new TransformerException("Both name and value must be specified for "
+										+ "metadata element: ");
+							}
+							fieldOptionNames.add(fieldOptionArray[0]);
+							fieldOptionValues.add(fieldValueArray[0]);
+						}
+					}
+					metadata.setFieldOptionNames(fieldOptionNames);
+					metadata.setFieldOptionValues(fieldOptionValues);
+				} else {
+					metadata.setFieldType("text");
+				}
+			} catch (GeneralPropertyException gpe) {
+				throw new TransformerException("Property error while processing key: " + keyArray[0]);
+			}
+
+			if (isRequired != null && isRequired[0].equals("true")) {
+				metadata.setIsRequired(true);
+			}
         	
             propertyMap.put(keyArray[0], metadata);
         }   	
