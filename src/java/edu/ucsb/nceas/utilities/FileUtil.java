@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: daigle $'
- *     '$Date: 2008-12-26 21:27:53 $'
- * '$Revision: 1.7 $'
+ *   '$Author: leinfelder $'
+ *     '$Date: 2009-02-19 01:05:41 $'
+ * '$Revision: 1.8 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import java.util.Enumeration;
@@ -221,7 +223,7 @@ public class FileUtil
 	}
 	
     /**
-	 * Create and write content to a new file
+	 * Create and write content to a new file with default character encoding
 	 * 
 	 * @param filePath
 	 *            the full pathname of the file to create
@@ -230,6 +232,21 @@ public class FileUtil
 	 * @returns boolean representing success or failure of file creation
 	 */
 	public static boolean writeNewFile(String filePath, String content) throws IOException {
+		return writeNewFile(filePath, content, null);
+	}
+	
+    /**
+	 * Create and write content to a new file
+	 * 
+	 * @param filePath
+	 *            the full pathname of the file to create
+	 * @param content
+	 *            a string holding the contents to be written to the file
+	 * @param charset
+	 * 				the character encoding to use for writing (i.e. "UTF8") 
+	 * @returns boolean representing success or failure of file creation
+	 */
+	public static boolean writeNewFile(String filePath, String content, String charset) throws IOException {
 		if (getFileStatus(filePath) != DOES_NOT_EXIST) {
 			throw new IOException("Cannot create file: " + filePath 
 					+ ". File already exists.");
@@ -239,8 +256,14 @@ public class FileUtil
 
 		PrintWriter output = null;
 		try {
-			output = new PrintWriter(new BufferedWriter(
-					new FileWriter(filePath)));
+			if (charset != null) {
+				output = new PrintWriter(new BufferedWriter(
+						new OutputStreamWriter(new FileOutputStream(filePath), charset)));
+			}
+			else {
+				output = new PrintWriter(new BufferedWriter(
+						new FileWriter(filePath, false)));
+			}
 
 			output.print(content);
 		} finally {
@@ -250,7 +273,7 @@ public class FileUtil
 		return true;
 	}
 
-    /**
+	 /**
 	 * Replace a file or create a new one if it does not exist
 	 * 
 	 * @param filePath
@@ -260,13 +283,34 @@ public class FileUtil
 	 * @returns boolean representing success or failure of file creation
 	 */
 	public static boolean writeFile(String filePath, String content) throws IOException {	
+		return FileUtil.writeFile(filePath, content, null);
+	}
+	
+    /**
+	 * Replace a file or create a new one if it does not exist
+	 * 
+	 * @param filePath
+	 *            the full pathname of the file to create/replace
+	 * @param content
+	 *            a string holding the contents to be written to the file
+	 * @param charset
+	 * 				the character encoding to use for writing	 
+	 * @returns boolean representing success or failure of file creation
+	 */
+	public static boolean writeFile(String filePath, String content, String charset) throws IOException {	
 		File file = new File(filePath);
 		file.createNewFile();
 
 		PrintWriter output = null;
 		try {
-			output = new PrintWriter(new BufferedWriter(
-					new FileWriter(file, false)));
+			if (charset != null) {
+				output = new PrintWriter(new BufferedWriter(
+						new OutputStreamWriter(new FileOutputStream(file), charset)));
+			}
+			else {
+				output = new PrintWriter(new BufferedWriter(
+						new FileWriter(file, false)));
+			}
 
 			output.print(content);
 		} finally {
@@ -276,14 +320,27 @@ public class FileUtil
 		return true;
 	}
 	
+	/**
+	 * Read the contents of a file - uses default charset
+	 * 
+	 * @param filePath
+	 *            the full pathname of the file to read    
+	 * @returns a string holding the contents of the file
+	 */
+	public static String readFileToString(String filePath) throws IOException {
+		return readFileToString(filePath, null);
+	}
+	
     /**
 	 * Read the contents of a file
 	 * 
 	 * @param filePath
 	 *            the full pathname of the file to read
+	 * @param charset
+	 * 			the optional character set to use for reading the file           
 	 * @returns a string holding the contents of the file
 	 */
-	public static String readFileToString(String filePath) throws IOException {
+	public static String readFileToString(String filePath, String charset) throws IOException {
 		if (getFileStatus(filePath) < EXISTS_READABLE) {
 			throw new IOException("Cannot read file: " + filePath);
 		}
@@ -293,7 +350,12 @@ public class FileUtil
 		String nextLine;
 
 		try {
-			input = new BufferedReader(new FileReader(filePath));
+			if (charset != null) {
+				input = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), charset));
+			}
+			else {
+				input = new BufferedReader(new FileReader(filePath));
+			}
 			boolean firstLine = true;
 			while ((nextLine = input.readLine()) != null) {
 				if (!firstLine) {
