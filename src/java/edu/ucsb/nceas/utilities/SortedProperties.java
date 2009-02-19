@@ -4,8 +4,8 @@
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
- *     '$Date: 2008-08-26 23:35:31 $'
- * '$Revision: 1.6 $'
+ *     '$Date: 2009-02-19 00:31:34 $'
+ * '$Revision: 1.7 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,9 @@ public class SortedProperties
 	private static String IS_NOT_PROPERTY = "false";
 	private static String SPACE = "space";
     private static String COMMENT = "#";
-    private static String UNKNOWN = "???";  
+    private static String UNKNOWN = "???"; 
+    private static String IS_CONTINUED = "continued";
+    private static String IS_NOT_CONTINUED = "not-continued";
     
     // This is incremented and used with the non-property identifiers to
     // create unique keys for those lines.
@@ -99,11 +101,30 @@ public class SortedProperties
 		    
 		    // Read in file
 		    String fileLine;
+		    boolean processingPartialLine = false;
+		    String partialLineKey = null;
+		    String partialLineValue = "";
 		    while ((fileLine = reader.readLine()) != null) {
 			    String parsedLine[] = parseLine(fileLine);
 			    allLinesMap.put(parsedLine[0], parsedLine[1]);
-			    if (parsedLine[2].equals("true")) {
-			    	propertiesMap.put(parsedLine[0], parsedLine[1]);
+			    if (processingPartialLine) {
+			    	if (parsedLine[3].equals(IS_CONTINUED)) {
+			    		partialLineValue += parsedLine[1].substring(0, parsedLine[1].length() - 1).trim();
+			    	} else {
+			    		partialLineValue += parsedLine[1];
+			    		propertiesMap.put(partialLineKey, partialLineValue);
+			    		processingPartialLine = false;
+					    partialLineKey = null;
+					    partialLineValue = "";
+			    	}
+			    } else if (parsedLine[2].equals(IS_PROPERTY)) {
+			    	if (parsedLine[3].equals(IS_CONTINUED)) {
+			    		processingPartialLine = true;
+			    		partialLineKey = parsedLine[0];
+			    		partialLineValue = parsedLine[1].substring(0, parsedLine[1].length() - 1).trim();
+			    	} else {
+			    		propertiesMap.put(parsedLine[0], parsedLine[1]);
+			    	}
 			    }
 		    }
 		} finally {
@@ -129,7 +150,8 @@ public class SortedProperties
         
     	int equalIndex;
     	String line = rawLine.trim();
-    	String[] parsedString = new String[3];    	
+    	String[] parsedString = new String[4];  
+    	parsedString[3] = IS_NOT_CONTINUED;
                
     	if (line.matches("^#.*")) {                // line is a comment
     		nonPropertyCount++;
@@ -154,14 +176,18 @@ public class SortedProperties
         	} else {                                    // there is a key and a value
         		parsedString[0] = line.substring(0, equalIndex);
         		parsedString[1] = line.substring(equalIndex + 1).trim();
-            	parsedString[2] = IS_PROPERTY;
-        	}        	
+        		parsedString[2] = IS_PROPERTY;
+        	}     	
         } else {                                     // something else going on here
         	nonPropertyCount++;
         	parsedString[0] = UNKNOWN + nonPropertyCount;
         	parsedString[1] = line;            	
         	parsedString[2] = IS_NOT_PROPERTY;
         }
+    	
+   		if (line.endsWith("\\")) {
+			parsedString[3] = IS_CONTINUED;
+		} 
     	
     	return parsedString;
     }
