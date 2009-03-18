@@ -5,9 +5,9 @@
  *    Authors: @authors@
  *    Release: @release@
  *
- *   '$Author: leinfelder $'
- *     '$Date: 2009-02-19 01:05:41 $'
- * '$Revision: 1.8 $'
+ *   '$Author: daigle $'
+ *     '$Date: 2009-03-18 16:47:59 $'
+ * '$Revision: 1.9 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -345,8 +345,10 @@ public class FileUtil
 			throw new IOException("Cannot read file: " + filePath);
 		}
 
+		File file = new File(filePath);
+		Long fileLength = new Long(file.length());
 		BufferedReader input = null;
-		String contents = "";
+		StringBuffer contents = new StringBuffer(fileLength.intValue());
 		String nextLine;
 
 		try {
@@ -359,11 +361,11 @@ public class FileUtil
 			boolean firstLine = true;
 			while ((nextLine = input.readLine()) != null) {
 				if (!firstLine) {
-					contents += "\n";
+					contents.append("\n");
 				} else {
 					firstLine = false;
 				}
-				contents += nextLine;
+				contents.append(nextLine);
 			}
 
 		} finally {
@@ -374,7 +376,7 @@ public class FileUtil
 			return null;
 		}
 
-		return contents;
+		return contents.toString();
 	}
 	
 	/**
