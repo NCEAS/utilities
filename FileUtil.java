@@ -6,8 +6,8 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2009-03-18 16:47:59 $'
- * '$Revision: 1.9 $'
+ *     '$Date: 2009-03-19 17:09:05 $'
+ * '$Revision: 1.10 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,6 +102,21 @@ public class FileUtil
     		return DOES_NOT_EXIST;
     	}
     }
+    
+    /**
+     * Get the file size in bytes
+     * @param the path to the file
+     * @return the size of the file in bytes.
+     */
+    public static long getFileSize(String filePath) {
+    	File file = new File(filePath);
+    	
+    	if (!file.exists()) {
+    		return -1;
+    	}
+    	
+    	return file.length();
+    }
 
     /**
 	 * Wrap the File.isDirectory method
@@ -172,9 +187,8 @@ public class FileUtil
 	 *            the full pathname of the file to modify
 	 * @param replacementList
 	 *            a hashtable of original and replacement values
-	 * @returns boolean representing success or failure of file creation
 	 */
-	public static boolean replaceInFile(String filePath,
+	public static void replaceInFile(String filePath,
 			Hashtable<String, String> replacementList) throws IOException {
 		if (getFileStatus(filePath) != EXISTS_READ_WRITABLE) {
 			throw new IOException("File: " + filePath + " is not writeable.");
@@ -218,8 +232,6 @@ public class FileUtil
 		} finally {
 			output.close();
 		}
-
-		return true;
 	}
 	
     /**
@@ -231,8 +243,8 @@ public class FileUtil
 	 *            a string holding the contents to be written to the file
 	 * @returns boolean representing success or failure of file creation
 	 */
-	public static boolean writeNewFile(String filePath, String content) throws IOException {
-		return writeNewFile(filePath, content, null);
+	public static void writeNewFile(String filePath, String content) throws IOException {
+		writeNewFile(filePath, content, null);
 	}
 	
     /**
@@ -246,7 +258,7 @@ public class FileUtil
 	 * 				the character encoding to use for writing (i.e. "UTF8") 
 	 * @returns boolean representing success or failure of file creation
 	 */
-	public static boolean writeNewFile(String filePath, String content, String charset) throws IOException {
+	public static void writeNewFile(String filePath, String content, String charset) throws IOException {
 		if (getFileStatus(filePath) != DOES_NOT_EXIST) {
 			throw new IOException("Cannot create file: " + filePath 
 					+ ". File already exists.");
@@ -269,8 +281,6 @@ public class FileUtil
 		} finally {
 			output.close();
 		}
-
-		return true;
 	}
 
 	 /**
@@ -282,8 +292,8 @@ public class FileUtil
 	 *            a string holding the contents to be written to the file
 	 * @returns boolean representing success or failure of file creation
 	 */
-	public static boolean writeFile(String filePath, String content) throws IOException {	
-		return FileUtil.writeFile(filePath, content, null);
+	public static void writeFile(String filePath, String content) throws IOException {	
+		FileUtil.writeFile(filePath, content, null);
 	}
 	
     /**
@@ -297,7 +307,11 @@ public class FileUtil
 	 * 				the character encoding to use for writing	 
 	 * @returns boolean representing success or failure of file creation
 	 */
-	public static boolean writeFile(String filePath, String content, String charset) throws IOException {	
+	public static void writeFile(String filePath, String content, String charset) throws IOException {	
+		if (content == null || content.equals("")) {
+			throw new IOException("Attempting to write a file with no content: " + filePath);
+		}
+		
 		File file = new File(filePath);
 		file.createNewFile();
 
@@ -316,8 +330,6 @@ public class FileUtil
 		} finally {
 			output.close();
 		}
-
-		return true;
 	}
 	
 	/**
@@ -346,9 +358,16 @@ public class FileUtil
 		}
 
 		File file = new File(filePath);
-		Long fileLength = new Long(file.length());
+		int fileLength = new Long(file.length()).intValue();
 		BufferedReader input = null;
-		StringBuffer contents = new StringBuffer(fileLength.intValue());
+		StringBuffer contents = null;
+		
+		// If fileLength is < 0, the length was greater that an integer could hold
+		if (fileLength >= 0) {
+			contents = new StringBuffer(fileLength);
+		} else {
+			contents = new StringBuffer(100000);
+		}
 		String nextLine;
 
 		try {
