@@ -6,7 +6,7 @@
  *    Release: @release@
  *
  *   '$Author: daigle $'
- *     '$Date: 2009-03-23 21:53:59 $'
+ *     '$Date: 2009/03/23 21:53:59 $'
  * '$Revision: 1.11 $'
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -42,6 +43,8 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.Vector;
 
 /**
@@ -56,6 +59,8 @@ public class FileUtil
     public static int EXISTS_READ_WRITABLE = 3; 
     
     private static Character FILE_SEPARATOR = null;
+    
+    private static int DEFAULT_BUFFER_SIZE = 4 * 1024; // 4K buffer
     
     /**
      *  constructor
@@ -138,13 +143,13 @@ public class FileUtil
 	 * @param dirPath the full pathname of the directory to create
 	 * @returns boolean representing success or failure of directory creation
 	 */
-	public static void createDirectory(String dirPath) throws IOException {
+	public static void createDirectory(String dirPath) throws UtilException {
 		File file = new File(dirPath);
 		if (file.exists() && file.isDirectory()) {
 			return;
 		}
 		if (!file.mkdirs()) {
-			throw new IOException("Could not create directory: " + dirPath);
+			throw new UtilException("Could not create directory: " + dirPath);
 		}
 	}	
     
@@ -307,6 +312,53 @@ public class FileUtil
 	
     /**
 	 * Replace a file or create a new one if it does not exist
+	 *  
+	 * @returns boolean representing success or failure of file creation
+	 */
+	public static void writeFile(String filePath, InputStream inputStream, String charset) throws UtilException {	
+		writeFile(filePath, inputStream, charset, DEFAULT_BUFFER_SIZE);
+	}
+	
+    /**
+	 * Replace a file or create a new one if it does not exist
+	 * 
+	 * @returns boolean representing success or failure of file creation
+	 */
+	public static void writeFile(String filePath, InputStream inputStream, String charset, int bufferSize) throws UtilException {	
+
+		FileOutputStream outputStream = null;
+		try {
+			if (FileUtil.getFileStatus(filePath) == DOES_NOT_EXIST) {
+				createFile(filePath);
+			}
+			
+			outputStream = new FileOutputStream(filePath);
+
+			byte[] byteBuffer = new byte[bufferSize];
+
+			int b = 0;
+			while ((b = inputStream.read(byteBuffer)) != -1) {
+				outputStream.write(byteBuffer, 0, b);
+			}	
+
+		} catch (IOException ioe) {
+			throw new UtilException("I/O error while trying to write file: " + filePath + " : " + ioe.getMessage());
+		} finally {
+			try {
+				inputStream.close();
+			} catch (IOException ioe) {
+				// not much that can be done here
+			}
+			try {
+				outputStream.close();
+			} catch (IOException ioe) {
+				// not much that can be done here
+			}	
+		}
+	}
+	
+    /**
+	 * Replace a file or create a new one if it does not exist
 	 * 
 	 * @param filePath
 	 *            the full pathname of the file to create/replace
@@ -431,6 +483,133 @@ public class FileUtil
 	public static String normalizePath(String path) {
 		return path.replace('/', getFS());
 	}
+	
+	/**
+	 * Get information about the contents of a jar file. The info is returned as
+	 * a list of JarEntry objects.
+	 * 
+	 * @param jarFilePath
+	 *            the path to the jar file
+	 * 
+	 * @return a vector of JarEntry objects holding information about all files
+	 *         in the jar.
+	 */
+	public static JarEntry getJarEntry(String jarFilePath, String entryName)
+			throws UtilException {
+		if (getFileStatus(jarFilePath) < EXISTS_READABLE) {
+			throw new UtilException("Could not find jar file to get content names: " + jarFilePath);
+		}
+
+		JarFile jarFile = null;
+		try {
+			jarFile = new JarFile(jarFilePath);
+		} catch (IOException ioe) {
+			throw new UtilException("I/O problem while trying to get contents of jar: "
+					+ jarFilePath + " : " + ioe.getMessage());
+		}
+
+		return jarFile.getJarEntry(entryName);
+	}
+	
+	/**
+	 * Get information about the contents of a jar file. The info is returned as
+	 * a list of JarEntry objects.
+	 * 
+	 * @param jarFilePath
+	 *            the path to the jar file
+	 * 
+	 * @return a vector of JarEntry objects holding information about all files
+	 *         in the jar.
+	 */
+	public static Vector<JarEntry> getJarInfoList(String jarFilePath)
+			throws UtilException {
+		if (getFileStatus(jarFilePath) < EXISTS_READABLE) {
+			throw new UtilException("Could not find jar file to get content names: " + jarFilePath);
+		}
+
+		Vector<JarEntry> infoList = new Vector<JarEntry>();
+		JarFile jarFile = null;
+		try {
+			jarFile = new JarFile(jarFilePath);
+		} catch (IOException ioe) {
+			throw new UtilException("I/O problem while trying to get contents of jar: "
+					+ jarFilePath + " : " + ioe.getMessage());
+		}
+
+		Enumeration<JarEntry> jarEntryEnum = jarFile.entries();
+
+		while (jarEntryEnum.hasMoreElements()) {
+			infoList.add(jarEntryEnum.nextElement());
+		}
+
+		return infoList;
+	}
+	
+	/**
+	 * Get information about the contents of a jar file. The info is returned as
+	 * a list of JarEntry objects.
+	 * 
+	 * @param jarFilePath
+	 *            the path to the jar file
+	 * 
+	 * @return a vector of JarEntry objects holding information about all files
+	 *         in the jar.
+	 */
+	public static void extractJarFile(String jarFilePath, String destinationPath) 
+			throws UtilException {
+
+		JarFile jarFile = null;
+		try {
+			jarFile = new JarFile(jarFilePath );
+			
+			Enumeration<JarEntry> jarEntryEnum = jarFile.entries();
+
+			while (jarEntryEnum.hasMoreElements()) {
+				JarEntry jarEntry = jarEntryEnum.nextElement();
+				String entryName = jarEntry.getName();
+				InputStream inputStream = jarFile.getInputStream(jarEntry);
+			
+				if (jarEntry.isDirectory()) {
+					createDirectory(destinationPath + getFS() + entryName);
+				} else {				
+					writeFile(destinationPath + getFS() + entryName, inputStream, null); 
+				}
+			}
+		} catch (IOException ioe) {
+			throw new UtilException("I/O problem while trying to get contents of jar: "
+					+ jarFilePath + " : " + ioe.getMessage());
+		}
+	}
+	
+	/**
+	 * Get a buffered reader for a given file in a given jar file
+	 * 
+	 * @param jarFilePath
+	 *            the jar file that holds the desired file
+	 * @param jarEntryName
+	 *            the name of the file for which we want a reader
+	 * @return a BufferedReader for the desired file
+	 */
+	public static BufferedReader getJarEntryReader(String jarFilePath, String jarEntryName)
+			throws UtilException {
+		BufferedReader bufferedReader = null;
+
+		try {
+			JarFile jarFile = new JarFile(jarFilePath);
+			JarEntry jarEntry = jarFile.getJarEntry(jarEntryName);
+
+			InputStream inputStream = jarFile.getInputStream(jarEntry);
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			bufferedReader = new BufferedReader(inputStreamReader);
+
+		} catch (IOException ioe) {
+			throw new UtilException("I/O problem while trying to get jar entry reader for entry " 
+					+ jarEntryName + " in jar file " + jarFilePath + " : " + ioe.getMessage());
+		}
+
+		return bufferedReader;
+	}
+	
 }
 
 
