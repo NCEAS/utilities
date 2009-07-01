@@ -1,13 +1,14 @@
 /**
- *  '$RCSfile$'
- *    Purpose: A Class that implements administrative methods 
+ *  '$RCSfile: PropertyExistsException.java,v $'
+ *    Purpose: An Exception thrown when an error occurs because an 
+ *             AccessionNumber was invalid or used incorrectly
  *  Copyright: 2008 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
- *    Authors: Michael Daigle
- * 
+ *    Authors: Matt Jones
+ *
  *   '$Author: daigle $'
- *     '$Date: 2009-03-23 13:56:56 -0800 (Mon, 23 Mar 2009) $'
- * '$Revision: 4854 $'
+ *     '$Date: 2008-07-11 20:36:39 $'
+ * '$Revision: 1.1 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +27,21 @@
 
 package edu.ucsb.nceas.utilities;
 
+/**
+ * Exception thrown when an error occurs because property already exists. 
+ * Typically this is used when a property is being added and there is a 
+ * conflict
+ */
+public class ParseLSIDException extends Exception {
 
-public class StatusUtil {
+	private static final long serialVersionUID = 6229544481308174753L;
 
-	public static String ACTIVE = "active";
-	public static String DELETED = "deleted";
-	public static String INACTIVE = "inactive";
-	public static String SCHEDULED = "scheduled";
-	public static String UNSCHEDULED = "unscheduled";	
-	public static String EXECUTING = "executing";
+	/**
+	 * Create a new AccessionNumberException.
+	 *
+	 * @param message The error or warning message.
+	 */
+	public ParseLSIDException(String message) {
+		super(message);
+	}
 }
