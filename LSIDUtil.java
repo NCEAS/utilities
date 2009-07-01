@@ -25,7 +25,10 @@
  */
 package edu.ucsb.nceas.utilities;
 
-public class LSIDUtilities 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+public class LSIDUtil 
 {
 	private static final char COLON = ':';
 	private static final char DOT = '.';
@@ -83,6 +86,48 @@ public class LSIDUtilities
 				docid = null;
 			}
 		}
+		return docid;
+	}
+	
+	/**
+	 * Parse the lsid string into an LSID object
+	 * @param lsidString string representation of lsid
+	 * @return an LSID object
+	 */
+	public static LSID parseLSID(String lsidString) throws ParseLSIDException {
+		LSID lsid = new LSID();
+		
+		String regex = "urn:lsid:.+:.+:.*";
+		
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(lsidString);
+		
+		if (!matcher.matches()) {
+			throw new ParseLSIDException("Could not parse lsid: " + lsidString);
+		}
+		
+		String[] splitLSID = lsidString.split(":");
+		
+		lsid.setAuthority(splitLSID[2]);
+		lsid.setNamespace(splitLSID[3]);
+		lsid.setObjectId(splitLSID[4]);
+		
+		if (splitLSID.length > 4 && splitLSID[5] != "") {
+			Long version = Long.valueOf(splitLSID[5]);
+			lsid.setVersion(version);
+		}
+				
+		return lsid;
+	}
+	
+	public static String getDocId(String lsid, boolean includeRevision) throws ParseLSIDException {
+		LSID parsedLSID = parseLSID(lsid);
+		
+		String docid = parsedLSID.getNamespace() + "." + parsedLSID.getObjectId();
+		if (includeRevision && parsedLSID.getVersion() != null ) {
+			docid += "." + parsedLSID.getVersion();
+		}
+		
 		return docid;
 	}
 }
