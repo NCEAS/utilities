@@ -345,12 +345,16 @@ public class FileUtil
 			throw new UtilException("I/O error while trying to write file: " + filePath + " : " + ioe.getMessage());
 		} finally {
 			try {
-				inputStream.close();
+				if (inputStream != null) {
+					inputStream.close();
+				}
 			} catch (IOException ioe) {
 				// not much that can be done here
 			}
 			try {
-				outputStream.close();
+				if (outputStream != null) {
+					outputStream.close();
+				}
 			} catch (IOException ioe) {
 				// not much that can be done here
 			}	
@@ -571,7 +575,13 @@ public class FileUtil
 			
 				if (jarEntry.isDirectory()) {
 					createDirectory(destinationPath + getFS() + entryName);
-				} else {				
+				} else {	
+					String filePath = destinationPath + getFS() + entryName;
+					int lastFS = filePath.lastIndexOf(getFS());
+					String fileDir = filePath.substring(0, lastFS);
+					if (!FileUtil.isDirectory(fileDir)) {
+						FileUtil.createDirectory(fileDir);
+					}
 					writeFile(destinationPath + getFS() + entryName, inputStream, null); 
 				}
 			}
