@@ -1,10 +1,10 @@
 /**
- *  '$RCSfile: PropertyExistsException.java,v $'
- *    Purpose: An Exception thrown when an error occurs because an 
- *             AccessionNumber was invalid or used incorrectly
- *  Copyright: 2008 Regents of the University of California and the
+ *  '$RCSfile: ParseLSIDException.java,v $'
+ *    Purpose: An Exception thrown when an error occurs when parsing
+ *             an lsid
+ *  Copyright: 2009 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
- *    Authors: Matt Jones
+ *    Authors: Michael Daigle
  *
  *   '$Author: daigle $'
  *     '$Date: 2008-07-11 20:36:39 $'
@@ -28,16 +28,14 @@
 package edu.ucsb.nceas.utilities;
 
 /**
- * Exception thrown when an error occurs because property already exists. 
- * Typically this is used when a property is being added and there is a 
- * conflict
+ * Exception thrown when an error occurs when parsing an LSID
  */
 public class ParseLSIDException extends Exception {
 
 	private static final long serialVersionUID = 6229544481308174753L;
 
 	/**
-	 * Create a new AccessionNumberException.
+	 * Create a new ParseLSIDException.
 	 *
 	 * @param message The error or warning message.
 	 */

@@ -1,9 +1,8 @@
 /**
- *  '$RCSfile: XMLUtilities.java,v $'
- *  Copyright: 2002 Regents of the University of California and the
+ *  '$RCSfile: LSIDUtil.java,v $'
+ *  Copyright: 2009 Regents of the University of California and the
  *              National Center for Ecological Analysis and Synthesis
- *    Authors: @authors@
- *    Release: @release@
+ *    Authors: Jing Tao, Michael Daigle
  *
  *   '$Author: leinfelder $'
  *     '$Date: 2008-10-02 15:59:09 $'
@@ -34,7 +33,7 @@ public class LSIDUtil
 	private static final char DOT = '.';
 	private static final String LSIDPREFIX = "urn:lsid:";
     /**
-     * This class contains utitlities method for LSID
+     * This class contains utilities method for LSID
      */
 	
 	/**
@@ -91,7 +90,9 @@ public class LSIDUtil
 	
 	/**
 	 * Parse the lsid string into an LSID object
-	 * @param lsidString string representation of lsid
+	 * 
+	 * @param lsidString
+	 *            string representation of lsid
 	 * @return an LSID object
 	 */
 	public static LSID parseLSID(String lsidString) throws ParseLSIDException {
@@ -120,6 +121,17 @@ public class LSIDUtil
 		return lsid;
 	}
 	
+	/**
+	 * Get the doc id from an lsid with an option to include the revision
+	 * number.
+	 * 
+	 * @param lsid
+	 *            the lsid to parse
+	 * @param includeRevision
+	 *            if set to true, include the revision part of the doc id,
+	 *            otherwise don't
+	 * @return the docid
+	 */
 	public static String getDocId(String lsid, boolean includeRevision) throws ParseLSIDException {
 		LSID parsedLSID = parseLSID(lsid);
 		

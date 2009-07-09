@@ -169,15 +169,15 @@ public class StringUtil
 	 * @return string extracted from reader
 	 */
 	public static String readerToString(Reader reader) throws IOException {
-		String xmlString = "";
+		StringBuffer contents = new StringBuffer();
 		int tmp = reader.read();
 		while (tmp != -1) {
-			xmlString += (char) tmp;
+			contents.append((char)tmp);
 			tmp = reader.read();
 		}
 
 		reader.reset();
-		return xmlString;
+		return contents.toString();
 	}
 }
 
