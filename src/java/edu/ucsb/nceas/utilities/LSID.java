@@ -1,6 +1,6 @@
 /**
- *  '$RCSfile: MetaDataElement.java,v $'
- *  Copyright: 2003 Regents of the University of California and the
+ *  '$RCSfile: LSID.java,v $'
+ *  Copyright: 2009 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *
  *   '$Author: daigle $'
@@ -24,22 +24,11 @@
 package edu.ucsb.nceas.utilities;
 
 /**
- * Encapsulate the meta-information about Options so that this information can
- * be used by applications for managing options in a usable way.  The metadata
- * managed for each option includes a human-readable label, a description of
- * the option, an index into the order of the option relative to others in its
- * group, and a category (group) for the option. This information is stored in a
- * file which can be accessed using the load() and store() methods.
+ * Encapsulate information about an LSID
  * 
- * @author Matt Jones
+ * @author Michael Daigle
  */
-/**
- * A data structure to encapsulate the metadata about a property, including
- * accessor methods for all fields.
- */
-/**
- * A data structure to encapsulate the information about a group
- */
+
 public class LSID {
     private String _authority = null;
     private String _namespace = null;
