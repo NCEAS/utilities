@@ -52,8 +52,8 @@ public class DateUtil
 	 * 
 	 * @returns String representation of the calendar
 	 */
-    public static String getHumanReadable(Calendar cal, boolean dstAdjust) throws UtilException {
-    	return getHumanReadable(cal, "d MMM yyyy hh:mm:ss aaa zzz");
+    public static String getHumanReadable(Calendar cal) throws UtilException {
+    	return getHumanReadable(cal, "mm/dd/yy HH:mm:ss z");
     }
     
     /**
@@ -92,8 +92,8 @@ public class DateUtil
 	 * 
 	 * @returns String representation of the calendar
 	 */
-    public static String getHumanReadable(Timestamp timestamp, boolean dstAdjust) throws UtilException {
-    	return getHumanReadable(timestamp, "d MMM yyyy hh:mm:ss aaa zzz");
+    public static String getHumanReadable(Timestamp timestamp) throws UtilException {
+    	return getHumanReadable(timestamp, "mm/dd/yy HH:mm:ss z");
     }
     
     /**
