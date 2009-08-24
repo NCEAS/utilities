@@ -29,6 +29,7 @@ package edu.ucsb.nceas.utilities;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -146,6 +147,12 @@ public class DBUtil
 		}
 
 		return false;
+	}
+	
+	public static ResultSet select (Connection conn, PreparedStatement ps) throws SQLException {
+		ResultSet resultSet = null;
+		
+		return resultSet;
 	}
 }
 
