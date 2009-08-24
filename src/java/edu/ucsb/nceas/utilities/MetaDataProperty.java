@@ -47,6 +47,7 @@ public class MetaDataProperty extends MetaDataElement {
 	public static final String PASSWORD_TYPE = "password";
 	public static final String CHECKBOX_TYPE = "checkbox";
 	public static final String RADIO_TYPE = "radio";
+	public static final String HIDDEN_TYPE = "hidden";
 	
 	static final HashSet<String> fieldTypeSet = new HashSet<String>();
 	static {
@@ -55,6 +56,7 @@ public class MetaDataProperty extends MetaDataElement {
 		fieldTypeSet.add(PASSWORD_TYPE);
 		fieldTypeSet.add(CHECKBOX_TYPE);
 		fieldTypeSet.add(RADIO_TYPE);
+		fieldTypeSet.add(HIDDEN_TYPE);
 	}
 	private String key;
     private String label;
@@ -132,7 +134,7 @@ public class MetaDataProperty extends MetaDataElement {
      */
     public void setFieldType(String fieldType) throws GeneralPropertyException {
     	if (fieldType == null || !fieldTypeSet.contains(fieldType)) {
-    		throw new GeneralPropertyException("cannot set field type to: " + fieldType);
+    		throw new GeneralPropertyException("MetaDataProperty.setFieldType - cannot set field type to: " + fieldType);
     	}
         this.fieldType = fieldType;
     }

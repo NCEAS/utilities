@@ -160,6 +160,14 @@ public class PropertiesMetaData {
         // populate the group information  	
         String[] groupArray = 
         	metadataProperties.getProperty("/metadataConfig/group");
+    	MetaDataGroup defaultGroup = new MetaDataGroup();
+    	defaultGroup.setIndex(0);
+    	defaultGroup.setName("Hidden Group");
+    	defaultGroup.setComment("Group for hidden values");
+    	defaultGroup.setDescription("This group holds values that will not show up on the " 
+    			+ "configuration page, but we want to be persisted to backup properties.");
+    	groupMap.put(0, defaultGroup);
+        
         for (int i = 1; i <= groupArray.length; i++ ) {
         	String xPathPrefix = "/metadataConfig/group[" + i + "]";
         	String[] indexArray = metadataProperties.getProperty(xPathPrefix + "/index");
@@ -168,7 +176,7 @@ public class PropertiesMetaData {
         	String[] descriptionArray = metadataProperties.getProperty(xPathPrefix + "/description");
         	String[] helpFileArray = metadataProperties.getProperty(xPathPrefix + "/helpFile");
             if (indexArray == null || nameArray == null) {
-            	throw new TransformerException("Could not process a metadata group properties +" +
+            	throw new TransformerException("PropertiesMetaData.load - Could not process a metadata group properties " +
             			"record. One of the following values is null: name or index");
             }
             
@@ -176,7 +184,7 @@ public class PropertiesMetaData {
             try {
         	    intIndex = Integer.parseInt(indexArray[0]);
         	} catch (NumberFormatException nfe) {
-        		throw new TransformerException("Could not process a metadata properties record. " +
+        		throw new TransformerException("PropertiesMetaData.load - Could not process a metadata properties record. " +
         				"index was not a valid integer for group: " + nameArray[0]);
         	}
         	MetaDataGroup group = new MetaDataGroup();
@@ -223,7 +231,7 @@ public class PropertiesMetaData {
 
 			if (keyArray == null || labelArray == null || groupIdArray == null
 					|| indexArray == null) {
-				throw new TransformerException("Could not process a metadata properties +"
+				throw new TransformerException("PropertiesMetaData.load - Could not process a metadata properties +"
 						+ "record. One of the following values is null: key, label, group or index");
 			}
 
@@ -234,7 +242,7 @@ public class PropertiesMetaData {
 				intGroupId = Integer.parseInt(groupIdArray[0]);
 			} catch (NumberFormatException nfe) {
 				throw new TransformerException("Could not process a metadata properties record. "
-						+ "index was not a valid integer for key: " + keyArray[0]);
+						+ "index was not a valid integer for key: " + keyArray[0] + " : " + nfe.getMessage());
 			}
 
 			MetaDataProperty metadata = new MetaDataProperty();
@@ -263,7 +271,7 @@ public class PropertiesMetaData {
 							String[] fieldValueArray = 
 								metadataProperties.getProperty(xPathPrefix + "/option[" + j + "]/value");
 							if (fieldOptionArray == null || fieldValueArray == null) {
-								throw new TransformerException("Both name and value must be specified for "
+								throw new TransformerException("PropertiesMetaData.load - Both name and value must be specified for "
 										+ "metadata element: ");
 							}
 							fieldOptionNames.add(fieldOptionArray[0]);
@@ -276,7 +284,7 @@ public class PropertiesMetaData {
 					metadata.setFieldType("text");
 				}
 			} catch (GeneralPropertyException gpe) {
-				throw new TransformerException("Property error while processing key: " + keyArray[0]);
+				throw new TransformerException("PropertiesMetaData.load - Property error while processing key: " + keyArray[0] + " : " + gpe.getMessage());
 			}
 
 			if (isRequired != null && isRequired[0].equals("true")) {
