@@ -42,8 +42,8 @@ import java.util.Collection;
 public class OrderedMap extends HashMap {
 
   private final List ordKeyList;
-  private final static String KEY = "key";
-  private final static String VALUE = "value";
+  public final static String KEY = "key";
+  public final static String VALUE = "value";
   private final static String OPEN = "<";
   private final static String SLASH = "/";
   private final static String CLOSE = ">";
