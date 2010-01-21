@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -241,7 +243,9 @@ public class FileUtil
 				output.println(iter.next());
 			}
 		} finally {
-			output.close();
+			if (output != null) {
+				output.close();
+			}
 		}
 	}
 	
@@ -293,21 +297,10 @@ public class FileUtil
 		} catch (IOException ioe) {
 			throw new UtilException("I/O error while writing new file : " + filePath + " : " + ioe.getMessage());
 		} finally {
-			output.close();
+			if (output != null) {
+				output.close();
+			}
 		}
-	}
-
-	 /**
-	 * Replace a file or create a new one if it does not exist
-	 * 
-	 * @param filePath
-	 *            the full pathname of the file to create/replace
-	 * @param content
-	 *            a string holding the contents to be written to the file
-	 * @returns boolean representing success or failure of file creation
-	 */
-	public static void writeFile(String filePath, String content) throws UtilException {	
-		FileUtil.writeFile(filePath, content, null);
 	}
 	
     /**
@@ -360,6 +353,32 @@ public class FileUtil
 			}	
 		}
 	}
+
+	 /**
+	 * Replace a file or create a new one if it does not exist
+	 * 
+	 * @param filePath
+	 *            the full pathname of the file to create/replace
+	 * @param content
+	 *            a string holding the contents to be written to the file
+	 * @returns boolean representing success or failure of file creation
+	 */
+	public static void writeFile(String filePath, Reader content) throws UtilException {	
+		FileUtil.writeFile(filePath, content, null);
+	}
+	
+	 /**
+	 * Replace a file or create a new one if it does not exist
+	 * 
+	 * @param filePath
+	 *            the full pathname of the file to create/replace
+	 * @param content
+	 *            a string holding the contents to be written to the file
+	 * @returns boolean representing success or failure of file creation
+	 */
+	public static void writeFile(String filePath, String content) throws UtilException {	
+		FileUtil.writeFile(filePath, new StringReader(content), null);
+	}
 	
     /**
 	 * Replace a file or create a new one if it does not exist
@@ -372,8 +391,9 @@ public class FileUtil
 	 * 				the character encoding to use for writing	 
 	 * @returns boolean representing success or failure of file creation
 	 */
-	public static void writeFile(String filePath, String content, String charset) throws UtilException {	
-		if (content == null || content.equals("")) {
+	public static void writeFile(String filePath, Reader content, String charset) throws UtilException {	
+
+		if (content == null) {
 			throw new UtilException("Attempting to write a file with no content: " + filePath);
 		}
 
@@ -381,10 +401,9 @@ public class FileUtil
 		File file = null;
 		
 		try {
+			content.reset();
 			file = new File(filePath);
-		file.createNewFile();
-
-		output = null;
+			file.createNewFile();
 
 			if (charset != null) {
 				output = new PrintWriter(new BufferedWriter(
@@ -395,9 +414,16 @@ public class FileUtil
 						new FileWriter(file, false)));
 			}
 
-			output.print(content);
+		    BufferedReader bufferedReader = new BufferedReader(content); 
+		    String contentLine = null;
+		    while((contentLine = bufferedReader.readLine()) != null) {
+		    	output.println(contentLine);
+		    }
+			content.reset();
 		} catch (IOException ioe) {
-			file.delete();
+			if (file != null) {
+				file.delete();
+			}
 			throw new UtilException("I/O error while trying to write file: " + filePath);
 		} finally {
 			output.close();
@@ -463,7 +489,9 @@ public class FileUtil
 			throw new UtilException("I/O error while trying to read file: " + filePath);
 		} finally {
 			try {
-				input.close();
+				if (input != null) {
+					input.close();
+				}
 			} catch (IOException ioe) {
 				// not much to do here
 			}
