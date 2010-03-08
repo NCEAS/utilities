@@ -1,13 +1,14 @@
 /**
- *  '$RCSfile$'
- *    Purpose: A Class that implements administrative methods 
- *  Copyright: 2008 Regents of the University of California and the
+ *  '$RCSfile: ParseLSIDException.java,v $'
+ *    Purpose: An Exception thrown when an error occurs when parsing
+ *             an lsid
+ *  Copyright: 2009 Regents of the University of California and the
  *             National Center for Ecological Analysis and Synthesis
  *    Authors: Michael Daigle
- * 
+ *
  *   '$Author: daigle $'
- *     '$Date: 2009-03-23 13:56:56 -0800 (Mon, 23 Mar 2009) $'
- * '$Revision: 4854 $'
+ *     '$Date: 2008-07-11 20:36:39 $'
+ * '$Revision: 1.1 $'
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +27,19 @@
 
 package edu.ucsb.nceas.utilities;
 
+/**
+ * Exception thrown when an error occurs when parsing an LSID
+ */
+public class ParseLSIDException extends Exception {
 
-public class StatusUtil {
+	private static final long serialVersionUID = 6229544481308174753L;
 
-	public static String ACTIVE = "active";
-	public static String DELETED = "deleted";
-	public static String INACTIVE = "inactive";
-	public static String SCHEDULED = "scheduled";
-	public static String UNSCHEDULED = "unscheduled";	
-	public static String EXECUTING = "executing";
+	/**
+	 * Create a new ParseLSIDException.
+	 *
+	 * @param message The error or warning message.
+	 */
+	public ParseLSIDException(String message) {
+		super(message);
+	}
 }

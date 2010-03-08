@@ -139,13 +139,7 @@
 
    <target name="clean" depends="init"
            description="deletes everything in the build directory">
-       <delete>
-          <fileset dir="${build.dir}">
-            <include name="**/*.*"/>
-            <exclude name="**/CVS*"/>
-            <exclude name="**/.#*"/>
-          </fileset>
-       </delete>
+       <delete dir="${build.dir}" />
    </target>
 
    <target name="buildtestjar" depends="clean,compile"

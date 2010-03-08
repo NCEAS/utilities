@@ -42,6 +42,18 @@ import java.util.Collection;
 public class OrderedMap extends HashMap {
 
   private final List ordKeyList;
+  public final static String KEY = "key";
+  public final static String VALUE = "value";
+  public final static String PAIR = "pair";
+  private final static String OPEN = "<";
+  private final static String SLASH = "/";
+  private final static String CLOSE = ">";
+  private final static String OPENNINGPAIR = OPEN+PAIR+CLOSE;
+  private final static String CLOSINGPAIR = OPEN+SLASH+PAIR+CLOSE;
+  private final static String OPENNINGKEY = OPEN+KEY+CLOSE;
+  private final static String CLOSINGKEY = OPEN+SLASH+KEY+CLOSE;
+  private final static String OPENNINGVALUE = OPEN+VALUE+CLOSE;
+  private final static String CLOSINGVALUE = OPEN+SLASH+VALUE+CLOSE;
   
   /** 
   *    Creates a new instance of OrderedMap
@@ -312,6 +324,44 @@ public class OrderedMap extends HashMap {
     }
     toStringBuff.append("\n* * * End OrderedMap * * *\n");
     return toStringBuff.toString();
+  }
+  
+  /**
+   * Resturns a XML representation of the keys & values contained in this map
+   * <pair>
+   *   <key>...</key>
+   *   <value>...</value>
+   *  </pair>
+   */
+  public String toXML()
+  {
+	    Iterator it = keySet().iterator();
+	    if (it==null) return null;
+	    
+	    toStringBuff.delete(0,toStringBuff.length());
+	    Object nextKey = null;
+	    Object nextVal = null;
+	    
+	    while (it.hasNext()) {
+	      
+	      nextKey = it.next();
+	      
+	      if (nextKey==null) {
+	        continue;
+	      } else {
+	    	toStringBuff.append(OPENNINGPAIR);
+	        toStringBuff.append(OPENNINGKEY+nextKey+CLOSINGKEY);
+	      }
+	      
+
+	      nextVal = get(nextKey);
+	      
+	      if   (nextVal==null) toStringBuff.append(OPENNINGVALUE+"**NULL VALUE**"+CLOSINGVALUE);
+	      else toStringBuff.append(OPENNINGVALUE+nextVal+CLOSINGVALUE);
+	      toStringBuff.append(CLOSINGPAIR);
+	      toStringBuff.append("\n");
+	    }
+	    return toStringBuff.toString();
   }
 
 
