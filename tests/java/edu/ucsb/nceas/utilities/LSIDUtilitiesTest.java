@@ -85,15 +85,15 @@ public class LSIDUtilitiesTest extends TestCase
     	String LISD3= "urn:lsid:gamma.msi.ucsb.edu/OepnAuth/:286:9";
     	String LISD4= "urn:lsid:gamma.msi.ucsb.edu/OepnAuth/:286:5:1";
     	String LISD5 = "tao.1.1";
-    	String result = LSIDUtilities.transformToDocID(LISD1);
+    	String result = LSIDUtil.transformToDocID(LISD1);
     	assertTrue(result == null);
-    	result = LSIDUtilities.transformToDocID(LISD2);
+    	result = LSIDUtil.transformToDocID(LISD2);
     	assertTrue(result == null);
-    	result = LSIDUtilities.transformToDocID(LISD3);
+    	result = LSIDUtil.transformToDocID(LISD3);
     	assertTrue(result.equals("286.9"));
-    	result = LSIDUtilities.transformToDocID(LISD4);
+    	result = LSIDUtil.transformToDocID(LISD4);
     	assertTrue(result.equals("286.5.1"));
-    	result = LSIDUtilities.transformToDocID(LISD5);
+    	result = LSIDUtil.transformToDocID(LISD5);
         assertTrue(result == null);
     }
 
