@@ -67,7 +67,7 @@
       <property name="junitjar"  value="${libdir}/junit.jar" />
       <!-- CLASSPATH -->
       <property name="cpath"          
-	      value="${xercesjar}:${log4jjar}:${httpjar}:${xalanjar}:${xmlapijar}:${junitjar}" />
+	      value="${xercesjar}:${log4jjar}:${httpjar}:${xalanjar}:${xmlapijar}" />
                 
       <echo message="classpath is:   ${cpath}"/>
  
