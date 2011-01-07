@@ -73,8 +73,6 @@ public class XMLUtilities {
   private static final String PREDICATE_OPEN_SYMBOL  = "[";
   private static final String PREDICATE_CLOSE_SYMBOL = "]";
 
-  private static DocumentBuilder domParser = null;
-
 //  private static Logger log = Logger.getLogger(XMLUtilities.class.getName());
 
   /**
@@ -1561,6 +1559,9 @@ public static void addNodeToDOMTree(Node rootNode, String xpath,
    */
   private static DocumentBuilder getDOMParser()
                                           throws ParserConfigurationException {
+
+	  // create a new parser for each call for multi-threaded environments
+	DocumentBuilder domParser = null;
 
     if (domParser==null) {
 
