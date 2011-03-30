@@ -49,6 +49,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.Vector;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  *  General static utilities for File operations
  */
@@ -456,53 +458,21 @@ public class FileUtil
 		}
 
 		File file = new File(filePath);
-		int fileLength = new Long(file.length()).intValue();
-		BufferedReader input = null;
-		StringBuffer contents = null;
 		
-		// If fileLength is < 0, the length was greater that an integer could hold
-		if (fileLength >= 0) {
-			contents = new StringBuffer(fileLength);
-		} else {
-			contents = new StringBuffer(100000);
-		}
-		String nextLine;
-
+		String contents = null;
 		try {
-			if (charset != null) {
-				input = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), charset));
-			}
-			else {
-				input = new BufferedReader(new FileReader(filePath));
-			}
-			boolean firstLine = true;
-			while ((nextLine = input.readLine()) != null) {
-				if (!firstLine) {
-					contents.append("\n");
-				} else {
-					firstLine = false;
-				}
-				contents.append(nextLine);
-			}
-
-		} catch (IOException ioe) {
+			FileInputStream fis = new FileInputStream(file);
+			contents = IOUtils.toString(fis,charset);
+		} catch (FileNotFoundException e) {
+			throw new UtilException("Cannot read file: " + filePath);
+		} catch (IOException e) {
 			throw new UtilException("I/O error while trying to read file: " + filePath);
-		} finally {
-			try {
-				if (input != null) {
-					input.close();
-				}
-			} catch (IOException ioe) {
-				// not much to do here
-			}
 		}
-		
-		if (contents.equals("")) {
-			return null;
-		}
-
-		return contents.toString();
+		return contents;
 	}
+		
+	
+
 	
 	/**
 	 * Adapt a path to the current OS. Currently this only replaces forward

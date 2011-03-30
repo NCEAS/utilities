@@ -64,10 +64,13 @@
       <property name="xercesjar" value="${libdir}/xercesImpl.jar" />
       <property name="log4jjar"  value="${libdir}/log4j-1.2.8.jar" />
       <property name="httpjar"  value="${libdir}/httpclient.jar" />
+      <property name="commonsiojar"  value="${libdir}/commons-io-1.4.jar" />
+      <property name="junitjar"  value="${libdir}/junit-4.8.1.jar" />
+
       <!-- CLASSPATH -->
       <property name="cpath"          
-	      value="${xercesjar}:${log4jjar}:${httpjar}:${xalanjar}:${xmlapijar}" />
-                
+		value="${xercesjar}:${log4jjar}:${httpjar}:${xalanjar}:${xmlapijar}:${junitjar}:${commonsiojar}" />
+
       <echo message="classpath is:   ${cpath}"/>
  
     </target>
