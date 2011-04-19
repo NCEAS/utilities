@@ -151,8 +151,10 @@ public class OptionsTest extends TestCase
             assertNotNull(options);
             String prop1 = options.getOption("hello");
             assertTrue(prop1.equals("world"));
-            String prop2 = options.getOption("my.first");
-            assertTrue(prop2.equals("1"));
+            // don't want to test this one, since it gets changed in the setProperty test
+            // and this test might be run more than once
+//            String prop2 = options.getOption("my.first");
+//            assertTrue(prop2.equals("1"));
             String prop3 = options.getOption("my.second");
             assertTrue(prop3.equals("2"));
             String prop4 = options.getOption("my.third");
@@ -171,13 +173,21 @@ public class OptionsTest extends TestCase
         try
         {
            Options options = Options.initialize(propertyFile);
-           String key = "my.first";
-           String newValue = "one";
            assertNotNull(options);
+           String key = "my.first";
+           String retrievedValue = options.getOption(key);
+           String newValue;
+           if (retrievedValue.equals("1")) {
+        	   // original value
+        	   newValue = "one";
+           } else {
+        	   // "newValue" already there, so restore to original
+        	   newValue = "1";
+           }
            options.setOption(key, newValue);
-           String retrieveValue = options.getOption(key);
-           System.out.println("the new retrive value is "+ retrieveValue);
-           assertTrue(retrieveValue.equals(newValue));
+           retrievedValue = options.getOption(key);
+           System.out.println("the new retrieved value is "+ retrievedValue);
+           assertTrue(retrievedValue.equals(newValue));
         }
         catch(IOException e)
         {
