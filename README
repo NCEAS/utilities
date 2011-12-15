@@ -1,6 +1,5 @@
 #  '$RCSfile: README,v $' 
-#  Copyright: 2000 Regents of the University of California and the
-#             National Center for Ecological Analysis and Synthesis
+#  Copyright: 2000 Regents of the University of California 
 # 
 #   '$Author: jones $'
 #     '$Date: 2003-03-19 19:58:49 $'
@@ -47,8 +46,7 @@ well as other projects that we are currently involved with.
 Legalese
 --------
 This software is copyrighted by The Regents of the University of California
-and the National Center for Ecological Analysis and Synthesis and licensed
-under the GNU GPL; see the 'LICENSE' file for details.
+and licensed under the BSD; see the 'LICENSE' file for details.
 
 This material is based upon work supported by the National Science Foundation
 under Grant No. DEB99-80154 and DBI99-04777. Any opinions, findings and
