@@ -47,6 +47,8 @@ import java.util.Iterator;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerException;
 
 import org.apache.xml.serialize.OutputFormat;
@@ -61,8 +63,11 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 //import org.apache.log4j.Logger;
 
@@ -173,7 +178,7 @@ public class XMLUtilities {
     InputSource in  = new InputSource(xmlReader);
 
     try {
-      doc = getDOMParser().parse(in);
+      doc = createDomParser().parse(in);
 
     } catch(SAXException e) {
 
@@ -1550,51 +1555,74 @@ public static void addNodeToDOMTree(Node rootNode, String xpath,
     return (array);
   }
 
-
-
-
-
-
-
   /**
    * Set up a DOM parser for reading an XML document
    *
    * @return   a DOM parser object for parsing
    */
-  private static DocumentBuilder getDOMParser()
-                                          throws ParserConfigurationException {
-
-	  // create a new parser for each call for multi-threaded environments
-	DocumentBuilder domParser = null;
-
-    if (domParser==null) {
-
+  public static DocumentBuilder createDomParser() throws ParserConfigurationException
+  {
+      DocumentBuilder parser = null;
+          
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setNamespaceAware(true);
-      factory.setValidating(false);
-
-      //ignore whitespace, CR's etc in file when parsing:
-      //factory.setIgnoringContentElementWhitespace(true);
-
-      ////////////////////////////////////////////////////////////////////////
-      //
-      // see http://xml.apache.org/xerces2-j/features.html
-      ////////////////////////////////////////////////////////////////////////
-      
-      //comment out this line because xerces doesn't support this property any more.
-      /*factory.setAttribute(
-            "http://apache.org/xml/features/nonvalidating/load-external-dtd",
-            new Boolean(false));*/
-
-      ////////////////////////////////////////////////////////////////////////
-      ////////////////////////////////////////////////////////////////////////
-
-      domParser = factory.newDocumentBuilder();
-
-    }
-    return domParser;
+      parser = factory.newDocumentBuilder();
+      if (parser != null) {
+          Log.debug(30, "Parser created is: " + parser.getClass().getName());
+      } else {
+          Log.debug(9, "Unable to create DOM parser!");
+      }
+     
+      return parser;
   }
+  /**
+   * Set up a SAX parser for reading an XML document
+   *
+   * @param contentHandler  object to be used for parsing the content
+   * @param errorHandler    object to be used for handling errors
+   * @return                a SAX XMLReader object for parsing
+   */
+  public static XMLReader createSaxParser(ContentHandler contentHandler,
+          ErrorHandler errorHandler)
+  {
+      XMLReader parser = null;
 
+      // Set up the SAX document handlers for parsing
+      try {
+
+          // Get an instance of the parser
+          SAXParserFactory spfactory = SAXParserFactory.newInstance();
+          SAXParser saxp = spfactory.newSAXParser();
+          parser = saxp.getXMLReader();
+
+          if (parser != null) {
+              parser.setFeature("http://xml.org/sax/features/namespaces",
+                  true);
+              Log.debug(30, "Parser created is: " +
+                      parser.getClass().getName());
+          } else {
+              Log.debug(9, "Unable to create SAX parser!");
+          }
+
+          // Set the ContentHandler to the provided object
+          if (null != contentHandler) {
+              parser.setContentHandler(contentHandler);
+          } else {
+              Log.debug(3,
+                      "No content handler for SAX parser!");
+          }
+
+          // Set the error Handler to the provided object
+          if (null != errorHandler) {
+              parser.setErrorHandler(errorHandler);
+          }
+      } catch (Exception e) {
+          Log.debug(1, "Failed to create SAX parser:\n" +
+                  e.toString());
+      }
+
+      return parser;
+  }
 
   // pops last-added object from the Stack provided. Returns null if popped
   // Object is null or is not an instance of String. Otherwise, casts Object to
