@@ -68,6 +68,8 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 //import org.apache.log4j.Logger;
 
@@ -1623,6 +1625,31 @@ public static void addNodeToDOMTree(Node rootNode, String xpath,
 
       return parser;
   }
+  
+  /**
+	 * Method to initialize the parser
+	 * @throws SAXException 
+	 */
+	public static XMLReader initParser(DefaultHandler dh, String parserName) throws SAXException {
+		XMLReader parser = null;
+
+		ContentHandler chandler = dh;
+
+		// Get an instance of the parser
+		if (parserName != null) {
+			parser = XMLReaderFactory.createXMLReader(parserName);
+		} else {
+			parser = XMLReaderFactory.createXMLReader();
+		}
+
+		// Turn off validation
+		parser.setFeature("http://xml.org/sax/features/validation", false);
+
+		parser.setContentHandler((ContentHandler) chandler);
+		parser.setErrorHandler((ErrorHandler) chandler);
+
+		return parser;
+	}
 
   // pops last-added object from the Stack provided. Returns null if popped
   // Object is null or is not an instance of String. Otherwise, casts Object to
