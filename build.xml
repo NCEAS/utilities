@@ -65,10 +65,18 @@
       <property name="httpjar"  value="${libdir}/httpclient.jar" />
       <property name="commonsiojar"  value="${libdir}/commons-io-1.4.jar" />
       <property name="junitjar"  value="${libdir}/junit-4.8.1.jar" />
+  	
+	<!-- for pdf export -->
+		<property name="serializer" value="lib/serializer.jar"/>
+		<property name="xml-apis" value="lib/xml-apis-xerces-2.9.1.jar"/>
+		<property name="itext" value="lib/iText-2.0.8.jar"/>
+		<property name="renderer" value="lib/core-renderer.jar"/>
+		<property name="renderer-min" value="lib/core-renderer-minimal.jar"/>
+		<property name="jtidy" value="lib/jtidy-r938.jar"/>
 
       <!-- CLASSPATH -->
       <property name="cpath"          
-		value="${xercesjar}:${log4jjar}:${httpjar}:${xalanjar}:${xmlapijar}:${junitjar}:${commonsiojar}" />
+		value="${xercesjar}:${log4jjar}:${httpjar}:${xalanjar}:${xmlapijar}:${junitjar}:${commonsiojar}:${serializer}:${xml-apis}:${jtidy}:${itext}:${renderer}:${renderer-min}" />
 
       <echo message="classpath is:   ${cpath}"/>
  
