@@ -41,7 +41,7 @@ import junit.framework.TestSuite;
  */
 public class OptionsTest extends TestCase
 {
-    private String testfile = "tests/test.properties";
+    private String testfile = "src/test/resources/test.properties";
     private File propertyFile = null;
 
     /**

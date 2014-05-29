@@ -30,9 +30,9 @@
 
       <filter token="release" value="${release}"/>
 
-      <property name="srcdir" value="src/java" />
+      <property name="srcdir" value="src/main/java" />
       <property name="libdir" value="lib" />
-      <property name="testdir" value="tests/java" />
+      <property name="testdir" value="src/test/java" />
 
       <property name="build.dir" value="./build"/>
       <property name="build.src" value="${build.dir}/src"/>

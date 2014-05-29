@@ -131,17 +131,17 @@ public class FileUtilTest extends TestCase
     		
     		System.out.println("\n******* Character encoding specification: " + encoding + "************************");
     		// Unix / Mac OSX style line-separators
-    		runFileToStringTest("tests/resources/fileUtil/LF0.utf8.txt", encoding, expectEqual);
-    		runFileToStringTest("tests/resources/fileUtil/LF1.utf8.txt", encoding, expectEqual);
-    		runFileToStringTest("tests/resources/fileUtil/LF2.utf8.txt", encoding, expectEqual);
+    		runFileToStringTest("src/test/resources/fileUtil/LF0.utf8.txt", encoding, expectEqual);
+    		runFileToStringTest("src/test/resources/fileUtil/LF1.utf8.txt", encoding, expectEqual);
+    		runFileToStringTest("src/test/resources/fileUtil/LF2.utf8.txt", encoding, expectEqual);
     		// DOS (Windows) style line-separators 
-    		runFileToStringTest("tests/resources/fileUtil/CRLF0.utf8.txt", encoding, expectEqual);
-    		runFileToStringTest("tests/resources/fileUtil/CRLF1.utf8.txt", encoding, expectEqual);
-    		runFileToStringTest("tests/resources/fileUtil/CRLF2.utf8.txt", encoding, expectEqual);
+    		runFileToStringTest("src/test/resources/fileUtil/CRLF0.utf8.txt", encoding, expectEqual);
+    		runFileToStringTest("src/test/resources/fileUtil/CRLF1.utf8.txt", encoding, expectEqual);
+    		runFileToStringTest("src/test/resources/fileUtil/CRLF2.utf8.txt", encoding, expectEqual);
        		// Mac OS9 (and earlier) style line-separators 
-    		runFileToStringTest("tests/resources/fileUtil/CR0.utf8.txt", encoding, expectEqual);
-    		runFileToStringTest("tests/resources/fileUtil/CR1.utf8.txt", encoding, expectEqual);
-    		runFileToStringTest("tests/resources/fileUtil/CR2.utf8.txt", encoding, expectEqual);
+    		runFileToStringTest("src/test/resources/fileUtil/CR0.utf8.txt", encoding, expectEqual);
+    		runFileToStringTest("src/test/resources/fileUtil/CR1.utf8.txt", encoding, expectEqual);
+    		runFileToStringTest("src/test/resources/fileUtil/CR2.utf8.txt", encoding, expectEqual);
     	}
     }
 
